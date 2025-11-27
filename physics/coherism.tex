@@ -52,7 +52,7 @@
 \begin{document}
 
 \title{%
-Coherism: A Variational Feedback Framework for Quantum Information and Spacetime Geometry
+Gravitational Backreaction from Relative Entropy: A Variational Principle
 }
 
 \author{David Ahmann}
@@ -73,7 +73,7 @@ We propose a variational framework that couples quantum information and spacetim
 \end{equation*}
 while variation with respect to $\rho$ yields a geometry-dependent open-system evolution
 $\dot{\rho} = -i[H,\rho] + \mathcal{L}_g[\rho]$.
-In suitable limits, the framework reproduces the semiclassical Einstein equation, the Polyakov anomaly in $1+1$ dimensions, and the Einstein--Langevin form of stochastic gravity. We then construct a minimal $1+1$-dimensional ``Gedanken-experiment'' in which two systems of equal rest energy but different quantum coherence exhibit a small, principle-calculable violation of the Weak Equivalence Principle (WEP). We also suggest that coherence may modify semiclassical tunneling rates in fusion processes. Finally, we outline cosmological and black-hole applications, and identify experimental directions---atom interferometry, Bose--Einstein condensate free-fall, and gravitational-wave memory---that could constrain or refute the Coherist corrections. The resulting picture treats gravity and quantum mechanics as complementary limits of a deeper feedback law governing the alignment of quantum information with spacetime geometry.
+In suitable limits, the framework reproduces the semiclassical Einstein equation, the Polyakov anomaly in $1+1$ dimensions, and the Einstein--Langevin form of stochastic gravity. We then construct a minimal $1+1$-dimensional ``Gedanken-experiment'' in which two systems of equal rest energy but different quantum coherence exhibit a small, principle-calculable violation of the Weak Equivalence Principle (WEP). We also suggest that coherence may modify semiclassical tunneling rates in fusion processes. Finally, we outline cosmological and black-hole applications, and identify experimental directions---atom interferometry, Bose--Einstein condensate free-fall, and gravitational-wave memory---that could constrain or refute these entropic corrections. The resulting picture treats gravity and quantum mechanics as complementary limits of a deeper feedback law governing the alignment of quantum information with spacetime geometry.
 \end{abstract}
 
 \maketitle
@@ -107,8 +107,8 @@ If so, one might hope to:
 (ii) identify an additional ``informational'' stress tensor that encodes how persistent coherence feeds back on geometry; and
 (iii) derive concrete, albeit small, deviations from the Weak Equivalence Principle or from $\Lambda$CDM cosmology that are, in principle, observable.
 
-We call the resulting framework \emph{Coherism}.
-The name is descriptive rather than metaphysical: it emphasizes a focus on \emph{coherence}, understood in the precise sense of robust predictive structure or relative-entropy alignment, as a dynamical player in the geometry--state feedback loop.
+We call the resulting framework \emph{Entropic Feedback}.
+The name emphasizes the focus on \emph{relative entropy}, understood as a measure of distinguishability, as a dynamical player in the geometry--state feedback loop.
 
 The basic picture is sketched in Fig.~\ref{fig:feedback-loop}.
 At a given coarse-graining scale $\mu^{-1}$, the metric $g_{\mu\nu}$ induces a family of local reference states $\sigma[g]$ on causal diamonds.
@@ -134,7 +134,7 @@ an Einstein-like equation sourced by both $\langle T_{\mu\nu}\rangle$ and an inf
         \draw[->, thick] (coh.west) .. controls +(-2,0.2) and +(0,-1.2) .. node[left, align=center]{informational\\stress $\Tmn$} (geom.south);
         \draw[->, thick] (coh.east) .. controls +(2,0.2) and +(0,-1.2) .. node[right, align=center]{open-system\\term $\mathcal{L}_g[\rho]$} (state.south);
     \end{tikzpicture}
-    \caption{Schematic feedback loop in Coherism. At a coarse-graining scale $\mu$, the geometry $g_{\mu\nu}$ defines a family of reference states $\sigma[g]$ on local causal diamonds. The mismatch between $\rho$ and $\sigma[g]$ enters the coherence functional $\Cfunc[g,\rho;\mu]$, whose variation yields an informational stress tensor $\Tmn$ and a geometry-dependent open-system generator $\mathcal{L}_g[\rho]$.}
+    \caption{Schematic feedback loop. At a coarse-graining scale $\mu$, the geometry $g_{\mu\nu}$ defines a family of reference states $\sigma[g]$ on local causal diamonds. The mismatch between $\rho$ and $\sigma[g]$ enters the coherence functional $\Cfunc[g,\rho;\mu]$, whose variation yields an informational stress tensor $\Tmn$ and a geometry-dependent open-system generator $\mathcal{L}_g[\rho]$.}
     \label{fig:feedback-loop}
 \end{figure*}
 
@@ -145,7 +145,7 @@ We aim to:
 (iii) demonstrate consistency with known limits such as the Einstein--Langevin equation and anomaly-induced stress in 1+1 dimensions; and
 (iv) exhibit at least one explicit, falsifiable prediction in a simplified setting.
 We do not claim a UV-complete theory of quantum gravity, nor a derivation of all known laws from a single principle.
-Instead, Coherism is presented as a candidate \emph{feedback law} that may organize, and slightly deform, the semiclassical frontier between GR and QM.
+Instead, this framework is presented as a candidate \emph{feedback law} that may organize, and slightly deform, the semiclassical frontier between GR and QM.
 
 The rest of the paper is organized as follows.
 In Sec.~\ref{sec:preliminaries} we review the necessary mathematical tools: causal diamonds, relative entropy, generalized entropy, and semiclassical gravity.
@@ -261,14 +261,7 @@ where $\{L_k\}$ are Lindblad operators.
 This evolution is trace-preserving, completely positive, and Markovian.
 In our setting, the geometry $g_{\mu\nu}$ will enter both through the Hamiltonian $H[g]$ and, in an effective way, through the dissipative term that tends to reduce the mismatch between $\rho$ and $\sigma[g]$.
 
-% ----------------------------------------------------------------------
-\subsection{Coherence and coherons}
-% ----------------------------------------------------------------------
 
-Within this framework, we use ``coherence'' in a precise, operational sense.
-At a given scale $\mu$, coherent structure in $\rho$ relative to $\sigma[g]$ is captured by a robust, perturbation-resistant surplus of predictive information.
-Formally, one can define a coherence measure $\Iop_{\mathrm{coh}}$ in terms of robust predictive mutual information on suitable spacetime regions, and a corresponding unit---the \emph{coheron}---as one bit of robust predictive information that survives a prescribed perturbation class across minimal coherence time and domain.
-Although we will not require the full machinery of coherons in the main text, this perspective informs the structure of the coherence functional and will be revisited in Appendix~\ref{appendix:coheron}.
 
 
 % ======================================================================
@@ -399,7 +392,7 @@ Instead we impose the minimal consistency requirements:
     \item \textbf{Semiclassical limit:} in regimes where $\rho$ is locally indistinguishable from $\sigma[g]$ and the generalized entropy is extremal, $\Tmn$ reduces to familiar anomaly-induced and semiclassical corrections, and Eq.~\eqref{eq:semi-einstein} is recovered.
 \end{enumerate}
 
-The Coherist field equation is then
+The entropic field equation is then
 \begin{equation}
     G_{\mu\nu} + \Lambda g_{\mu\nu}
     =
@@ -453,10 +446,10 @@ For the macroscopic applications considered here, Eq.~\eqref{eq:lindblad-ansatz}
         \addplot[blue, dashed, thick] table[x=t, y=E_base] {simulation_data.dat};
         \addlegendentry{Standard Evolution}
         \addplot[red, thick] table[x=t, y=E_coherist] {simulation_data.dat};
-        \addlegendentry{Coherist Damping}
+        \addlegendentry{Entropic Damping}
         \end{axis}
     \end{tikzpicture}
-    \caption{Numerical simulation of the Coherist Wave Equation. The blue dashed line shows the constant energy of a standard harmonic oscillator. The red solid line shows the energy decay due to the informational friction term $\kappa \Theta_{00} \dot{\phi}$, demonstrating the ``friction of geometry'' acting on coherent states. Parameters: $\kappa=0.5$, initial amplitude $\phi_0=1.0$, units of Planck time $t_P$ and Planck energy $E_P$.}
+    \caption{Numerical simulation of the Entropic Wave Equation. The blue dashed line shows the constant energy of a standard harmonic oscillator. The red solid line shows the energy decay due to the informational friction term $\kappa \Theta_{00} \dot{\phi}$, demonstrating the ``friction of geometry'' acting on coherent states. Parameters: $\kappa=0.5$, initial amplitude $\phi_0=1.0$, units of Planck time $t_P$ and Planck energy $E_P$.}
     \label{fig:simulation}
 \end{figure}
 
@@ -498,7 +491,7 @@ Causal diamonds act as local ``patches'' where geometry, state, and their mismat
 \label{sec:toy}
 % ======================================================================
 
-Before turning to new predictions, we must verify that the Coherist framework reproduces known limits.
+Before turning to new predictions, we must verify that the entropic framework reproduces known limits.
 In this section we briefly summarize a 1+1-dimensional toy model in which the informational stress tensor can be written explicitly and shown to reduce to the Polyakov anomaly and Einstein--Langevin form in appropriate regimes.
 Details are given in Appendix~\ref{appendix:polyakov}.
 
@@ -542,7 +535,7 @@ The coefficients $\alpha,\beta$ can be tuned so that the usual semiclassical con
 % ----------------------------------------------------------------------
 
 The Einstein--Langevin equation in 1+1D couples the metric to both the expectation value and stochastic fluctuations of the stress--energy tensor.
-In the Coherist toy model, fluctuations in $\Delta\!\langle T_{\mu\nu}\rangle$ and the relative entropy can be shown to induce stochastic variations in $\Tmn$ with the same structure, at least in Gaussian approximations.
+In the entropic toy model, fluctuations in $\Delta\!\langle T_{\mu\nu}\rangle$ and the relative entropy can be shown to induce stochastic variations in $\Tmn$ with the same structure, at least in Gaussian approximations.
 Thus the 1+1D toy model reproduces the standard semiclassical and stochastic limits in appropriate regimes.
 This supports the claim that $\Tmn$ can be viewed as an informational completion of the semiclassical stress, rather than a replacement of it.
 
@@ -634,7 +627,7 @@ the effective gravitational mass and free-fall acceleration of A and B are ident
 \subsection{Informational stress and effective mass}
 % ----------------------------------------------------------------------
 
-In the 1+1D Coherist toy model, the informational stress can be written schematically as
+In the 1+1D entropic toy model, the informational stress can be written schematically as
 \begin{equation}
     \Tmn
     =
@@ -701,12 +694,12 @@ In the limit $\kappa\to 0$ or $\Xi^{\mathrm{coh}}_{00}\to 0$, we recover $m_g^{(
 % ----------------------------------------------------------------------
 
 Equation~\eqref{eq:eta-coh} provides a concrete, falsifiable scaling law.
-If Coherism is correct and the coherence-dependent informational stress couples to gravity with strength $\kappa$, then precision free-fall experiments comparing coherent and incoherent systems with the same rest energy should, in principle, detect or bound $\eta_{\mathrm{coh}}$.
+If the entropic feedback hypothesis is correct and the coherence-dependent informational stress couples to gravity with strength $\kappa$, then precision free-fall experiments comparing coherent and incoherent systems with the same rest energy should, in principle, detect or bound $\eta_{\mathrm{coh}}$.
 In higher dimensions, atom interferometers, optomechanical resonators, and Bose--Einstein condensate drop tests provide candidate platforms.
 
 A detailed 3+1D modeling of such experiments lies beyond the scope of this first paper.
-Here we emphasize only that Coherism predicts a qualitatively new kind of equivalence-principle violation: not due to composition, charge, or spin, but due to the state-dependent coherence structure of the matter system.
-Even if $\eta_{\mathrm{coh}}$ is ultimately constrained to be extremely small, this would provide nontrivial bounds on $\kappa$ and on the allowed magnitude of Coherist corrections.
+Here we emphasize only that this framework predicts a qualitatively new kind of equivalence-principle violation: not due to composition, charge, or spin, but due to the state-dependent coherence structure of the matter system.
+Even if $\eta_{\mathrm{coh}}$ is ultimately constrained to be extremely small, this would provide nontrivial bounds on $\kappa$ and on the allowed magnitude of entropic corrections.
 
 
 % ======================================================================
@@ -715,10 +708,10 @@ Even if $\eta_{\mathrm{coh}}$ is ultimately constrained to be extremely small, t
 % ======================================================================
 
 In cosmology, the relevant degrees of freedom are coarse-grained over large scales.
-The Coherist framework suggests that, beyond standard matter and radiation, there may be an effective contribution to the stress--energy tensor arising from the large-scale coherence or decoherence of the cosmic quantum state relative to the FRW geometry.
+The entropic framework suggests that, beyond standard matter and radiation, there may be an effective contribution to the stress--energy tensor arising from the large-scale coherence or decoherence of the cosmic quantum state relative to the FRW geometry.
 We briefly sketch the structure here.
 
-Assuming a spatially flat FRW metric with scale factor $a(t)$, the Coherist Einstein equation takes the schematic form
+Assuming a spatially flat FRW metric with scale factor $a(t)$, the entropic Einstein equation takes the schematic form
 \begin{equation}
     3H^2
     =
@@ -739,8 +732,8 @@ where $\Delta \Iop(t)$ is a measure of the ``coherence deficit'' of the cosmic s
 Here, we define the coherence deficit explicitly as $\Delta \Iop(t) \equiv \int_{\Sigma_t} d^3x \sqrt{h} \, s_{\mathrm{rel}}(\rho || \sigma)$, representing the total informational misalignment in the spatial slice.
 This leads to small deviations from a pure cosmological constant, modeled by an equation of state $w(a) = -1 + w_a (1-a)$ and a modified growth index $\gamma = 0.55+\delta\gamma$.
 Observational consistency with Planck and SH0ES data requires $|w(a) + 1| < 0.01$ for redshifts $z < 1$, placing a tight bound on the evolution of this deficit.
-These deviations are constrained by current data but may leave a small window for Coherist corrections.
-A more quantitative analysis would require integrating the Coherist term into a Boltzmann code, as outlined in Appendix~\ref{appendix:boltzmann}.
+These deviations are constrained by current data but may leave a small window for entropic corrections.
+A more quantitative analysis would require integrating the entropic term into a Boltzmann code, as outlined in Appendix~\ref{appendix:boltzmann}.
 
 
 % ======================================================================
@@ -749,7 +742,7 @@ A more quantitative analysis would require integrating the Coherist term into a 
 % ======================================================================
 
 Black holes provide a natural laboratory for the interplay between geometry, entropy, and information.
-In the Coherist picture, the region near the horizon is where the distinction between geometric and informational degrees of freedom becomes blurred: the reference state $\sigma[g]$ is dominated by the near-horizon vacuum structure, while infalling matter and radiation alter $\rho$.
+In the entropic picture, the region near the horizon is where the distinction between geometric and informational degrees of freedom becomes blurred: the reference state $\sigma[g]$ is dominated by the near-horizon vacuum structure, while infalling matter and radiation alter $\rho$.
 
 The generalized entropy associated with a surface near the horizon can be written as
 \begin{equation}
@@ -759,7 +752,7 @@ The generalized entropy associated with a surface near the horizon can be writte
     + S_{\mathrm{out}}[\rho],
 \end{equation}
 where $A$ is the area and $S_{\mathrm{out}}$ the entropy of fields outside the surface.
-Coherism suggests that the flow of coherence---captured by relative entropy between $\rho$ and $\sigma[g]$ in appropriately chosen diamonds---feeds back on the near-horizon geometry through $\Tmn$.
+This framework suggests that the flow of coherence---captured by relative entropy between $\rho$ and $\sigma[g]$ in appropriately chosen diamonds---feeds back on the near-horizon geometry through $\Tmn$.
 In extreme cases, one might envision regimes where the geometry acts as a ``pure coherence sink'', with $\rho$ driven toward $\sigma[g]$ and the horizon area adjusting accordingly.
 We leave a detailed exploration to future work.
 
@@ -769,29 +762,29 @@ We leave a detailed exploration to future work.
 \label{sec:relations}
 % ======================================================================
 
-Here we briefly summarize how Coherism relates to several existing lines of research.
+Here we briefly summarize how this framework relates to several existing lines of research.
 
 \emph{Stochastic gravity:}
 the Einstein--Langevin equation already extends semiclassical gravity by incorporating stress--energy fluctuations.
-Coherism is compatible with this and can be viewed as adding an informational contribution to the mean stress.
+This framework is compatible with this and can be viewed as adding an informational contribution to the mean stress.
 
 \emph{Entanglement-based gravity:}
 derivations of linearized Einstein equations from entanglement entropy and the ``first law'' of entanglement motivate the use of relative entropy and generalized entropy.
-Coherism fits naturally into this landscape by elevating these quantities into a variational principle.
+This framework fits naturally into this landscape by elevating these quantities into a variational principle.
 Specifically, our coherence functional $\Cfunc$ can be viewed as an extension of the ``First Law of Entanglement Entropy'' ($\delta S = \delta E$) to non-equilibrium regimes.
 In the context of AdS/CFT, the relative entropy term $\alpha S_{\mathrm{rel}}$ is dual to the canonical energy of the bulk excitation, suggesting that $\Tmn$ may be interpreted as the bulk stress tensor required to support the boundary information geometry.
 
 \emph{Penrose--Diósi collapse:}
 these models connect gravitational self-energy of superpositions to objective collapse of the wavefunction.
-Coherism does not introduce a collapse mechanism, but it shares the intuition that coherence interacts nontrivially with gravity.
+This framework does not introduce a collapse mechanism, but it shares the intuition that coherence interacts nontrivially with gravity.
 
 \emph{Relativistic quantum information (Fuentes and others):}
 studies of non-inertial observers, entanglement in curved spacetimes, and quantum fields in an expanding universe provide concrete setups where geometry modifies quantum coherence.
-These are natural testbeds for the Coherist informational stress tensor.
+These are natural testbeds for the entropic informational stress tensor.
 
 \emph{Computational and cellular automaton approaches:}
 programs that treat the universe as a discrete computation or cellular automaton seek a deterministic substrate for quantum phenomena.
-Coherism, by contrast, remains within the continuum field-theoretic framework but emphasizes informational structure as a dynamical player in gravity.
+This framework, by contrast, remains within the continuum field-theoretic framework but emphasizes informational structure as a dynamical player in gravity.
 
 
 % ======================================================================
@@ -799,7 +792,7 @@ Coherism, by contrast, remains within the continuum field-theoretic framework bu
 \label{sec:experiments}
 % ======================================================================
 
-Several experimental fronts could, in principle, constrain Coherist corrections:
+Several experimental fronts could, in principle, constrain entropic corrections:
 
 \begin{itemize}
     \item \textbf{Atom interferometry:} precision measurements of free-fall acceleration for atomic superpositions vs.\ thermal ensembles.
@@ -819,7 +812,7 @@ We view this as an opportunity for collaboration between theory and experiment.
 \label{sec:discussion}
 
 We have proposed a framework where spacetime geometry and quantum information are coupled through a variational principle based on relative entropy.
-This ``Coherism'' recovers semiclassical gravity in the incoherent limit but predicts deviations for macroscopic quantum superpositions.
+This ``Entropic Feedback'' recovers semiclassical gravity in the incoherent limit but predicts deviations for macroscopic quantum superpositions.
 
 \subsection{Sign of the Informational Stress}
 A critical open question is the sign of the energy density contribution from $\Theta_{\mu\nu}$.
@@ -830,11 +823,11 @@ Key open problems include:
     \item Deriving a fully explicit expression for $\Tmn$ in general 3+1D settings.
     \item Understanding the renormalization-group flow of the coefficients $\alpha,\beta,\gamma$ and the scale $\mu$.
     \item Specifying the Lindblad generator $\mathcal{L}_g[\rho]$ in a way that preserves causality and consistency with known quantum field dynamics.
-    \item Embedding Coherism into a UV-complete theory of quantum gravity, if possible.
+    \item Embedding the framework into a UV-complete theory of quantum gravity, if possible.
     \item Constructing simple but realistic 3+1D models for experimental tests.
 \end{itemize}
 
-Conceptually, Coherism suggests that physical laws themselves may be viewed as self-consistency attractors of the geometry--information feedback loop: not arbitrary prescriptions but stable patterns favored by the reduction of informational tension.
+Conceptually, this framework suggests that physical laws themselves may be viewed as self-consistency attractors of the geometry--information feedback loop: not arbitrary prescriptions but stable patterns favored by the reduction of informational tension.
 We do not attempt to formalize this idea here, but it shapes the broader research agenda.
 
 
@@ -843,15 +836,15 @@ We do not attempt to formalize this idea here, but it shapes the broader researc
 \label{sec:conclusion}
 % ======================================================================
 
-We have introduced Coherism as a variational feedback framework linking quantum information and spacetime geometry.
+We have introduced a variational feedback framework linking quantum information and spacetime geometry.
 The central object is a coherence functional $\Cfunc[g,\rho;\mu]$ whose variation yields both an informational stress tensor $\Tmn$ that modifies Einstein's equation and a geometry-dependent open-system evolution for $\rho$.
 Using a 1+1D toy model, we showed that standard semiclassical and anomaly-induced results are recovered in appropriate limits, and we derived a simple scaling law for coherence-dependent violations of the Weak Equivalence Principle.
 We also suggested that coherence may modify semiclassical tunneling rates, a hypothesis that warrants careful scrutiny in fusion experiments.
-We sketched how Coherist corrections may appear in cosmology and black-hole physics~\cite{Verlinde2011,Padmanabhan2010}, and identified experimental directions where such effects could be probed.
+We sketched how entropic corrections may appear in cosmology and black-hole physics~\cite{Verlinde2011,Padmanabhan2010}, and identified experimental directions where such effects could be probed.
 
 Much remains to be done, both mathematically and phenomenologically.
 The present work should be read not as a final theory, but as the definition of a research program.
-The value of Coherism will ultimately be decided by whether it yields concrete, testable predictions and a clearer understanding of how quantum coherence and spacetime geometry fit together.
+The value of this framework will ultimately be decided by whether it yields concrete, testable predictions and a clearer understanding of how quantum coherence and spacetime geometry fit together.
 
 
 % ======================================================================
@@ -929,7 +922,7 @@ Explicitly, for a massless scalar field, the energy density component is modifie
 \begin{equation}
     \langle \Theta_{\tau\tau} \rangle \propto \frac{\delta S(\rho || \sigma)}{\delta g^{\tau\tau}} \sim \sinh^2(r) \cdot T^4.
 \end{equation}
-This demonstrates that even in flat spacetime (viewed by an accelerated observer), coherent excitations (squeezing) induce an effective stress-energy that backreacts on the geometry, consistent with the Coherism framework.
+This demonstrates that even in flat spacetime (viewed by an accelerated observer), coherent excitations (squeezing) induce an effective stress-energy that backreacts on the geometry, consistent with the entropic framework.
 
 % ----------------------------------------------------------------------
 \section{1+1D Polyakov Correspondence}
@@ -958,7 +951,7 @@ Explicitly, in conformal gauge $ds^2 = -e^{2\omega} du dv$, one finds
 \end{equation}
 
 \subsection{Einstein-Langevin Limit}
-The Coherist equation of motion is
+The entropic equation of motion is
 \begin{equation}
     G_{\mu\nu} = 8\pi G (\langle T_{\mu\nu} \rangle_{\rho} + \Tmn).
 \end{equation}
@@ -979,10 +972,10 @@ This suggests that ``quantum noise'' in gravity is actually a deterministic sign
 
 We hypothesize that the informational tension term could modify the effective potential barrier for quantum tunneling.
 If the tunneling particle maintains high coherence $\Cfunc$ across the barrier, the geometry might deform to lower the barrier height $V_{\mathrm{eff}} = V_0 - \kappa \Tmn$, effectively catalyzing the process.
-Standard quantum mechanics assumes a fixed background; Coherism suggests the background relaxes to accommodate the coherent wavefunction.
+Standard quantum mechanics assumes a fixed background; this framework suggests the background relaxes to accommodate the coherent wavefunction.
 This could have implications for fusion rates in coherent plasmas, though we emphasize that standard tunneling calculations are robust and any deviation would be a higher-order correction.
 Standard WKB tunneling depends on the action of the bounce solution $S_E$.
-In Coherism, the action is augmented by the coherence functional:
+In this framework, the action is augmented by the coherence functional:
 \begin{equation}
     S_{\mathrm{eff}} = S_E + \Delta \Cfunc.
 \end{equation}
@@ -1023,50 +1016,7 @@ This predicts that fusion rates could be slightly enhanced for coherent wavepack
     \label{fig:tunneling}
 \end{figure}
 
-% ----------------------------------------------------------------------
-\section{Coheron Bound Origin}
-\label{appendix:coheron}
-% ----------------------------------------------------------------------
 
-The bound on the number of coherons,
-\begin{equation}
-    N_{\mathrm{coh}} \le \frac{A}{4G \ln 2},
-    \label{eq:coheron-bound-app}
-\end{equation}
-is motivated by the holographic principle.
-It states that the maximum amount of robust, predictive information (coherence) that can be stored in a region is bounded by the area of its boundary in Planck units.
-
-\begin{figure}[h]
-    \centering
-    \begin{tikzpicture}[>=Stealth, scale=1.0]
-        % Spacetime axes
-        \draw[->] (-2,0) -- (2,0) node[right] {$x$};
-        \draw[->] (0,-0.5) -- (0,3.5) node[above] {$t$};
-        
-        % Causal Diamond
-        \draw[thick] (0,0) -- (-1.5,1.5) -- (0,3) -- (1.5,1.5) -- cycle;
-        \node at (1.8,1.5) {$\Ddom$};
-        
-        % Coherence Tube (Worldtube)
-        \fill[blue!20, opacity=0.5] (-0.5,0) -- (-0.5,3) -- (0.5,3) -- (0.5,0) -- cycle;
-        \draw[blue, dashed] (-0.5,0) -- (-0.5,3);
-        \draw[blue, dashed] (0.5,0) -- (0.5,3);
-        
-        \node[blue] at (0,1.5) {Coherent State $\rho$};
-        \node[align=center, right] at (0.6, 2.5) {Robustness Scale $\tau_{\mathrm{coh}}$};
-        
-        \draw[<->] (-0.5, -0.2) -- (0.5, -0.2);
-        \node[below] at (0,-0.2) {$\xi_{\mathrm{coh}}$};
-    \end{tikzpicture}
-    \caption{Visualization of a ``coheron'' domain. The shaded region represents the spacetime volume where the quantum state $\rho$ maintains robust predictive correlations (coherence) relative to the geometry-adapted reference. The size of this domain determines the magnitude of the informational backreaction.}
-    \label{fig:coheron}
-\end{figure}
-
-The coherence capacity of a spacetime region is bounded by the generalized entropy:
-\begin{equation}
-    N_{\mathrm{coh}} \le \frac{A}{4G \ln 2}.
-\end{equation}
-This connects our informational stress tensor to holographic bounds.
 
 % ----------------------------------------------------------------------
 
@@ -1075,7 +1025,7 @@ This connects our informational stress tensor to holographic bounds.
 \label{appendix:numerics}
 % ----------------------------------------------------------------------
 
-We outline a minimal numerical scheme for evolving coupled geometry--state systems under the Coherist dynamics in simplified 1+1D settings.
+We outline a minimal numerical scheme for evolving coupled geometry--state systems under the entropic dynamics in simplified 1+1D settings.
 We use a null-coordinate grid $(u,v)$ with metric $ds^2 = -e^{2\omega(u,v)} du dv$.
 The evolution proceeds as follows:
 \begin{enumerate}
@@ -1092,7 +1042,7 @@ This scheme ensures that the feedback loop is closed at each time step.
 \label{appendix:boltzmann}
 % ----------------------------------------------------------------------
 
-To test Coherism against cosmological data, one can modify standard Boltzmann codes (e.g., CLASS or CAMB).
+To test entropic feedback against cosmological data, one can modify standard Boltzmann codes (e.g., CLASS or CAMB).
 The informational stress tensor behaves as an effective fluid component.
 The modifications required are:
 \begin{enumerate}
@@ -1109,7 +1059,7 @@ The modifications required are:
 We performed preliminary simulations of the 1+1D model for a scalar field in a cavity with oscillating walls.
 \begin{itemize}
     \item \textbf{Scenario}: Walls oscillate at frequency $\Omega$.
-    \item \textbf{Result}: Without Coherism, particle production grows exponentially (dynamical Casimir effect). With Coherism ($\alpha > 0$), the ``informational tension'' acts as a damping force, suppressing the growth of entanglement entropy and saturating the particle number earlier.
+    \item \textbf{Result}: Without entropic feedback, particle production grows exponentially (dynamical Casimir effect). With feedback ($\alpha > 0$), the ``informational tension'' acts as a damping force, suppressing the growth of entanglement entropy and saturating the particle number earlier.
     \item \textbf{Interpretation}: The geometry resists being driven into a state of high informational mismatch with the vacuum reference.
 \end{itemize}
 
@@ -1134,7 +1084,7 @@ To detect a WEP violation $\eta_{\mathrm{coh}} \approx 10^{-15}$, the following 
         Coupling Strength & $\kappa$ & (Model Dependent) \\
         \hline\hline
     \end{tabular}
-    \caption{Estimated parameters for a next-generation atom interferometry test of Coherism.}
+    \caption{Estimated parameters for a next-generation atom interferometry test of entropic feedback.}
     \label{tab:params}
 \end{table}
 
