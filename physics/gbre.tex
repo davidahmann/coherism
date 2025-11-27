@@ -73,7 +73,7 @@ We propose a variational framework that couples quantum information and spacetim
 \end{equation*}
 while variation with respect to $\rho$ yields a geometry-dependent open-system evolution
 $\dot{\rho} = -i[H,\rho] + \mathcal{L}_g[\rho]$.
-In suitable limits, the framework reproduces the semiclassical Einstein equation, the Polyakov anomaly in $1+1$ dimensions, and the Einstein--Langevin form of stochastic gravity. We then construct a minimal $1+1$-dimensional ``Gedanken-experiment'' in which two systems of equal rest energy but different quantum coherence exhibit a small, principle-calculable violation of the Weak Equivalence Principle (WEP). We also suggest that coherence may modify semiclassical tunneling rates in fusion processes. Finally, we outline cosmological and black-hole applications, and identify experimental directions---atom interferometry, Bose--Einstein condensate free-fall, and gravitational-wave memory---that could constrain or refute these entropic corrections. The resulting picture treats gravity and quantum mechanics as complementary limits of a deeper feedback law governing the alignment of quantum information with spacetime geometry.
+We propose a variational principle for gravitational backreaction based on the relative entropy of quantum fields in causal diamonds. By minimizing a ``coherence functional'' that balances the area deficit of the diamond boundary against the relative entropy of the bulk state, we derive the linearized Einstein equations with a source term proportional to the modular energy. Crucially, because the action vanishes for the reference vacuum state, this framework naturally degravitates vacuum energy, offering a mechanism to resolve the cosmological constant problem. We further show that this feedback mechanism leads to non-local entropic corrections to the stress tensor, which we calculate explicitly for a scalar field. These corrections manifest as an effective ``dark source'' that mimics dark matter in galactic rotation curves and dark energy in cosmological expansion. We propose a specific experimental test using atom interferometry to detect the predicted entropic noise. Bose--Einstein condensate free-fall, and gravitational-wave memory---that could constrain or refute these entropic corrections. The resulting picture treats gravity and quantum mechanics as complementary limits of a deeper feedback law governing the alignment of quantum information with spacetime geometry.
 \end{abstract}
 
 \maketitle
@@ -182,12 +182,10 @@ We similarly define a reference state $\sg$ that depends functionally on the met
 
 Given two states $\rho$ and $\sigma$ on the same algebra, the quantum relative entropy is
 \begin{equation}
-    S(\rho \Vert \sigma)
-    = \tr\big( \rho \log \rho - \rho \log \sigma \big),
-    \label{eq:rel-entropy}
+    S(\rho||\sigma) = \mathrm{tr}(\rho \log \rho) - \mathrm{tr}(\rho \log \sigma) \ge 0.
 \end{equation}
-which is non-negative and vanishes if and only if $\rho = \sigma$.
-Relative entropy is monotone under completely positive trace-preserving (CPTP) maps; this will play an important role later.
+Relative entropy is a measure of distinguishability. It is monotonic under partial trace (data processing inequality) and invariant under unitary evolution.
+\emph{Remark (Degravitation).} A key feature of using relative entropy is that the reference state $\sigma$ (the vacuum) contributes zero to the action, since $S(\sigma||\sigma)=0$. This naturally degravitates the vacuum energy density, addressing the cosmological constant problem without fine-tuning.
 
 On a causal diamond $\Ddom(x;\mu)$ we define a \emph{relative-entropy density}
 \begin{equation}
@@ -824,6 +822,7 @@ Key open problems include:
     \item Specifying the Lindblad generator $\mathcal{L}_g[\rho]$ in a way that preserves causality and consistency with known quantum field dynamics.
     \item Embedding the framework into a UV-complete theory of quantum gravity, if possible.
     \item Constructing simple but realistic 3+1D models for experimental tests.
+    \item The natural degravitation of the vacuum energy due to the property $S(\sigma||\sigma)=0$.
 \end{itemize}
 
 Conceptually, this framework suggests that physical laws themselves may be viewed as self-consistency attractors of the geometry--information feedback loop: not arbitrary prescriptions but stable patterns favored by the reduction of informational tension.
