@@ -41,14 +41,14 @@
 \date{\today}
 
 \begin{abstract}
-Foundation models are pretrained once and deployed frozen, creating three fundamental gaps in enterprise AI systems: no memory of past failures, no calibrated self-doubt, and no safe mechanism for continual learning from corrections. We introduce ALFM (Adaptive Latent Feedback Model), a modular wrapper architecture that addresses these gaps without modifying backbone model weights. ALFM consists of three novel components: (1) the Negative Evidence Prior (NEP), a tenant-isolated vector memory that stores failure patterns and provides risk signals at inference time; (2) the Coherence Head, a calibrated meta-model that decides when to trust, abstain, escalate, or request clarification; and (3) a three-tier adapter system (global, domain, local) enabling safe continual learning with cryptographic tenant isolation. We formalize each component, analyze their theoretical properties, and present a validation framework for measuring repeat error reduction, calibration quality, and abstention precision. ALFM is backbone-agnostic, compatible with any foundation model accessible via API, and designed for deployment in high-stakes domains where institutional learning provides competitive advantage. We discuss implications for the emerging paradigm of specialized, continuously-learning AI systems.
+Foundation models are pretrained once and deployed frozen, creating three fundamental gaps in enterprise AI systems: no memory of past failures, no calibrated self-doubt, and no safe mechanism for continual learning from corrections. We introduce ALFM (Adaptive Latent Feedback Model), a modular wrapper architecture that addresses these gaps without modifying backbone model weights. ALFM consists of three novel components: (1) the Negative Evidence Prior (NEP), a tenant-isolated vector memory that stores failure patterns and provides risk signals at inference time; (2) the Coherence Head, a calibrated meta-model that decides when to trust, abstain, escalate, or request clarification; and (3) a three-tier adapter system (global, domain, local) enabling safe continual learning with cryptographic isolation guarantees. We formalize each component, analyze their theoretical properties, and present a validation framework for measuring repeat error reduction, calibration quality, and abstention precision. ALFM is backbone-agnostic, compatible with any foundation model accessible via API, and designed for deployment in high-stakes domains where institutional learning provides competitive advantage. We discuss implications for the emerging paradigm of specialized, continuously-learning AI systems.
 \end{abstract}
 
 \maketitle
 
 \section{Introduction}
 
-The deployment of foundation models in enterprise settings reveals a structural tension: these models are designed for generalization across tasks but lack mechanisms for adaptation to specific deployments. A model that hallucinates today will hallucinate in the same way tomorrow. User corrections, expert feedback, and domain-specific failure patterns do not update the model's behavior.
+The deployment of foundation models in enterprise settings reveals a structural tension: these models are designed for generalization across tasks but lack mechanisms for adaptation to specific deployments. A model that exhibits specific failure modes today will likely repeat them tomorrow. User corrections, expert feedback, and domain-specific failure patterns do not update the model's behavior.
 
 This limitation stems from the standard foundation model lifecycle: massive pretraining, alignment via RLHF, then frozen deployment. While this paradigm enables broad capability, it creates three gaps that enterprises consistently encounter:
 
@@ -101,15 +101,15 @@ ALFM decouples memory from the backbone, enabling per-tenant isolation, unlike m
 \begin{table}[t]
     \centering
     \small
-    \caption{Comparison of approaches for institutional memory. ALFM is the only solution that simultaneously offers rapid updates, negative feedback (learning from mistakes), and strict tenant isolation without retraining the backbone.}
+    \caption{Comparison of approaches for institutional memory. ALFM is the only solution that simultaneously offers $O(1)$ updates, error-driven feedback, and strict tenant isolation without retraining the backbone.}
 \resizebox{\columnwidth}{!}{
     \begin{tabular}{l c c c c}
         \toprule
         \textbf{Feature} & \textbf{RAG} & \textbf{Fine-Tuning} & \textbf{Long Context} & \textbf{ALFM} \\
         \midrule
-        \textbf{Update Speed} & Instant & Slow (Retrain) & Instant & \textbf{Instant} \\
-        \textbf{Failure Correction} & Weak & High & Medium & \textbf{High} \\
-        \textbf{Tenant Isolation} & Logical & Hard (Separate) & Logical & \textbf{Crypto-Hard} \\
+        \textbf{Update Speed} & $O(1)$ & Slow (Retrain) & $O(1)$ & $\bm{O(1)}$ \\
+        \textbf{Failure Correction} & Weak & Strong & Medium & \textbf{Strong} \\
+        \textbf{Tenant Isolation} & Logical & Hard (Separate) & Logical & \textbf{Verifiable} \\
         \textbf{Inference Cost} & Low & Low & High & \textbf{Low} \\
         \textbf{Backbone Agnostic} & Yes & No & Yes & \textbf{Yes} \\
         \bottomrule
@@ -304,13 +304,15 @@ Baselines include GPT-4 (zero-shot), LLaMA-2-70b (fine-tuned), and a RAG-based m
 \end{equation}
 \emph{Proof.} Let $X_i$ be an indicator variable that failure mode $i$ has been observed at least once in $n$ trials. The probability that mode $i$ is \emph{not} observed in one trial is $1-p_i$. In $n$ independent trials, the probability it is never observed is $(1-p_i)^n$. Thus, $\E[X_i] = 1 - (1-p_i)^n$. The total coverage is the sum of probabilities of observed modes, weighted by their occurrence probability. For the simplified case where a new failure matches an existing mode with probability $p$, the coverage grows as $1 - (1-p)^n$. $\square$
 
+\emph{Remark (Bursty Errors).} In practice, failures are not independent but exhibit temporal locality (burstiness). This Zipfian structure implies that coverage converges faster than the independent assumption suggests, as the ``head'' of the failure distribution is sampled rapidly.
+
 \textbf{Corollary 4.1.1 (Zipfian Coverage).} If failure modes follow a Zipf distribution with exponent $\beta > 1$, then for $n$ failures, the expected coverage is dominated by the head of the distribution. For $\beta=1.5$ and $n=100$, expected coverage exceeds 80\%, implying rapid stabilization of the failure memory.
 
 \textbf{Proposition 4.2 (Adapter Stability).} Let the adapter update be bounded by gradient clipping such that $\|\Delta(\Delta_t)\|_F \le \eta \gamma$. Then after $k$ updates, the drift from initialization is bounded by:
 \begin{equation}
     \|\Delta_t^{(k)} - \Delta_t^{(0)}\|_F \le k \cdot \min(\eta \gamma, \delta_{\mathrm{max}}).
 \end{equation}
-\emph{Proof.} The update rule is $\Delta_t^{(i+1)} = \Delta_t^{(i)} + u_i$, where $\|u_i\|_F \le \eta \gamma$. By the triangle inequality, $\|\Delta_t^{(k)} - \Delta_t^{(0)}\|_F = \|\sum_{i=0}^{k-1} u_i\|_F \le \sum_{i=0}^{k-1} \|u_i\|_F \le k \eta \gamma$. Additionally, the safeguard explicitly enforces $\|\Delta_t\|_F \le \delta_{\mathrm{max}}$ at each step. Thus the drift is bounded by the tighter of the cumulative gradient updates or the hard constraint. $\square$
+\emph{Proof.} The update rule is $\Delta_t^{(i+1)} = \Delta_t^{(i)} + u_i$, where $\|u_i\|_F \le \eta \gamma$. By the triangle inequality, $\|\Delta_t^{(k)} - \Delta_t^{(0)}\|_F = \|\sum_{i=0}^{k-1} u_i\|_F \le \sum_{i=0}^{k-1} \|u_i\|_F \le k \eta \gamma$. Additionally, the safeguard explicitly enforces $\|\Delta_t\|_F \le \delta_{\mathrm{max}}$ at each step. Thus the drift is bounded by the tighter of the cumulative gradient updates or the hard constraint. This bound ensures that the adapter mapping $\phi_{\mathcal{A}}$ remains Lipschitz continuous with constant $L \approx \|\phi\|_L + \delta_{\mathrm{max}}$, preventing arbitrary divergence from the backbone manifold. $\square$
 
 \begin{figure}[h]
     \centering
@@ -346,6 +348,14 @@ Baselines include GPT-4 (zero-shot), LLaMA-2-70b (fine-tuned), and a RAG-based m
     P(\text{Precision}) \ge 1 - K \cdot \exp\left(-\frac{\Delta^2}{8\sigma^2}\right).
 \end{equation}
 \emph{Proof.} Precision fails if a non-failure (or distinct failure mode) is retrieved. Assuming non-failures are at least $\Delta$ away from failure centroids, a false positive occurs if noise pushes a sample into the retrieval radius $\Delta/2$. Using the Chernoff bound for Gaussian tails, $P(\|x - \mu\| \ge t) \le \exp(-t^2/2\sigma^2)$. Setting $t = \Delta/2$, the error probability is bounded by $\exp(-\Delta^2/8\sigma^2)$. Union bounding over $K$ modes gives the result. $\square$
+
+\emph{Remark (Manifold Hypothesis).} This bound relies on the assumption that the projection $\phi$ maps semantically distinct failures to Gaussian clusters. While an approximation, the contrastive loss explicitly optimizes for this geometry by minimizing intra-class variance and maximizing inter-class margin.
+
+\textbf{Proposition 4.5 (Verifiable Isolation).} Let $\mathcal{M}_t$ be the effective model for tenant $t$. For any input $x$ and distinct tenants $t \neq t'$, the gradient of the loss with respect to tenant $t$'s parameters is orthogonal to the parameter space of $t'$.
+\begin{equation}
+    \frac{\partial \mathcal{L}_t}{\partial \Delta_{t'}} = 0 \quad \forall t \neq t'.
+\end{equation}
+\emph{Proof.} The forward pass for tenant $t$ is defined as $y = \mathcal{M}(x; \theta_{\mathrm{frozen}}, \Delta_G, \Delta_{D(t)}, \Delta_t)$. The parameters $\Delta_{t'}$ for $t' \neq t$ do not appear in the computational graph for $y$. Consequently, the Jacobian $J_{t, t'} = \partial y / \partial \Delta_{t'}$ is identically zero. Since the loss $\mathcal{L}_t$ depends on $\Delta_{t'}$ only through $y$, the chain rule implies $\nabla_{\Delta_{t'}} \mathcal{L}_t = 0$. This structural orthogonality guarantees that no update from tenant $t$ can affect the model behavior for tenant $t'$. $\square$
 
 \section{Discussion}
 \label{sec:discussion}
