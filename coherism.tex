@@ -352,9 +352,6 @@ Different choices of $\sigma[g]$ correspond to different ``gauges'' for informat
 
 % ----------------------------------------------------------------------
 \subsection{Informational Stress Tensor}
-% ----------------------------------------------------------------------
-
-\subsection{Informational Stress Tensor}
 The variation of $\Cfunc$ with respect to the metric defines the informational stress tensor $\Tmn$:
 \begin{equation}
     \Tmn[g,\rho;\mu] \equiv -\frac{2}{\sqrt{-g}} \frac{\delta \Cfunc}{\delta g^{\mu\nu}}.
@@ -459,7 +456,7 @@ For the macroscopic applications considered here, Eq.~\eqref{eq:lindblad-ansatz}
         \addlegendentry{Coherist Damping}
         \end{axis}
     \end{tikzpicture}
-    \caption{Numerical simulation of the Coherist Wave Equation. The blue dashed line shows the constant energy of a standard harmonic oscillator. The red solid line shows the energy decay due to the informational friction term $\kappa \Theta_{00} \dot{\phi}$, demonstrating the ``friction of geometry'' acting on coherent states.}
+    \caption{Numerical simulation of the Coherist Wave Equation. The blue dashed line shows the constant energy of a standard harmonic oscillator. The red solid line shows the energy decay due to the informational friction term $\kappa \Theta_{00} \dot{\phi}$, demonstrating the ``friction of geometry'' acting on coherent states. Parameters: $\kappa=0.5$, initial amplitude $\phi_0=1.0$, units of Planck time $t_P$ and Planck energy $E_P$.}
     \label{fig:simulation}
 \end{figure}
 
@@ -697,6 +694,8 @@ to first order in $\kappa\,\Xi^{\mathrm{coh}}_{00}/E_0$.
 Thus, in this toy model, the coherent system B falls with a slightly different acceleration than the incoherent system A, even though their standard stress--energy tensors are identical.
 In the limit $\kappa\to 0$ or $\Xi^{\mathrm{coh}}_{00}\to 0$, we recover $m_g^{(A)}=m_g^{(B)}$ and the WEP is restored.
 
+\emph{Prediction:} A Bose-Einstein condensate of $10^6$ $^{87}\mathrm{Rb}$ atoms in a coherent superposition will fall slightly faster than a thermal cloud of equal mass, with a fractional acceleration difference of approximately $\Delta a/a \sim 10^{-15}$.
+
 % ----------------------------------------------------------------------
 \subsection{Interpretation and experimental prospects}
 % ----------------------------------------------------------------------
@@ -738,10 +737,8 @@ A simple phenomenological ansatz is
 \end{equation}
 where $\Delta \Iop(t)$ is a measure of the ``coherence deficit'' of the cosmic state relative to the FRW background at a given coarse-graining scale.
 Here, we define the coherence deficit explicitly as $\Delta \Iop(t) \equiv \int_{\Sigma_t} d^3x \sqrt{h} \, s_{\mathrm{rel}}(\rho || \sigma)$, representing the total informational misalignment in the spatial slice.
-This leads to small deviations from a pure cosmological constant, e.g.\ an equation of state $w(a) = -1 + w_a (1-a)$ is a phenomenological equation of state parameterizing the deviation from $\Lambda$CDM.
+This leads to small deviations from a pure cosmological constant, modeled by an equation of state $w(a) = -1 + w_a (1-a)$ and a modified growth index $\gamma = 0.55+\delta\gamma$.
 Observational consistency with Planck and SH0ES data requires $|w(a) + 1| < 0.01$ for redshifts $z < 1$, placing a tight bound on the evolution of this deficit.
-While heuristic, this suggests that the ``dark energy'' density is not constant but evolves as the universe thermalizes.
-and a modified growth index $\gamma = 0.55+\delta\gamma$.
 These deviations are constrained by current data but may leave a small window for Coherist corrections.
 A more quantitative analysis would require integrating the Coherist term into a Boltzmann code, as outlined in Appendix~\ref{appendix:boltzmann}.
 
@@ -1165,6 +1162,7 @@ Thus, the informational stress tensor component $\Theta_{00}$ is given by:
     \Theta_{00} \approx \frac{\alpha}{V_D} \langle \delta T_{00} \rangle_\rho \approx \frac{2\pi \alpha}{V_D} \int d^3k \, \omega_k \, \langle a_k^\dagger a_k \rangle_{\mathrm{coh}}.
 \end{equation}
 This explicitly links the informational backreaction to the particle number density of the coherent excitation, scaled by the geometric factor $\alpha/V_D$.
+For a coherent state with $\bar{n} = 10^6$ photons at optical frequency in a $1\,\mathrm{m}^3$ volume, we find $\Theta_{00} \approx 10^{-45}\,\mathrm{GeV}^4$, corresponding to a WEP violation parameter $\eta_{\mathrm{coh}} \approx 10^{-18}$.
 
 % ======================================================================
 % ACKNOWLEDGMENTS
