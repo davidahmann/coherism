@@ -40,7 +40,7 @@ def get_service():
         print(f"An error occurred: {error}")
         return None
 
-def send_email(to_email, subject, body):
+def send_email(to_email, subject, body, attachment_path=None):
     """Create and send an email message
     Print the returned  message id
     Returns: Message object, including message id
@@ -52,9 +52,31 @@ def send_email(to_email, subject, body):
     try:
         message = EmailMessage()
         message.set_content(body)
+        from email.utils import formataddr
         message["To"] = to_email
-        message["From"] = "me" # Special value 'me' indicates the authenticated user
+        # Explicitly set the sender name and email based on user feedback
+        sender_email = "dilmurat.personal@gmail.com"
+        sender_name = "David Ahmann"
+        message["From"] = formataddr((sender_name, sender_email))
+        print(f"DEBUG: Set From header to: {message['From']}")
         message["Subject"] = subject
+
+        if attachment_path:
+            import mimetypes
+            # Guess the content type based on the file's extension.  Encoding
+            # will be ignored, although we should check for simple things like
+            # gzip'd files.
+            ctype, encoding = mimetypes.guess_type(attachment_path)
+            if ctype is None or encoding is not None:
+                # No guess could be made, or the file is encoded (compressed), so
+                # use a generic bag-of-bits type.
+                ctype = 'application/octet-stream'
+            maintype, subtype = ctype.split('/', 1)
+            
+            with open(attachment_path, 'rb') as f:
+                file_data = f.read()
+                file_name = os.path.basename(attachment_path)
+                message.add_attachment(file_data, maintype=maintype, subtype=subtype, filename=file_name)
 
         # encoded message
         encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
