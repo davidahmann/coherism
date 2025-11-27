@@ -185,7 +185,7 @@ This multiplicative form models the probability that \emph{at least one} retriev
 
 \textbf{Memory Stability and Pruning.} To prevent unbounded growth and memory collapse, we employ a pruning policy $\pi_{\mathrm{prune}}$. Entries are clustered using periodic $k$-means; redundant entries within a cluster are merged into a centroid representation. Least-recently-used (LRU) pruning is applied to low-severity entries when capacity $N_{\mathrm{max}}$ is reached. This guarantees that the query time remains sublinear and the manifold density remains bounded.
 
-\textbf{Feedback Validation.} To mitigate memory poisoning, we require $k \ge 2$ independent corrections before adding a high-severity ($s \ge 4$) entry to NEP. Low-severity entries ($s \le 2$) are added immediately but flagged for periodic review. Anomalous feedback patterns (e.g., sudden spike in corrections from a single user) trigger manual audit.
+\textbf{Feedback Validation.} To mitigate memory poisoning, we require $k \ge 2$ independent corrections before adding a high-severity ($s \ge 4$) entry to NEP. Low-severity entries ($s \le 2$) are added immediately but flagged for periodic review. Anomalous feedback patterns (e.g., sudden spike in corrections from a single user) trigger manual audit. Furthermore, updates to the Global NEP partition ($\N_G$) require explicit administrative review.
 
 \subsection{Coherence Head}
 The Coherence Head decides appropriate action.
@@ -201,7 +201,7 @@ The Coherence Head decides appropriate action.
 
 \textbf{Calibration and Conformal Prediction.} We employ temperature scaling optimized on a held-out calibration set to minimize ECE. Furthermore, we adopt a conformal prediction framework to construct valid prediction sets $C(x)$ such that $P(y \in C(x)) \ge 1-\alpha$. We use the Coherence Head's softmax probabilities as conformity scores. The prediction set includes all actions $a$ where $P(a) \ge \hat{q}$, with $\hat{q}$ calibrated on held-out data to achieve $1 - \alpha$ coverage. If Trust $\notin$ prediction set, the system selects the most conservative action in the set (Escalate $>$ Abstain $>$ Clarify).
 
-\textbf{Training Data.} The Coherence Head is trained on a small dataset of (context, action) pairs derived from human feedback logs (e.g., "thumbs down" implies Abstain/Escalate) and synthetic perturbations. In a cold-start scenario, we rely on a generic pre-trained Coherence Head that defaults to conservative actions (Escalate) until tenant-specific feedback is available.
+\textbf{Training Data.} The Coherence Head is trained on a small dataset of (context, action) pairs derived from human feedback logs (e.g., "thumbs down" implies Abstain/Escalate) and synthetic perturbations. In a cold-start scenario, we rely on a generic pre-trained Coherence Head that defaults to conservative actions (Escalate $>$ Abstain) to minimize risk while the projection layer adapts to tenant-specific failure modes.
 
 \subsection{Three-Tier Adapter System}
 \textbf{Definition 3.8 (Adapter).} An adapter $\A$ is a low-rank perturbation: $\phi_{\A}(h) = \phi(h) + B \cdot A \cdot h$.
@@ -319,7 +319,7 @@ Baselines include GPT-4 (zero-shot), LLaMA-2-70b (fine-tuned), and a RAG-based m
 \end{figure}
 
 \textbf{Proposition 4.3 (Latency Overhead).} The total latency overhead is $\tau_{\mathrm{ALFM}} = \tau_{\mathrm{proj}} + \tau_{\mathrm{NEP}} + \tau_{\mathrm{CH}}$.
-\emph{Proof.} The operations are sequential. Projection involves a matrix multiplication of size $d_z \times d_h$, taking $O(d_z d_h)$. NEP query with HNSW takes $O(\log |\N|)$. Coherence Head inference is a small MLP. Typical values ($\tau_{\mathrm{proj}} \approx 5\text{ms}$, $\tau_{\mathrm{NEP}} \approx 10\text{ms}$, $\tau_{\mathrm{CH}} \approx 10\text{ms}$) yield a total overhead of $\approx 25\text{ms}$. $\square$
+\emph{Proof.} The operations are sequential. Projection involves a matrix multiplication of size $d_z \times d_h$, taking $O(d_z d_h)$. NEP query with HNSW takes $O(\log |\N|)$. Coherence Head inference is a small MLP. Typical values on a standard NVIDIA T4 GPU ($\tau_{\mathrm{proj}} \approx 5\text{ms}$, $\tau_{\mathrm{NEP}} \approx 10\text{ms}$, $\tau_{\mathrm{CH}} \approx 10\text{ms}$) yield a total overhead of $\approx 25\text{ms}$. $\square$
 
 \textbf{Proposition 4.4 (NEP Precision Lower Bound).} Let failure modes be distributed as a mixture of $K$ isotropic Gaussians with variance $\sigma^2$ and minimum separation $\Delta$. If NEP contains at least one centroid for each mode, then for a similarity threshold equivalent to distance $d = \Delta/2$, the precision of retrieval is lower bounded by:
 \begin{equation}
