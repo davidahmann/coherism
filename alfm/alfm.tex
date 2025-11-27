@@ -111,6 +111,7 @@ ALFM decouples memory from the backbone, enabling per-tenant isolation, unlike m
         \textbf{Failure Correction} & Weak & Strong & Medium & \textbf{Strong} \\
         \textbf{Tenant Isolation} & Logical & Hard (Separate) & Logical & \textbf{Verifiable} \\
         \textbf{Inference Cost} & Low & Low & High & \textbf{Low} \\
+        \textbf{Learning Signal} & Manual curation & Labeled data & In-context & \textbf{Interaction failures} \\
         \textbf{Backbone Agnostic} & Yes & No & Yes & \textbf{Yes} \\
         \bottomrule
     \end{tabular}
@@ -347,7 +348,7 @@ Baselines include GPT-4 (zero-shot), LLaMA-2-70b (fine-tuned), and a RAG-based m
 \begin{equation}
     P(\text{Precision}) \ge 1 - K \cdot \exp\left(-\frac{\Delta^2}{8\sigma^2}\right).
 \end{equation}
-\emph{Proof.} Precision fails if a non-failure (or distinct failure mode) is retrieved. Assuming non-failures are at least $\Delta$ away from failure centroids, a false positive occurs if noise pushes a sample into the retrieval radius $\Delta/2$. Using the Chernoff bound for Gaussian tails, $P(\|x - \mu\| \ge t) \le \exp(-t^2/2\sigma^2)$. Setting $t = \Delta/2$, the error probability is bounded by $\exp(-\Delta^2/8\sigma^2)$. Union bounding over $K$ modes gives the result. $\square$
+\emph{Proof.} Precision fails if a non-failure (or distinct failure mode) is retrieved. Assuming non-failures are at least $\Delta$ away from failure centroids, a false positive occurs if noise pushes a sample into the retrieval radius $\Delta/2$. Using the Chernoff bound for Gaussian tails, $P(\|x - \mu\| \ge t) \le \exp(-t^2/2\sigma^2)$. Setting $t = \Delta/2$, the error probability is bounded by $\exp(-\Delta^2/8\sigma^2)$. Union bounding over $K$ modes gives the result. This bound is tight when failure modes are well-separated ($\Delta \gg \sigma$); in the overlapping regime, precision degrades gracefully. $\square$
 
 \emph{Remark (Manifold Hypothesis).} This bound relies on the assumption that the projection $\phi$ maps semantically distinct failures to Gaussian clusters. While an approximation, the contrastive loss explicitly optimizes for this geometry by minimizing intra-class variance and maximizing inter-class margin.
 
