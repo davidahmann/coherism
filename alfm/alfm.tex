@@ -98,6 +98,26 @@ Constitutional AI~\cite{Bai2022} and guardrail systems~\cite{Rebedea2023} encode
 \subsection{Positioning Relative to Emerging Architectures}
 ALFM decouples memory from the backbone, enabling per-tenant isolation, unlike monolithic optimization approaches. Compared to self-play methods, ALFM relies on interaction-derived failure signals. While knowledge editing focuses on facts, ALFM focuses on \emph{failure avoidance} and governance.
 
+\begin{table}[t]
+    \centering
+    \small
+    \caption{Comparison of approaches for institutional memory. ALFM is the only solution that simultaneously offers rapid updates, negative feedback (learning from mistakes), and strict tenant isolation without retraining the backbone.}
+\resizebox{\columnwidth}{!}{
+    \begin{tabular}{l c c c c}
+        \toprule
+        \textbf{Feature} & \textbf{RAG} & \textbf{Fine-Tuning} & \textbf{Long Context} & \textbf{ALFM} \\
+        \midrule
+        \textbf{Update Speed} & Instant & Slow (Retrain) & Instant & \textbf{Instant} \\
+        \textbf{Failure Correction} & Weak & High & Medium & \textbf{High} \\
+        \textbf{Tenant Isolation} & Logical & Hard (Separate) & Logical & \textbf{Crypto-Hard} \\
+        \textbf{Inference Cost} & Low & Low & High & \textbf{Low} \\
+        \textbf{Backbone Agnostic} & Yes & No & Yes & \textbf{Yes} \\
+        \bottomrule
+    \end{tabular}
+    }
+    \label{tab:comparison}
+\end{table}
+
 \section{ALFM Architecture}
 \label{sec:arch}
 
