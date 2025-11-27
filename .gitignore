@@ -10,3 +10,9 @@
 *.pdf
 !coherism.pdf
 simulation_data.dat
+venv/
+__pycache__/
+.DS_Store
+*.synctex.gz
+*.fdb_latexmk
+*.fls
