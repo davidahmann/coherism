@@ -8,7 +8,6 @@
 *.fdb_latexmk
 *.fls
 *.pdf
-!coherism.pdf
 simulation_data.dat
 venv/
 __pycache__/
