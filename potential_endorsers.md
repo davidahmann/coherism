@@ -356,7 +356,7 @@ David Ahmann
 ---
 
 ### 14. Giovanni Amelino-Camelia (Naples)
-To: `giovanni.amelino-camelia@unina.it`
+To: `giovanni.amelino-camelia@unina.it` (Alternative: `amelino@na.infn.it`)
 Subject: Endorsement Request: Coherism: A Variational Feedback Framework for Quantum Information and Spacetime Geometry (Relevant to your work on QG phenomenology)
 
 Dear Professor Amelino-Camelia,
