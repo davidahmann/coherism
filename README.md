@@ -17,6 +17,19 @@ This directory contains the LaTeX source and figures for the "Coherism" preprint
     *   `coherism.tex`: Main manuscript.
     *   `references.bib`: Bibliography.
     *   `figures/`: TikZ and PDF figures illustrating the feedback loop.
+    *   `generate_data.py`: A Python script simulating a 0D QFT harmonic oscillator to demonstrate "Coherist friction" (energy loss due to informational feedback).
+
+#### 🧬 The Feedback Loop (Coherism)
+```mermaid
+graph TD
+    G[Spacetime Geometry g] -->|Induces| S[Reference State σ]
+    S -->|Compared with| R[Quantum State ρ]
+    R -->|Relative Entropy| C[Coherence Functional]
+    C -->|Variation δg| T[Informational Stress]
+    C -->|Variation δρ| L[Open System Evolution]
+    T -->|Backreaction| G
+    L -->|State Update| R
+```
 
 ### 2. `alfm/` - ALFM (AI Systems)
 **Title:** *ALFM: Adaptive Latent Feedback Model for Institutional Memory in Foundation Model Deployments*
@@ -29,6 +42,19 @@ This directory contains the LaTeX source and validation logic for the ALFM frame
     *   `alfm.tex`: Main manuscript.
     *   `references.bib`: Bibliography.
     *   `figures/`: Architecture diagrams.
+    *   `simulate_nep.py`: A Python simulation of the Negative Evidence Prior, demonstrating how contrastive projection retrieves failure modes using cosine similarity.
+
+#### 🧠 ALFM Architecture
+```mermaid
+graph LR
+    User[User Input] -->|Context| BB[Frozen Backbone]
+    User -->|Context| NEP[NEP Memory]
+    NEP -->|Risk Signal| CH[Coherence Head]
+    BB -->|Latent State| CH
+    CH -->|Decision| Action{Action}
+    Action -->|Low Risk| Out[Output]
+    Action -->|High Risk| Abstain[Abstain/Escalate]
+```
 
 ---
 
