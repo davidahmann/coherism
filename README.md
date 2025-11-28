@@ -6,7 +6,7 @@ While operating at opposite ends of the abstraction spectrum—one at the theore
 
 ## 📂 Repository Structure
 
-### 1. `physics/` - Coherism (GBRE)
+### 1. `physics/` - Coherism
 **Title:** *Coherism: A Variational Feedback Framework for Quantum Information and Spacetime Geometry*
 
 This directory contains the LaTeX source and figures for the "Coherism" preprint.
@@ -82,7 +82,7 @@ pdflatex alfm.tex
 
 ## 🔗 The Connection
 
-*   **GBRE (Physics):** Gravity is spacetime correcting for *entropic errors*.
+*   **Coherism (Physics):** Gravity is spacetime correcting for *entropic errors*.
 *   **ALFM (AI):** Intelligence is an AI correcting for *prediction errors*.
 
 Both propose a "Universal Theory of Feedback"—one applied to the fabric of the universe, the other to the fabric of artificial intelligence.
