@@ -41,7 +41,7 @@
 \date{\today}
 
 \begin{abstract}
-Foundation models are pretrained once and deployed frozen, creating three fundamental gaps in enterprise AI systems: no memory of past failures, no calibrated self-doubt, and no safe mechanism for continual learning from corrections. We introduce ALFM (Adaptive Latent Feedback Model), a modular wrapper architecture that addresses these gaps without modifying backbone model weights. ALFM consists of three novel components: (1) the Negative Evidence Prior (NEP), a tenant-isolated vector memory that stores failure patterns and provides risk signals at inference time; (2) the Coherence Head, a calibrated meta-model that decides when to trust, abstain, escalate, or request clarification; and (3) a three-tier adapter system (global, domain, local) enabling safe continual learning with cryptographic isolation guarantees. We formalize each component, analyze their theoretical properties, and present a validation framework for measuring repeat error reduction, calibration quality, and abstention precision. ALFM is backbone-agnostic, compatible with any foundation model accessible via API, and designed for deployment in high-stakes domains where institutional learning provides competitive advantage. We discuss implications for the emerging paradigm of specialized, continuously-learning AI systems.
+Foundation models are pretrained once and deployed frozen, creating three fundamental gaps in enterprise AI systems: no memory of past failures, no calibrated self-doubt, and no safe mechanism for continual learning from corrections. We introduce ALFM (Adaptive Latent Feedback Model), a modular wrapper architecture that addresses these gaps without modifying backbone model weights. ALFM consists of three novel components: (1) the Negative Evidence Prior (NEP), a tenant-isolated vector memory that stores failure patterns and provides risk signals at inference time; (2) the Consensus Engine, a multi-agent system that arbitrates between semantic intuition and heuristic rules to decide when to trust, abstain, escalate, or request clarification; and (3) a three-tier adapter system (global, domain, local) enabling safe continual learning with cryptographic isolation guarantees. We formalize each component, analyze their theoretical properties, and present a validation framework for measuring repeat error reduction, calibration quality, and abstention precision. ALFM is backbone-agnostic, compatible with any foundation model accessible via API, and designed for deployment in high-stakes domains where institutional learning provides competitive advantage. We discuss implications for the emerging paradigm of specialized, continuously-learning AI systems.
 \end{abstract}
 
 \maketitle
@@ -62,7 +62,7 @@ We propose ALFM (Adaptive Latent Feedback Model), a wrapper architecture that pr
 
 \begin{enumerate}
     \item \textbf{Negative Evidence Prior (NEP):} A vector-space memory of failure patterns, queryable at inference time, providing risk signals when current context resembles past failures.
-    \item \textbf{Coherence Head:} A small meta-model that integrates NEP signals, uncertainty estimates, and policy constraints to decide appropriate action: trust the backbone output, abstain with explanation, escalate to human review, or request clarification.
+    \item \textbf{Consensus Engine:} A ``Society of Agents'' that integrates signals from a Semantic Agent (NEP-based intuition) and a Heuristic Agent (deterministic rules) to decide appropriate action: trust the backbone output, abstain with explanation, escalate to human review, or request clarification.
     \item \textbf{Three-Tier Adapters:} Lightweight trainable layers operating at global, domain, and local (tenant) levels, enabling bounded continual learning with explicit isolation guarantees.
 \end{enumerate}
 
@@ -71,7 +71,7 @@ ALFM is explicitly backbone-agnostic. It wraps transformer-based LLMs (GPT-4, Cl
 Our contributions are:
 \begin{itemize}
     \item We introduce the Negative Evidence Prior (NEP), a vector-space memory architecture for storing failure patterns rather than information---a conceptual inversion of standard memory-augmented networks.
-    \item We propose the Coherence Head, a calibrated meta-model that extends selective prediction with structured actions and uncertainty texture.
+    \item We propose the Consensus Engine, a multi-agent arbitration system that balances semantic risk signals with hard heuristic constraints.
     \item We formalize a three-tier adapter system with provable stability bounds and tenant isolation guarantees.
     \item We validate NEP on synthetic data, demonstrating that contrastive projection enables effective failure retrieval where raw embeddings fail.
 \end{itemize}
@@ -87,7 +87,7 @@ ALFM draws on and extends four research areas: memory-augmented neural networks,
 Memory-augmented architectures extend neural networks with external memory stores. Neural Turing Machines~\cite{Graves2014} and Differentiable Neural Computers~\cite{Graves2016} introduced differentiable read-write memory for algorithmic tasks. Memory Networks~\cite{Weston2015} enable retrieval over knowledge bases. More recently, Memorizing Transformers~\cite{Wu2022} and RETRO~\cite{Borgeaud2022} augment attention with retrieval. These approaches focus on augmenting the model with \emph{information}. ALFM's NEP differs fundamentally: it stores \emph{anti-patterns} rather than information. NEP entries represent contexts where the model failed, enabling avoidance rather than retrieval.
 
 \subsection{Selective Prediction and Learning to Defer}
-Selective prediction~\cite{Chow1970,ElYaniv2010} allows classifiers to abstain when uncertain. Recent work extends this to deep learning~\cite{Geifman2017} and language models~\cite{Varshney2022}. Learning to defer~\cite{Madras2018,Mozannar2020} trains models to route difficult examples to experts. Calibration research~\cite{Guo2017,Desai2020} addresses the mismatch between confidence and accuracy. ALFM's Coherence Head integrates these ideas but extends beyond binary abstention, producing structured decisions and ``uncertainty texture.''
+Selective prediction~\cite{Chow1970,ElYaniv2010} allows classifiers to abstain when uncertain. Recent work extends this to deep learning~\cite{Geifman2017} and language models~\cite{Varshney2022}. Learning to defer~\cite{Madras2018,Mozannar2020} trains models to route difficult examples to experts. Calibration research~\cite{Guo2017,Desai2020} addresses the mismatch between confidence and accuracy. ALFM's Consensus Engine integrates these ideas but extends beyond binary abstention, producing structured decisions and ``uncertainty texture.''
 
 \subsection{Continual Learning}
 Continual learning addresses learning from sequential data without forgetting. Approaches include regularization~\cite{Kirkpatrick2017}, replay buffers~\cite{Rolnick2019}, and architectural methods~\cite{Rusu2016}. Parameter-efficient fine-tuning methods like LoRA~\cite{Hu2022} and adapters~\cite{Houlsby2019} enable adaptation without full retraining. However, these do not address tenant isolation. ALFM's three-tier adapter system provides continual learning with explicit scope boundaries.
@@ -97,6 +97,8 @@ Constitutional AI~\cite{Bai2022} and guardrail systems~\cite{Rebedea2023} encode
 
 \subsection{Positioning Relative to Emerging Architectures}
 ALFM decouples memory from the backbone, enabling per-tenant isolation, unlike monolithic optimization approaches. Compared to self-play methods, ALFM relies on interaction-derived failure signals. While knowledge editing focuses on facts, ALFM focuses on \emph{failure avoidance} and governance.
+
+Recent work on Nested Learning~\cite{Behrouz2025} reveals that optimizers themselves are associative memory modules operating at different frequencies. This perspective aligns with ALFM's multi-tier architecture: the NEP operates at the fastest frequency (inference-time retrieval), adapters at medium frequency (per-correction updates), and the projection layer at the slowest frequency (periodic retraining). Similarly, MAKER~\cite{Meyerson2025} demonstrates that extreme task decomposition with error correction enables scaling to million-step tasks with zero errors. ALFM adopts a complementary approach: rather than decomposing tasks, we decompose the \emph{memory system} into hierarchical tiers with different update rates and isolation guarantees.
 
 \begin{table}[t]
     \centering
@@ -138,7 +140,7 @@ We assume access to a frozen backbone model $\M$ that maps input context $x$ to 
         \node [frozen] (backbone) {Backbone Model (Frozen)};
         \node [block, below of=backbone, node distance=2cm] (proj) {Projection Layer $\phi$};
         \node [memory, right of=proj, node distance=3.5cm] (nep) {NEP Memory};
-        \node [block, below of=proj, node distance=2cm] (head) {Coherence Head};
+        \node [block, below of=proj, node distance=2cm] (head) {Consensus Engine};
         \node [decision, below of=head, node distance=2.5cm] (action) {Action};
 
         % Edges
@@ -152,7 +154,7 @@ We assume access to a frozen backbone model $\M$ that maps input context $x$ to 
         \path [line] (action) -- (outputs);
         
     \end{tikzpicture}
-    \caption{ALFM Architecture. The frozen backbone's hidden states are projected into a failure-separable space. The NEP memory retrieves risk signals based on similarity to past failures. The Coherence Head integrates these signals to determine the safety action.}
+    \caption{ALFM Architecture. The frozen backbone's hidden states are projected into a failure-separable space. The NEP memory retrieves risk signals based on similarity to past failures. The Consensus Engine integrates these signals with heuristic rules to determine the safety action.}
     \label{fig:arch}
 \end{figure}
 
@@ -165,12 +167,24 @@ subject to:
 \begin{enumerate}
     \item \textbf{Safety Constraint:} $\mathrm{Risk}(x) \le \delta$ (enforced by NEP).
     \item \textbf{Stability Constraint:} $\|\Delta_t\|_F \le \epsilon$ (enforced by Adapters).
-    \item \textbf{Calibration Constraint:} $\mathrm{Calib}(\C) \le \alpha$ (enforced by Coherence Head).
+    \item \textbf{Calibration Constraint:} $\mathrm{Calib}(\C) \le \alpha$ (enforced by Consensus Engine).
 \end{enumerate}
-This formulation binds the components: NEP provides the risk estimate, Adapters provide the learnable parameters $\theta$ within bounds, and the Coherence Head enforces the calibration constraint.
+This formulation binds the components: NEP provides the risk estimate, Adapters provide the learnable parameters $\theta$ within bounds, and the Consensus Engine enforces the calibration constraint.
+
+\textbf{Connection to Nested Learning.} Following the Nested Learning framework~\cite{Behrouz2025}, we can view ALFM as a nested optimization problem where each component optimizes at its own timescale. The NEP memory update is analogous to the fast inner-loop optimization (compressing failure patterns), while adapter updates correspond to the slower outer-loop (consolidating learned corrections). This multi-frequency design prevents catastrophic interference and enables stable continual learning.
 
 \subsection{Contrastive Projection Layer}
-Before querying NEP, we project the input context into a representation space where failure patterns are separable. \textbf{Note on Backbone Updates:} Since $\phi$ depends on the backbone's hidden states $h(x)$, if the backbone model $\M$ is updated (e.g., GPT-4 to GPT-4.5), the projection layer must be retrained or fine-tuned to align with the new latent space. NEP entries must also be re-indexed.
+Before querying NEP, we project the input context into a representation space where failure patterns are separable.
+
+\textbf{Backbone Update Requirements.} Since $\phi$ depends on the backbone's hidden states $h(x)$, backbone model updates require corresponding ALFM updates. We characterize this cost explicitly:
+
+\emph{Full Backbone Change} (e.g., GPT-4 $\rightarrow$ Claude): Requires full retraining of $\phi$ on $\approx 10{,}000$ contrastive pairs (estimated 2--4 GPU-hours on A100). All NEP entries must be re-embedded and re-indexed ($O(|\N|)$ inference calls).
+
+\emph{Minor Backbone Update} (e.g., GPT-4 $\rightarrow$ GPT-4-turbo): Latent spaces are typically similar. We propose \emph{anchor-based alignment}: select $n_{\mathrm{anchor}} = 500$ diverse inputs, compute embeddings under both backbones, and fine-tune $\phi$ with an alignment loss $\|\phi_{\mathrm{new}}(h_{\mathrm{new}}(x)) - \phi_{\mathrm{old}}(h_{\mathrm{old}}(x))\|^2$ for $\approx 100$ steps. NEP re-indexing can be deferred or performed incrementally.
+
+\emph{Practical Mitigation.} For API-based backbones, we recommend: (1) pinning model versions where possible, (2) maintaining a validation set of $\approx 200$ failure/success pairs to detect latent drift, and (3) budgeting for quarterly $\phi$ recalibration.
+
+We emphasize that ALFM is \emph{backbone-swappable} rather than backbone-agnostic in the zero-cost sense: swapping backbones is feasible and bounded, but not free.
 
 \textbf{Definition 3.1 (Projection Function).} Let $h(x) \in \R^{d_h}$ be the backbone's hidden representation. The projection function $\phi: \R^{d_h} \rightarrow \R^{d_z}$ is:
 \begin{equation}
@@ -191,38 +205,89 @@ The NEP is a vector database storing failure patterns.
 
 \textbf{Definition 3.2 (NEP Entry).} A NEP entry $e$ is a tuple $e = (z_e, t_e, d_e, s_e, c_e, m_e)$, where $z_e$ is the failure context embedding, $t_e$ is the tenant ID, $d_e$ is the domain ID, $s_e \in \{1..5\}$ is severity, $c_e$ is the correction, and $m_e$ is metadata.
 
-\textbf{Definition 3.3 (NEP Memory).} The memory $\N$ is partitioned: $\N = \N_G \cup \N_D \cup \N_T$.
+\textbf{Definition 3.3 (NEP Memory).} The memory $\N$ is partitioned into two distinct layers, implementing a ``Hive Mind'' architecture:
+\begin{itemize}
+    \item \textbf{Global Layer ($\N_G$, Slow Memory):} Pre-loaded with $>9,000$ synthetic failure patterns (e.g., cutoff errors, missing signatures) derived from methodology standards. This layer provides baseline safety and evolves slowly.
+    \item \textbf{Tenant Layer ($\N_T$, Fast Memory):} Learns firm-specific and client-specific rules securely. Data never crosses tenant boundaries. This layer adapts rapidly to local drift.
+\end{itemize}
+Thus, $\N = \N_G \cup \N_{D(t)} \cup \N_T$.
 
 \textbf{Definition 3.4 (NEP Query).} Given $\zctx$ and tenant $t$:
 \begin{equation}
     \mathrm{NEP}(\zctx, t) = \{e \in \N_G \cup \N_{D(t)} \cup \N_t : \mathrm{sim}(\zctx, z_e) > \theta\}.
 \end{equation}
 
-\textbf{Definition 3.5 (NEP Risk Signal).} The risk signal $\sNEP \in [0, 1]$ is:
+\textbf{Definition 3.5 (NEP Risk Signal).} The base risk signal $\sNEP^{(0)} \in [0, 1]$ under independence is:
 \begin{equation}
-    \sNEP = 1 - \prod_{e \in \mathrm{NEP}(\zctx, t)} \left(1 - \alpha \cdot \mathrm{sim}(\zctx, z_e) \cdot \frac{s_e}{5}\right).
+    \sNEP^{(0)} = 1 - \prod_{e \in \mathrm{NEP}(\zctx, t)} \left(1 - \alpha \cdot \mathrm{sim}(\zctx, z_e) \cdot \frac{s_e}{5}\right).
 \end{equation}
 This multiplicative form models the probability that \emph{at least one} retrieved failure mode is relevant, assuming independence of failure causes. The parameter $\alpha \in [0, 1]$ scales the sensitivity; we set $\alpha=0.8$ based on preliminary calibration. Severity $s_e$ is linearly scaled to weight high-risk failures more heavily.
 
-\textbf{Memory Stability and Pruning.} To prevent unbounded growth and memory collapse, we employ a pruning policy $\pi_{\mathrm{prune}}$. Entries are clustered using periodic $k$-means; redundant entries within a cluster are merged into a centroid representation. Least-recently-used (LRU) pruning is applied to low-severity entries when capacity $N_{\mathrm{max}}$ is reached. This guarantees that the query time remains sublinear and the manifold density remains bounded.
-
-\textbf{Feedback Validation.} To mitigate memory poisoning, we require $k \ge 2$ independent corrections before adding a high-severity ($s \ge 4$) entry to NEP. Low-severity entries ($s \le 2$) are added immediately but flagged for periodic review. Anomalous feedback patterns (e.g., sudden spike in corrections from a single user) trigger manual audit. Furthermore, updates to the Global NEP partition ($\N_G$) require explicit administrative review.
-
-\subsection{Coherence Head}
-The Coherence Head decides appropriate action.
-
-\textbf{Definition 3.6 (Input).} $u = [\zctx; \sNEP; \eta; p]$, where $\eta$ is uncertainty features and $p$ is policy embedding.
-
-\textbf{Definition 3.7 (Output).} The Coherence Head $\C$ produces $\C(u) = (p_{\mathrm{err}}, p_{\mathrm{ood}}, \kappa, a, r)$, where $a \in \{\text{Trust}, \text{Abstain}, \text{Escalate}, \text{Clarify}\}$.
-
-\textbf{Training Objective.}
+\textbf{Correlated Failure Extension.} In practice, failure modes exhibit correlation (e.g., hallucination clusters, policy violation chains). We extend the risk signal with a correlation correction:
 \begin{equation}
-    \mathcal{L}_{\mathrm{CH}} = \lambda_1 \mathcal{L}_{\mathrm{CE}}(a, a^*) + \lambda_2 \mathcal{L}_{\mathrm{MSE}}(p_{\mathrm{err}}, p_{\mathrm{err}}^*) + \lambda_3 \mathcal{L}_{\mathrm{cal}}.
+    \sNEP = \sNEP^{(0)} + \beta \cdot \max_{e_i, e_j \in \mathrm{NEP}(\zctx, t)} \mathrm{sim}(z_{e_i}, z_{e_j}) \cdot \mathbf{1}[|\mathrm{NEP}| > 1],
+\end{equation}
+where $\beta \in [0, 0.2]$ boosts risk when multiple correlated failures are retrieved. The indicator function ensures single-match queries are unaffected. When failure modes cluster tightly (high pairwise similarity), the correlation term increases $\sNEP$, reflecting that correlated failures often indicate systematic rather than incidental errors.
+
+\textbf{Memory Hygiene: Vacuum and Snapshots.} To prevent unbounded growth and ensure auditability, we employ a ``Vacuum'' process. Periodic $k$-means clustering identifies redundant entries within a tenant's memory; these are merged into a single centroid representation with updated metadata. This process reduces index size while preserving the failure boundary. JSON snapshots with SHA-256 hashes are generated after each vacuum cycle, ensuring a pristine audit trail of the memory state.
+
+\textbf{Hard-Negative Ingestion.} To maintain high precision, we continually refine the projection space. We generate ``confusable'' pairs---transactions that look valid on the surface but share hidden features with known failures---and use them to train a lightweight cross-encoder re-ranker. This ensures that the system learns to distinguish between superficial similarity and true structural failure, preventing false positives even when descriptions are nearly identical.
+
+\emph{Error Correction Analogy.} MAKER~\cite{Meyerson2025} demonstrates that voting mechanisms over multiple model samples can achieve zero errors at scale. While ALFM does not vote over backbone outputs, the NEP retrieval mechanism serves an analogous function: by aggregating signals from multiple past failure instances, NEP effectively performs a form of \emph{memory-based error correction}, where the system learns to recognize and avoid patterns that previously led to failures.
+
+\textbf{Feedback Validation and Anti-Poisoning Mechanisms.} Memory poisoning---where adversarial or erroneous feedback corrupts NEP---is a critical failure mode. We implement a multi-layered defense:
+
+\emph{(1) Confirmation Threshold.} High-severity entries ($s \ge 4$) require $k \ge 2$ independent corrections from distinct users before addition. Low-severity entries ($s \le 2$) are added immediately but flagged for periodic review.
+
+\emph{(2) Anomaly Detection.} We monitor feedback velocity per user $u$ via an exponential moving average:
+\begin{equation}
+    v_u(t) = \gamma v_u(t-1) + (1-\gamma) \cdot \mathbf{1}[\text{feedback at } t],
+\end{equation}
+with $\gamma = 0.95$. If $v_u(t) > \mu + 3\sigma$ (where $\mu, \sigma$ are computed over historical user behavior), all pending entries from $u$ are quarantined for manual review.
+
+\emph{(3) Confidence Decay.} NEP entries decay in influence over time unless re-confirmed:
+\begin{equation}
+    w_e(t) = w_e(0) \cdot \exp(-\lambda (t - t_e)) + \sum_{t' > t_e} \rho \cdot \mathbf{1}[\text{confirmed at } t'],
+\end{equation}
+where $\lambda = 0.01$ (daily decay rate) and $\rho = 0.5$ (confirmation boost). Entries with $w_e < w_{\min}$ are pruned.
+
+\emph{(4) Cross-Tenant Consensus for Global NEP.} Updates to $\N_G$ require confirmation from $\ge 3$ distinct tenants or explicit administrative approval. This prevents a single compromised tenant from polluting shared failure memory.
+
+The anti-poisoning mechanisms operate asynchronously: anomaly detection and decay updates are computed offline during NEP maintenance windows (typically nightly), not during inference. The confirmation threshold affects NEP write path latency but not query latency. Inference overhead remains bounded by Proposition 4.3.
+
+\subsection{Consensus Engine: A Society of Agents Approach}
+To ensure reliability and explainability, we move from a monolithic decision model to a ``Society of Agents'' architecture. This system arbitrates between intuition and hard rules.
+
+\textbf{1. Semantic Agent (intuition-based pattern matching).}
+\begin{itemize}
+    \item \textbf{Role:} Intuition and Pattern Matching.
+    \item \textbf{Mechanism:} Uses the NEP vector search to identify semantic similarities with past failures.
+    \item \textbf{Output:} Risk signal $\sNEP$. E.g., ``This resembles known fraud pattern \#247 with 99\% similarity.''
+\end{itemize}
+
+\textbf{2. Heuristic Agent (deterministic rule checking).}
+\begin{itemize}
+    \item \textbf{Role:} Deterministic Rule Checking.
+    \item \textbf{Mechanism:} Executes Python-based logic (regex, date arithmetic, math verification) to enforce hard constraints.
+    \item \textbf{Output:} Binary violation flags. E.g., ``Transaction date is in the future (Violation).''
+\end{itemize}
+
+\textbf{3. Consensus Engine (vote aggregation).}
+\begin{itemize}
+    \item \textbf{Role:} Vote Aggregation and Final Action.
+    \item \textbf{Logic:} Adaptive Weighted Voting.
+    \item \textbf{Semantic Weight:} The Semantic Agent's vote is weighted $2\times$ if confidence $> 0.9$.
+    \item \textbf{Critical Override:} The Heuristic Agent can trigger a \emph{Hard Veto} for severe violations (e.g., Keyword Blacklist), overriding any semantic confidence.
+\end{itemize}
+
+\textbf{Benefit.} This architecture balances AI intuition with hard safety rules. High-confidence AI can override minor heuristic warnings, but critical rules always block.
+
+\textbf{Training Objective.} The Consensus Engine is trained to minimize the joint loss:
+\begin{equation}
+    \mathcal{L}_{\mathrm{CE}} = \lambda_1 \mathcal{L}_{\mathrm{vote}}(a, a^*) + \lambda_2 \mathcal{L}_{\mathrm{calib}}.
 \end{equation}
 
-\textbf{Calibration and Conformal Prediction.} We employ temperature scaling optimized on a held-out calibration set to minimize ECE. Furthermore, we adopt a conformal prediction framework to construct valid prediction sets $C(x)$ such that $P(y \in C(x)) \ge 1-\alpha$. We use the Coherence Head's softmax probabilities as conformity scores. The prediction set includes all actions $a$ where $P(a) \ge \hat{q}$, with $\hat{q}$ calibrated on held-out data to achieve $1 - \alpha$ coverage. If Trust $\notin$ prediction set, the system selects the most conservative action in the set (Escalate $>$ Abstain $>$ Clarify).
-
-\textbf{Training Data.} The Coherence Head is trained on a small dataset of (context, action) pairs derived from human feedback logs (e.g., "thumbs down" implies Abstain/Escalate) and synthetic perturbations. In a cold-start scenario, we rely on a generic pre-trained Coherence Head that defaults to conservative actions (Escalate $>$ Abstain) to minimize risk while the projection layer adapts to tenant-specific failure modes.
+\textbf{Cold Start Bootstrapping.} Before tenant-specific data is available, we use a \emph{generic Consensus Engine} pre-configured with conservative heuristic weights. As tenant data accumulates ($n > 200$ examples), the voting weights are fine-tuned to reflect local risk tolerance.
 
 \subsection{Three-Tier Adapter System}
 \textbf{Definition 3.8 (Adapter).} An adapter $\A$ is a low-rank perturbation: $\phi_{\A}(h) = \phi(h) + B \cdot A \cdot h$.
@@ -289,9 +354,30 @@ Figure~\ref{fig:nep_sim} shows the Precision-Recall curve. The area under the cu
 
 \textbf{Parameter Sensitivity.} We varied $\theta \in \{0.75, 0.80, 0.85, 0.90\}$ and $\alpha \in \{0.6, 0.7, 0.8, 0.9\}$ on the synthetic validation set. Performance (F1) was robust to $\theta \in [0.80, 0.90]$, degrading at $\theta < 0.75$ (false positives) and $\theta > 0.90$ (false negatives). The risk signal scaling $\alpha$ showed similar robustness in $[0.7, 0.9]$. We select $\theta = 0.85, \alpha = 0.8$ as defaults.
 
+\subsubsection{Cold Start Strategy}
+A critical deployment concern is system behavior before sufficient failure data accumulates. We address cold start through \emph{seed NEP initialization}:
+
+\textbf{Seed Entry Generation.} We generate $N_{\mathrm{seed}} = 200$ synthetic failure entries across five canonical failure types:
+\begin{itemize}
+    \item \emph{Hallucination} (40 entries): Factual claims contradicting known knowledge bases
+    \item \emph{Policy violation} (40 entries): Outputs violating domain-specific constraints
+    \item \emph{Reasoning error} (40 entries): Logical inconsistencies and invalid inferences
+    \item \emph{Instruction drift} (40 entries): Outputs that ignore or misinterpret user intent
+    \item \emph{Unsafe content} (40 entries): Outputs triggering safety classifiers
+\end{itemize}
+Seed entries are generated by: (1) prompting the backbone with adversarial inputs known to elicit failures, (2) applying perturbations (word substitution, negation insertion) to successful outputs to create failure variants, and (3) collecting failure examples from public red-teaming datasets.
+
+\textbf{Expected Coverage at Cold Start.} With seed NEP and Zipfian failure distribution ($\beta = 1.5$), we estimate:
+\begin{itemize}
+    \item At $n=0$ (seed only): Coverage $\approx 35\%$ of failure probability mass
+    \item At $n=50$ (early deployment): Coverage $\approx 65\%$
+    \item At $n=100$: Coverage $\approx 80\%$
+\end{itemize}
+These estimates follow from Corollary 4.1.1, assuming seed entries capture the head of the failure distribution.
+
 \subsubsection{Planned Experiments}
 \begin{enumerate}
-    \item \textbf{Cold Start:} Measure performance on the first 100 failures to assess learning speed. We initialize with a "seed" NEP of synthetic failure patterns generated by perturbing known error types (e.g., hallucination, bias) to mitigate the cold start problem.
+    \item \textbf{Cold Start Validation:} Measure RER at $n \in \{0, 25, 50, 100\}$ failures to validate coverage growth predictions.
     \item \textbf{Capacity:} Analyze RER vs. NEP size (1k, 10k, 100k entries) to test memory stability.
     \item \textbf{Drift:} Evaluate backbone performance on general benchmarks (MMLU, GSM8K) after $N$ adapter updates to quantify forgetting.
 \end{enumerate}
@@ -341,8 +427,8 @@ Baselines include GPT-4 (zero-shot), LLaMA-2-70b (fine-tuned), and a RAG-based m
     \label{fig:drift_sim}
 \end{figure}
 
-\textbf{Proposition 4.3 (Latency Overhead).} The total latency overhead is $\tau_{\mathrm{ALFM}} = \tau_{\mathrm{proj}} + \tau_{\mathrm{NEP}} + \tau_{\mathrm{CH}}$.
-\emph{Proof.} The operations are sequential. Projection involves a matrix multiplication of size $d_z \times d_h$, taking $O(d_z d_h)$. NEP query with HNSW takes $O(\log |\N|)$. Coherence Head inference is a small MLP. Typical values on a standard NVIDIA T4 GPU ($\tau_{\mathrm{proj}} \approx 5\text{ms}$, $\tau_{\mathrm{NEP}} \approx 10\text{ms}$, $\tau_{\mathrm{CH}} \approx 10\text{ms}$) yield a total overhead of $\approx 25\text{ms}$. $\square$
+\textbf{Proposition 4.3 (Latency Overhead).} The total latency overhead is $\tau_{\mathrm{ALFM}} = \tau_{\mathrm{proj}} + \tau_{\mathrm{NEP}} + \tau_{\mathrm{CE}}$.
+\emph{Proof.} The operations are sequential. Projection involves a matrix multiplication of size $d_z \times d_h$, taking $O(d_z d_h)$. NEP query with HNSW takes $O(\log |\N|)$. Consensus Engine inference is a small MLP/Logic block. Typical values on a standard NVIDIA T4 GPU ($\tau_{\mathrm{proj}} \approx 5\text{ms}$, $\tau_{\mathrm{NEP}} \approx 10\text{ms}$, $\tau_{\mathrm{CE}} \approx 10\text{ms}$) yield a total overhead of $\approx 25\text{ms}$. $\square$
 
 \textbf{Proposition 4.4 (NEP Precision Lower Bound).} Let failure modes be distributed as a mixture of $K$ isotropic Gaussians with variance $\sigma^2$ and minimum separation $\Delta$. If NEP contains at least one centroid for each mode, then for a similarity threshold equivalent to distance $d = \Delta/2$, the precision of retrieval is lower bounded by:
 \begin{equation}
@@ -360,11 +446,53 @@ Baselines include GPT-4 (zero-shot), LLaMA-2-70b (fine-tuned), and a RAG-based m
 
 \section{Discussion}
 \label{sec:discussion}
-ALFM enables a new paradigm of institutional AI memory, but it is not a panacea. It provides the most value in high-stakes, repetitive domains (e.g., finance, legal) where failure patterns are stable and the cost of error is high. It is less effective in rapidly changing domains where yesterday's failures do not predict today's. A key failure mode of ALFM itself is "memory poisoning," where incorrect feedback leads to spurious risk signals; robust moderation of the feedback loop is essential. We are currently deploying ALFM in healthcare revenue cycle management, where the 835 Electronic Remittance Advice provides structured ground-truth labels for NEP population, enabling automated learning from claim denials. Future work will explore multi-agent extensions and cross-tenant learning.
+
+\subsection{When ALFM Works Best}
+ALFM provides the most value in high-stakes, repetitive domains (e.g., finance, legal, healthcare) where failure patterns are stable and the cost of error is high. The key conditions for ALFM effectiveness are: (1) failure modes recur with sufficient frequency to populate NEP, (2) past failures predict future failures (temporal stability), and (3) feedback is reliable and timely.
+
+\subsection{Failure Modes of ALFM}
+We explicitly characterize scenarios where ALFM underperforms or fails:
+
+\textbf{Novel Failure Modes.} ALFM cannot prevent failures it has never seen. If the backbone exhibits a new failure type (e.g., a novel hallucination pattern), NEP provides no signal until the first instance is observed and corrected. The cold start strategy (Section 4.2.1) mitigates this partially, but fundamentally novel failures will bypass ALFM's defenses. \emph{Mitigation:} Complement ALFM with output classifiers or rule-based guardrails for known-dangerous categories.
+
+\textbf{Adversarial Feedback Injection.} Despite the anti-poisoning mechanisms (Section 3.3), a sophisticated adversary with sustained access could inject carefully crafted false failures to bias the Consensus Engine toward over-abstention (denial of service) or under-abstention (allowing harmful outputs). \emph{Mitigation:} Rate limiting, anomaly detection, and periodic human audit of high-influence NEP entries.
+
+\textbf{High-Variance Domains.} In domains where the ``correct'' response is context-dependent or rapidly evolving (e.g., breaking news, real-time markets), past failures may not predict future failures. ALFM's value diminishes when the failure distribution is non-stationary. \emph{Mitigation:} Aggressive confidence decay ($\lambda \uparrow$) and shorter NEP retention windows.
+
+\textbf{Feedback Sparsity.} If users rarely provide corrections (low feedback rate), NEP accumulates slowly and the Consensus Engine remains poorly calibrated. ALFM requires an engaged user base or automated feedback mechanisms. \emph{Mitigation:} Incentivize feedback, use implicit signals (regeneration, abandonment), or deploy structured ground-truth sources.
+
+\textbf{Correlated Failures Across Tenants.} If a backbone update introduces a systematic failure affecting all tenants, tenant-specific NEPs may be slow to respond. The Global NEP ($\N_G$) addresses this, but requires cross-tenant coordination. \emph{Mitigation:} Monitor for synchronized failure spikes; fast-track $\N_G$ updates during incidents.
+
+\subsection{Expected Performance}
+Table~\ref{tab:expected_perf} presents projected performance based on synthetic validation and theoretical analysis. These projections will be validated in planned real-world deployments.
+
+\begin{table}[h]
+    \centering
+    \caption{Preliminary projected performance comparison. Values are theoretical estimates based on synthetic validation (Section 4.2) and will be updated with empirical results.}
+    \label{tab:expected_perf}
+    \begin{tabular}{l c c c}
+        \toprule
+        \textbf{Method} & \textbf{RER} $\downarrow$ & \textbf{ECE} $\downarrow$ & \textbf{Abstain Prec.} $\uparrow$ \\
+        \midrule
+        GPT-4 (zero-shot) & 1.00 & 0.15--0.20 & N/A \\
+        GPT-4 + RAG & 0.85--0.95 & 0.12--0.18 & N/A \\
+        GPT-4 + Guardrails & 0.90--1.00 & 0.10--0.15 & 0.60--0.70 \\
+        \textbf{GPT-4 + ALFM} & \textbf{0.40--0.60} & \textbf{0.03--0.08} & \textbf{0.85--0.95} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Deployment Context}
+We are currently deploying ALFM in healthcare revenue cycle management, where the 835 Electronic Remittance Advice provides structured ground-truth labels for NEP population, enabling automated learning from claim denials. This domain exhibits high failure cost, stable failure patterns, and reliable feedback---ideal conditions for ALFM.
+
+\subsection{Brain-Inspired Architecture}
+ALFM's multi-timescale design parallels neurobiological memory systems. The NEP's fast retrieval corresponds to working memory and pattern recognition, while adapters mirror synaptic consolidation processes that occur on slower timescales. This alignment with Nested Learning's~\cite{Behrouz2025} neuroscience-inspired framework suggests that hierarchical, multi-frequency architectures may be fundamental to building robust, continually-learning AI systems. Just as the brain processes information at multiple temporal scales (from millisecond spikes to circadian rhythms), ALFM operates across inference-time retrieval (Fast Memory), per-interaction adaptation, and periodic recalibration (Slow Memory).
+
+Future work will explore multi-agent extensions and privacy-preserving cross-tenant learning.
 
 \section{Conclusion}
 \label{sec:conclusion}
-We introduced ALFM, a wrapper architecture that equips frozen foundation models with three capabilities they fundamentally lack: memory of past failures (NEP), calibrated self-doubt (Coherence Head), and safe continual learning (three-tier adapters). Our synthetic validation demonstrates that contrastive projection enables effective failure retrieval, and bounded adapter updates prevent catastrophic drift. ALFM is designed for high-stakes enterprise domains where institutional learning compounds over time. Future work will validate ALFM on real-world deployments in healthcare revenue cycle management and explore privacy-preserving cross-tenant learning.
+We introduced ALFM, a wrapper architecture that equips frozen foundation models with three capabilities they fundamentally lack: memory of past failures (NEP), calibrated self-doubt (Consensus Engine), and safe continual learning (three-tier adapters). Our synthetic validation demonstrates that contrastive projection enables effective failure retrieval, and bounded adapter updates prevent catastrophic drift. ALFM is designed for high-stakes enterprise domains where institutional learning compounds over time. Future work will validate ALFM on real-world deployments in healthcare revenue cycle management and explore privacy-preserving cross-tenant learning.
 
 \appendix
 
@@ -390,10 +518,10 @@ Table~\ref{tab:notation} summarizes the key symbols used in this paper.
         $\mathcal{N}$ & NEP memory \\
         $e$ & NEP entry \\
         $\sNEP$ & NEP risk signal \\
-        $\mathcal{C}$ & Coherence Head \\
+        $\mathcal{C}$ & Consensus Engine \\
         $p_{\mathrm{err}}$ & Predicted error probability \\
         $p_{\mathrm{ood}}$ & Predicted OOD probability \\
-        $\kappa$ & Coherence score \\
+        $\kappa$ & Consensus score \\
         $a$ & Recommended action \\
         $\mathcal{A}$ & Adapter \\
         $\Delta$ & Adapter perturbation \\
@@ -426,7 +554,7 @@ Table~\ref{tab:notation} summarizes the key symbols used in this paper.
     \item Similarity threshold $\theta$: 0.85 (Selected to maximize F1 score on validation set)
 \end{itemize}
 
-\subsection{Coherence Head Architecture}
+\subsection{Consensus Engine Architecture}
 \begin{itemize}
     \item Input dimension: $d_z + 1 + d_\eta + d_p$ (typically $256 + 1 + 32 + 64 = 353$)
     \item Hidden layers: 3
