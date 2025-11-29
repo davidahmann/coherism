@@ -41,7 +41,7 @@
 \date{\today}
 
 \begin{abstract}
-Foundation models are pretrained once and deployed frozen, creating three fundamental gaps in enterprise AI systems: no memory of past failures, no calibrated self-doubt, and no safe mechanism for continual learning from corrections. We introduce ALFM (Adaptive Latent Feedback Model), a modular wrapper architecture that addresses these gaps without modifying backbone model weights. ALFM consists of three novel components: (1) the Negative Evidence Prior (NEP), a tenant-isolated vector memory that stores failure patterns and provides risk signals at inference time; (2) the Consensus Engine, a multi-agent system that arbitrates between semantic intuition and heuristic rules to decide when to trust, abstain, escalate, or request clarification; and (3) a three-tier adapter system (global, domain, local) enabling safe continual learning with cryptographic isolation guarantees. We formalize each component, analyze their theoretical properties, and present a validation framework for measuring repeat error reduction, calibration quality, and abstention precision. ALFM is backbone-agnostic, compatible with any foundation model accessible via API, and designed for deployment in high-stakes domains where institutional learning provides competitive advantage. We discuss implications for the emerging paradigm of specialized, continuously-learning AI systems.
+Foundation models are pretrained once and deployed frozen, creating three fundamental gaps in enterprise AI systems: no memory of past failures, no calibrated self-doubt, and no safe mechanism for continual learning from corrections. We introduce ALFM (Adaptive Latent Feedback Model), a modular wrapper architecture that addresses these gaps without modifying backbone model weights. ALFM consists of three novel components: (1) the Negative Evidence Prior (NEP), a tenant-isolated vector memory that stores failure patterns and provides risk signals at inference time; (2) the Consensus Engine, a multi-agent system that arbitrates between semantic intuition and heuristic rules to decide when to trust, abstain, escalate, or request clarification; and (3) a three-tier adapter system (global, domain, local) enabling safe continual learning with cryptographic isolation guarantees. We formalize each component, analyze their theoretical properties, and validate core mechanisms on synthetic data. This paper presents ALFM as a principled architecture; real-world deployment validation is ongoing. ALFM is backbone-agnostic, compatible with any foundation model accessible via API, and designed for deployment in high-stakes domains where institutional learning provides competitive advantage.
 \end{abstract}
 
 \maketitle
@@ -58,7 +58,7 @@ This limitation stems from the standard foundation model lifecycle: massive pret
 
 \textbf{Gap 3: No safe continual learning.} Standard fine-tuning risks catastrophic forgetting and is impractical for per-tenant customization. Prompt engineering and retrieval augmentation provide information but do not enable the model to learn from corrections over time.
 
-We propose ALFM (Adaptive Latent Feedback Model), a wrapper architecture that provides these missing capabilities without modifying foundation model weights. ALFM treats the backbone as a frozen black box and adds three components:
+We propose ALFM (Adaptive Latent Feedback Model), a wrapper architecture designed to address these gaps without modifying foundation model weights. ALFM treats the backbone as a frozen black box and adds three components:
 
 \begin{enumerate}
     \item \textbf{Negative Evidence Prior (NEP):} A vector-space memory of failure patterns, queryable at inference time, providing risk signals when current context resembles past failures.
@@ -73,7 +73,7 @@ Our contributions are:
     \item We introduce the Negative Evidence Prior (NEP), a vector-space memory architecture for storing failure patterns rather than information---a conceptual inversion of standard memory-augmented networks.
     \item We propose the Consensus Engine, a multi-agent arbitration system that balances semantic risk signals with hard heuristic constraints.
     \item We formalize a three-tier adapter system with provable stability bounds and tenant isolation guarantees.
-    \item We validate NEP on synthetic data, demonstrating that contrastive projection enables effective failure retrieval where raw embeddings fail.
+    \item We validate NEP on synthetic data, suggesting that contrastive projection can enable effective failure retrieval where raw embeddings fail.
 \end{itemize}
 
 The remainder of this paper is organized as follows. Section~\ref{sec:related} reviews related work. Section~\ref{sec:arch} formalizes the ALFM architecture. Section~\ref{sec:validation} presents our validation framework and theoretical analysis. Section~\ref{sec:discussion} discusses limitations and implications. Section~\ref{sec:conclusion} concludes.
@@ -308,7 +308,7 @@ We define Repeat Error Rate (RER), Expected Calibration Error (ECE), and Abstent
 We define a rigorous grid of experiments to validate ALFM.
 
 \subsubsection{Synthetic Validation of NEP}
-To validate the NEP mechanism, we conducted a simulation using synthetic failure modes. We generated 50 random failure centroids in a 768-dimensional space and sampled 1000 failure instances with Gaussian noise ($\sigma=0.1$). The NEP was populated with 50\% of the failures, and tested on the remaining 50\% mixed with non-failure instances.
+To validate the NEP mechanism, we conducted a simulation using synthetic failure modes. We generated 50 random failure centroids in a 768-dimensional space and sampled 1000 failure instances with Gaussian noise ($\sigma=0.1$). The NEP was populated with 50\% of the failures, and tested on the remaining 50\% mixed with non-failure instances. This setup models a deployment scenario with approximately 50 distinct failure categories---comparable to production error taxonomies observed in domains like healthcare revenue cycle management or financial document review.
 \begin{figure}[h]
     \centering
     \begin{tikzpicture}
@@ -350,7 +350,7 @@ To validate the NEP mechanism, we conducted a simulation using synthetic failure
     \caption{Precision-Recall curve for NEP failure detection. Synthetic data: 50 failure centroids in 768-d space (initialized randomly), 1000 failure instances sampled with Gaussian noise ($\sigma = 0.1$), mixed with 1000 non-failure instances. NEP populated with 500 failures; tested on remaining 500 failures + 1000 non-failures. Projected space uses contrastive-trained $\phi$; baseline uses raw embeddings from a frozen SentenceTransformer (all-MiniLM-L6-v2). Threshold $\theta = 0.85$ for both. The projected space (blue) achieves high precision ($>0.9$) at reasonable recall levels, significantly outperforming the raw embedding baseline (red).}
     \label{fig:nep_sim}
 \end{figure}
-Figure~\ref{fig:nep_sim} shows the Precision-Recall curve. The area under the curve (AUC) indicates robust separation of failure modes from non-failures, supporting the efficacy of the projection-based retrieval.
+Figure~\ref{fig:nep_sim} shows the Precision-Recall curve. Under these synthetic conditions, the projected space achieves promising separation of failure modes from non-failures, suggesting that contrastive projection can enable effective failure retrieval.
 
 \textbf{Parameter Sensitivity.} We varied $\theta \in \{0.75, 0.80, 0.85, 0.90\}$ and $\alpha \in \{0.6, 0.7, 0.8, 0.9\}$ on the synthetic validation set. Performance (F1) was robust to $\theta \in [0.80, 0.90]$, degrading at $\theta < 0.75$ (false positives) and $\theta > 0.90$ (false negatives). The risk signal scaling $\alpha$ showed similar robustness in $[0.7, 0.9]$. We select $\theta = 0.85, \alpha = 0.8$ as defaults.
 
@@ -468,7 +468,7 @@ Table~\ref{tab:expected_perf} presents projected performance based on synthetic 
 
 \begin{table}[h]
     \centering
-    \caption{Preliminary projected performance comparison. Values are theoretical estimates based on synthetic validation (Section 4.2) and will be updated with empirical results.}
+    \caption{Hypothesized performance targets. Values are extrapolations from synthetic validation (Section 4.2), not empirical measurements. Included to illustrate expected operating regime; confirmation pending real-world deployment.}
     \label{tab:expected_perf}
     \begin{tabular}{l c c c}
         \toprule
@@ -482,17 +482,12 @@ Table~\ref{tab:expected_perf} presents projected performance based on synthetic 
     \end{tabular}
 \end{table}
 
-\subsection{Deployment Context}
-We are currently deploying ALFM in healthcare revenue cycle management, where the 835 Electronic Remittance Advice provides structured ground-truth labels for NEP population, enabling automated learning from claim denials. This domain exhibits high failure cost, stable failure patterns, and reliable feedback---ideal conditions for ALFM.
-
-\subsection{Brain-Inspired Architecture}
-ALFM's multi-timescale design parallels neurobiological memory systems. The NEP's fast retrieval corresponds to working memory and pattern recognition, while adapters mirror synaptic consolidation processes that occur on slower timescales. This alignment with Nested Learning's~\cite{Behrouz2025} neuroscience-inspired framework suggests that hierarchical, multi-frequency architectures may be fundamental to building robust, continually-learning AI systems. Just as the brain processes information at multiple temporal scales (from millisecond spikes to circadian rhythms), ALFM operates across inference-time retrieval (Fast Memory), per-interaction adaptation, and periodic recalibration (Slow Memory).
-
-Future work will explore multi-agent extensions and privacy-preserving cross-tenant learning.
+\subsection{Multi-Timescale Design}
+ALFM's architecture aligns with Nested Learning's~\cite{Behrouz2025} multi-frequency framework: NEP operates at inference-time, adapters at per-correction timescales, and projection retraining at periodic intervals.
 
 \section{Conclusion}
 \label{sec:conclusion}
-We introduced ALFM, a wrapper architecture that equips frozen foundation models with three capabilities they fundamentally lack: memory of past failures (NEP), calibrated self-doubt (Consensus Engine), and safe continual learning (three-tier adapters). Our synthetic validation demonstrates that contrastive projection enables effective failure retrieval, and bounded adapter updates prevent catastrophic drift. ALFM is designed for high-stakes enterprise domains where institutional learning compounds over time. Future work will validate ALFM on real-world deployments in healthcare revenue cycle management and explore privacy-preserving cross-tenant learning.
+We introduced ALFM, a wrapper architecture that equips frozen foundation models with three capabilities they fundamentally lack: memory of past failures (NEP), calibrated self-doubt (Consensus Engine), and safe continual learning (three-tier adapters). Our synthetic validation suggests that contrastive projection can enable effective failure retrieval in controlled settings, and that bounded adapter updates can prevent catastrophic drift. ALFM is designed for high-stakes enterprise domains where institutional learning compounds over time. We are currently deploying ALFM in healthcare revenue cycle management, where structured ground-truth from 835 Electronic Remittance Advice enables automated NEP population. Future work will report empirical results from this deployment and explore privacy-preserving cross-tenant learning.
 
 \appendix
 
