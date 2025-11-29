@@ -49,9 +49,9 @@ This directory contains the LaTeX source and validation logic for the ALFM frame
 graph LR
     User[User Input] -->|Context| BB[Frozen Backbone]
     User -->|Context| NEP[NEP Memory]
-    NEP -->|Risk Signal| CH[Coherence Head]
-    BB -->|Latent State| CH
-    CH -->|Decision| Action{Action}
+    NEP -->|Risk Signal| CE[Consensus Engine]
+    BB -->|Latent State| CE
+    CE -->|Decision| Action{Action}
     Action -->|Low Risk| Out[Output]
     Action -->|High Risk| Abstain[Abstain/Escalate]
 ```
