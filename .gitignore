@@ -13,10 +13,6 @@
 # Keep PDFs in repo for easy access (comment out if preferred)
 # *.pdf
 
-# Data files (regeneratable)
-simulation_data.dat
-drift_data.txt
-nep_data.txt
 
 # Python
 venv/
