@@ -1,5 +1,7 @@
 # Coherism: A Variational Feedback Framework for Quantum Information and Spacetime Geometry
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17766365.svg)](https://doi.org/10.5281/zenodo.17766365)
+
 This directory contains the manuscript and supporting code for the Coherism paper.
 
 ## Abstract

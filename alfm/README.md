@@ -1,5 +1,7 @@
 # ALFM: Adaptive Latent Feedback Model for Institutional Memory in Foundation Model Deployments
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17768608.svg)](https://doi.org/10.5281/zenodo.17768608)
+
 This directory contains the manuscript and supporting code for the ALFM paper.
 
 ## Abstract

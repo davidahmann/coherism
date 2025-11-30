@@ -10,6 +10,7 @@ While operating at opposite ends of the abstraction spectrum—one at the theore
 
 ### 1. `physics/` - Coherism
 **Title:** *Coherism: A Variational Feedback Framework for Quantum Information and Spacetime Geometry*
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17766365.svg)](https://doi.org/10.5281/zenodo.17766365)
 
 This directory contains the LaTeX source for the "Coherism" preprint.
 
@@ -35,6 +36,7 @@ graph TD
 
 ### 2. `alfm/` - ALFM (AI Systems)
 **Title:** *ALFM: Adaptive Latent Feedback Model for Institutional Memory in Foundation Model Deployments*
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17768608.svg)](https://doi.org/10.5281/zenodo.17768608)
 
 This directory contains the LaTeX source and validation code for the ALFM framework.
 
