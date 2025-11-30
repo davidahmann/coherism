@@ -1,9 +1,11 @@
-\documentclass[aps,pra,reprint,superscriptaddress,nofootinbib]{revtex4-2}
+\documentclass[aps,pra,reprint,superscriptaddress,nofootinbib,floatfix]{revtex4-2}
 
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{bm}
+\usepackage{float}
+\usepackage{placeins}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{booktabs}
@@ -12,11 +14,32 @@
 \pgfplotsset{compat=1.18}
 \usetikzlibrary{shapes,arrows,positioning,calc}
 \usepackage{hyperref}
+
+% Float placement parameters
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.9}
+\renewcommand{\textfraction}{0.1}
+\renewcommand{\floatpagefraction}{0.7}
+\setcounter{topnumber}{4}
+\setcounter{bottomnumber}{4}
+\setcounter{totalnumber}{8}
+
 \hypersetup{
     colorlinks = true,
     linkcolor  = blue,
     citecolor  = blue,
     urlcolor   = blue
+}
+\usepackage{listings}
+\lstset{
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{red!60!black},
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny\color{gray}
 }
 
 % Custom commands
@@ -221,6 +244,32 @@ Thus, $\N = \N_G \cup \N_{D(t)} \cup \N_T$.
 \begin{equation}
     \sNEP^{(0)} = 1 - \prod_{e \in \mathrm{NEP}(\zctx, t)} \left(1 - \alpha \cdot \mathrm{sim}(\zctx, z_e) \cdot \frac{s_e}{5}\right).
 \end{equation}
+
+\begin{algorithm*}
+\caption{NEP Query and Risk Computation}
+\label{alg:nep_query}
+\begin{algorithmic}[1]
+\Require Context embedding $\zctx$, tenant ID $t$, threshold $\theta$, sensitivity $\alpha$
+\Ensure Risk signal $\sNEP$, retrieved entries $\mathcal{R}$
+\Function{NEPQuery}{$\zctx$, $t$, $\theta$, $\alpha$}
+    \State $\mathcal{R} \gets \emptyset$
+    \State $\mathcal{N}_{\mathrm{scope}} \gets \mathcal{N}_G \cup \mathcal{N}_{D(t)} \cup \mathcal{N}_t$ \Comment{Scoped memory}
+    \For{$e \in \mathcal{N}_{\mathrm{scope}}$}
+        \If{$\mathrm{sim}(\zctx, z_e) > \theta$}
+            \State $\mathcal{R} \gets \mathcal{R} \cup \{e\}$
+        \EndIf
+    \EndFor
+    \State $\sNEP^{(0)} \gets 1 - \prod_{e \in \mathcal{R}} \left(1 - \alpha \cdot \mathrm{sim}(\zctx, z_e) \cdot \frac{s_e}{5}\right)$
+    \If{$|\mathcal{R}| > 1$} \Comment{Correlation correction}
+        \State $\rho_{\max} \gets \max_{e_i, e_j \in \mathcal{R}} \mathrm{sim}(z_{e_i}, z_{e_j})$
+        \State $\sNEP \gets \sNEP^{(0)} + \beta \cdot \rho_{\max}$
+    \Else
+        \State $\sNEP \gets \sNEP^{(0)}$
+    \EndIf
+    \State \Return $\sNEP$, $\mathcal{R}$
+\EndFunction
+\end{algorithmic}
+\end{algorithm*}
 This multiplicative form models the probability that \emph{at least one} retrieved failure mode is relevant, assuming independence of failure causes. The parameter $\alpha \in [0, 1]$ scales the sensitivity; we set $\alpha=0.8$ based on preliminary calibration. Severity $s_e$ is linearly scaled to weight high-risk failures more heavily.
 
 \textbf{Correlated Failure Extension.} In practice, failure modes exhibit correlation (e.g., hallucination clusters, policy violation chains). We extend the risk signal with a correlation correction:
@@ -282,12 +331,96 @@ To ensure reliability and explainability, we move from a monolithic decision mod
 
 \textbf{Benefit.} This architecture balances AI intuition with hard safety rules. High-confidence AI can override minor heuristic warnings, but critical rules always block.
 
-\textbf{Training Objective.} The Consensus Engine is trained to minimize the joint loss:
+\begin{figure}[ht]
+    \centering
+    \resizebox{0.9\columnwidth}{!}{%
+    \begin{tikzpicture}[node distance=0.8cm, >=stealth]
+        \tikzstyle{box} = [rectangle, draw, fill=blue!15, text width=1.5cm, text centered, rounded corners, minimum height=0.7cm, font=\small]
+        \tikzstyle{dec} = [diamond, draw, fill=orange!15, aspect=2.5, inner sep=1pt, font=\small]
+        \tikzstyle{act} = [rectangle, draw, fill=green!15, minimum width=1.0cm, text centered, rounded corners, minimum height=0.6cm, font=\small]
+        \tikzstyle{arr} = [draw, ->, thick]
+
+        % Row 1: Input centered
+        \node [box] (input) {Input $\zctx$};
+        
+        % Row 2: Two agents
+        \node [box, below left=1.0cm and 0.8cm of input] (sem) {Semantic};
+        \node [box, below right=1.0cm and 0.8cm of input] (heur) {Heuristic};
+        
+        % Row 3: Aggregator centered, Decision on right
+        \node [box, below=2.2cm of input] (agg) {Aggregator};
+        \node [dec, right=0.6cm of agg] (crit) {Crit?};
+        
+        % Row 4: Actions spread out
+        \node [act, below=1.0cm of agg, xshift=-2.4cm] (trust) {Trust};
+        \node [act, below=1.0cm of agg, xshift=-0.8cm] (clar) {Clarify};
+        \node [act, below=1.0cm of agg, xshift=0.8cm] (abst) {Abstain};
+        \node [act, below=1.0cm of agg, xshift=2.4cm] (esc) {Escalate};
+        
+        % Flow arrows
+        \path [arr] (input) -- (sem);
+        \path [arr] (input) -- (heur);
+        \path [arr] (sem) -- node[left, font=\scriptsize] {$\sNEP$} (agg);
+        \path [arr] (heur) -- (crit);
+        \path [arr] (crit.west) -- node[above, font=\scriptsize] {No} (agg.east);
+        \path [arr] (crit.south) -- node[right, font=\scriptsize] {Yes} (esc.north);
+        \path [arr] (agg) -- (trust);
+        \path [arr] (agg) -- (clar);
+        \path [arr] (agg) -- (abst);
+        \path [arr] (agg) -- (esc);
+    \end{tikzpicture}%
+    }
+    \caption{Consensus Engine flow. Semantic Agent provides NEP-based risk; Heuristic Agent checks rules. Critical violations bypass aggregation and escalate directly.}
+    \label{fig:consensus_flow}
+\end{figure}
+
+\textbf{Training Objective.}
 \begin{equation}
     \mathcal{L}_{\mathrm{CE}} = \lambda_1 \mathcal{L}_{\mathrm{vote}}(a, a^*) + \lambda_2 \mathcal{L}_{\mathrm{calib}}.
 \end{equation}
+where the \emph{voting loss} $\mathcal{L}_{\mathrm{vote}}$ is the cross-entropy between predicted action $a$ and ground-truth action $a^*$:
+\begin{equation}
+    \mathcal{L}_{\mathrm{vote}}(a, a^*) = -\sum_{k \in \{\mathrm{trust}, \mathrm{abstain}, \mathrm{escalate}, \mathrm{clarify}\}} a^*_k \log a_k,
+\end{equation}
+and the \emph{calibration loss} $\mathcal{L}_{\mathrm{calib}}$ penalizes miscalibration between predicted error probability and observed error rate:
+\begin{equation}
+    \mathcal{L}_{\mathrm{calib}} = \sum_{b=1}^{B} \frac{|B_b|}{n} \left| \mathrm{acc}(B_b) - \mathrm{conf}(B_b) \right|,
+\end{equation}
+where $B_b$ is the $b$-th confidence bin, $\mathrm{acc}(B_b)$ is the empirical accuracy within the bin, and $\mathrm{conf}(B_b)$ is the mean predicted confidence. We set $\lambda_1 = 1.0$ and $\lambda_2 = 0.5$.
 
-\textbf{Cold Start Bootstrapping.} Before tenant-specific data is available, we use a \emph{generic Consensus Engine} pre-configured with conservative heuristic weights. As tenant data accumulates ($n > 200$ examples), the voting weights are fine-tuned to reflect local risk tolerance.
+\begin{algorithm*}
+\caption{Consensus Engine Decision}
+\label{alg:consensus}
+\begin{algorithmic}[1]
+\Require Risk signal $\sNEP$, heuristic flags $\mathcal{H}$, context $\zctx$, confidence $c$
+\Ensure Action $a \in \{\textsc{Trust}, \textsc{Abstain}, \textsc{Escalate}, \textsc{Clarify}\}$
+\Function{ConsensusDecide}{$\sNEP$, $\mathcal{H}$, $\zctx$, $c$}
+    \State \Comment{Phase 1: Heuristic Agent (Hard Veto Check)}
+    \If{$\exists h \in \mathcal{H}$ with $h.\mathrm{critical} = \textsc{True}$}
+        \State \Return \textsc{Escalate}, $h.\mathrm{reason}$ \Comment{Hard veto}
+    \EndIf
+    \State $v_H \gets |\{h \in \mathcal{H} : h.\mathrm{violated}\}|$ \Comment{Violation count}
+    \State
+    \State \Comment{Phase 2: Semantic Agent (NEP-based intuition)}
+    \State $w_S \gets \mathbf{1}[c > 0.9] \cdot 2 + \mathbf{1}[c \le 0.9] \cdot 1$ \Comment{Confidence weight}
+    \State $v_S \gets \sNEP \cdot w_S$
+    \State
+    \State \Comment{Phase 3: Vote Aggregation}
+    \State $\kappa \gets \sigma(W_\kappa [v_H; v_S; \zctx] + b_\kappa)$ \Comment{Consensus score}
+    \If{$v_H > 0$ \textbf{and} $\sNEP > \tau_{\mathrm{high}}$}
+        \State \Return \textsc{Escalate}
+    \ElsIf{$\sNEP > \tau_{\mathrm{med}}$ \textbf{or} $v_H > 0$}
+        \State \Return \textsc{Abstain}
+    \ElsIf{$\kappa < \tau_{\mathrm{clarify}}$}
+        \State \Return \textsc{Clarify}
+    \Else
+        \State \Return \textsc{Trust}
+    \EndIf
+\EndFunction
+\end{algorithmic}
+\end{algorithm*}
+
+\textbf{Cold Start Bootstrapping.}
 
 \subsection{Three-Tier Adapter System}
 \textbf{Definition 3.8 (Adapter).} An adapter $\A$ is a low-rank perturbation: $\phi_{\A}(h) = \phi(h) + B \cdot A \cdot h$.
@@ -297,6 +430,33 @@ To ensure reliability and explainability, we move from a monolithic decision mod
 \textbf{Update Rule.} $\Delta_t \leftarrow \Delta_t + \eta \cdot \mathrm{clip}(\nabla_{\Delta_t} \mathcal{L}_{\mathrm{corr}}, \gamma)$.
 
 \textbf{Drift Analysis and Geometry Preservation.} Updates occur asynchronously upon verified feedback. To preserve the latent geometry of the projection layer, we enforce a \emph{drift penalty} $\|\Delta_t - \Delta_{t-1}\|_F$ in the loss. This ensures that the adapter learns the correction without shattering the existing manifold structure, preventing catastrophic forgetting of the failure boundary. We assume additive composition $\phi_{\mathrm{full}} = \phi + \sum \Delta_k$ is valid for small perturbations; for large shifts, re-training of the domain adapter may be required.
+
+\begin{algorithm*}
+\caption{Bounded Adapter Update}
+\label{alg:adapter}
+\begin{algorithmic}[1]
+\Require Correction loss $\mathcal{L}_{\mathrm{corr}}$, adapter $\Delta_t$, learning rate $\eta$, clip bound $\gamma$, max norm $\delta_{\max}$
+\Ensure Updated adapter $\Delta_t'$
+\Function{AdapterUpdate}{$\mathcal{L}_{\mathrm{corr}}$, $\Delta_t$, $\eta$, $\gamma$, $\delta_{\max}$}
+    \State $g \gets \nabla_{\Delta_t} \mathcal{L}_{\mathrm{corr}}$ \Comment{Compute gradient}
+    \State
+    \State \Comment{Gradient clipping}
+    \If{$\|g\|_F > \gamma$}
+        \State $g \gets g \cdot (\gamma / \|g\|_F)$
+    \EndIf
+    \State
+    \State \Comment{Apply update}
+    \State $\Delta_t' \gets \Delta_t - \eta \cdot g$
+    \State
+    \State \Comment{Norm constraint (projection to feasible set)}
+    \If{$\|\Delta_t'\|_F > \delta_{\max}$}
+        \State $\Delta_t' \gets \Delta_t' \cdot (\delta_{\max} / \|\Delta_t'\|_F)$
+    \EndIf
+    \State
+    \State \Return $\Delta_t'$
+\EndFunction
+\end{algorithmic}
+\end{algorithm*}
 
 \section{Validation Framework and Analysis}
 \label{sec:validation}
@@ -309,7 +469,7 @@ We define a rigorous grid of experiments to validate ALFM.
 
 \subsubsection{Synthetic Validation of NEP}
 To validate the NEP mechanism, we conducted a simulation using synthetic failure modes. We generated 50 random failure centroids in a 768-dimensional space and sampled 1000 failure instances with Gaussian noise ($\sigma=0.1$). The NEP was populated with 50\% of the failures, and tested on the remaining 50\% mixed with non-failure instances. This setup models a deployment scenario with approximately 50 distinct failure categories---comparable to production error taxonomies observed in domains like healthcare revenue cycle management or financial document review.
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering
     \begin{tikzpicture}
         \begin{axis}[
@@ -375,13 +535,33 @@ Seed entries are generated by: (1) prompting the backbone with adversarial input
 \end{itemize}
 These estimates follow from Corollary 4.1.1, assuming seed entries capture the head of the failure distribution.
 
-\subsubsection{Planned Experiments}
+\subsection{Planned Experiments}
 \begin{enumerate}
     \item \textbf{Cold Start Validation:} Measure RER at $n \in \{0, 25, 50, 100\}$ failures to validate coverage growth predictions.
     \item \textbf{Capacity:} Analyze RER vs. NEP size (1k, 10k, 100k entries) to test memory stability.
     \item \textbf{Drift:} Evaluate backbone performance on general benchmarks (MMLU, GSM8K) after $N$ adapter updates to quantify forgetting.
 \end{enumerate}
 Baselines include GPT-4 (zero-shot), LLaMA-2-70b (fine-tuned), and a RAG-based memory baseline.
+
+\subsubsection{RAG Baseline Implementation}
+To ensure fair comparison, the RAG baseline implements failure memory via retrieval augmentation:
+\begin{itemize}
+    \item \textbf{Index:} Same HNSW configuration as NEP (Section~\ref{app:implementation}).
+    \item \textbf{Entry Format:} Each failure is stored as natural language: ``\texttt{[FAILURE] Context: <ctx>. Error: <err>. Correction: <corr>}''.
+    \item \textbf{Retrieval:} Top-$k$ ($k=5$) failures prepended to prompt as few-shot examples.
+    \item \textbf{No Risk Signal:} RAG provides information but not calibrated risk; the backbone decides confidence implicitly.
+\end{itemize}
+This baseline tests whether explicit risk modeling (NEP + Consensus Engine) outperforms implicit in-context learning.
+
+\subsubsection{Ablation Study Design}
+To isolate the contribution of each ALFM component, we define the following ablations:
+\begin{enumerate}
+    \item \textbf{ALFM$_{\text{--NEP}}$:} Consensus Engine only, with $\sNEP = 0$ (no failure memory). Tests whether heuristic rules alone provide safety.
+    \item \textbf{ALFM$_{\text{--CE}}$:} NEP only, with fixed threshold-based action ($\sNEP > 0.5 \Rightarrow$ Abstain). Tests whether learned arbitration adds value.
+    \item \textbf{ALFM$_{\text{--Adapt}}$:} No adapters; projection frozen after initial training. Tests continual learning contribution.
+    \item \textbf{ALFM$_{\text{Global}}$:} Global NEP only ($\N_T = \emptyset$). Tests tenant-specific memory value.
+\end{enumerate}
+Each ablation is evaluated on RER, ECE, and Abstention Precision across three domains (healthcare, finance, legal) with $n = 500$ test cases per domain.
 
 \subsection{Theoretical Analysis}
 
@@ -401,7 +581,7 @@ Baselines include GPT-4 (zero-shot), LLaMA-2-70b (fine-tuned), and a RAG-based m
 \end{equation}
 \emph{Proof.} The update rule is $\Delta_t^{(i+1)} = \Delta_t^{(i)} + u_i$, where $\|u_i\|_F \le \eta \gamma$. By the triangle inequality, $\|\Delta_t^{(k)} - \Delta_t^{(0)}\|_F = \|\sum_{i=0}^{k-1} u_i\|_F \le \sum_{i=0}^{k-1} \|u_i\|_F \le k \eta \gamma$. Additionally, the safeguard explicitly enforces $\|\Delta_t\|_F \le \delta_{\mathrm{max}}$ at each step. Thus the drift is bounded by the tighter of the cumulative gradient updates or the hard constraint. This bound ensures that the adapter mapping $\phi_{\mathcal{A}}$ remains Lipschitz continuous with constant $L \approx \|\phi\|_L + \delta_{\mathrm{max}}$, preventing arbitrary divergence from the backbone manifold. $\square$
 
-\begin{figure}[h]
+\begin{figure}[htbp]
     \centering
     \begin{tikzpicture}
         \begin{axis}[
@@ -426,9 +606,30 @@ Baselines include GPT-4 (zero-shot), LLaMA-2-70b (fine-tuned), and a RAG-based m
     \caption{Adapter Drift Simulation. Unbounded updates (red) lead to random walk behavior with drift growing as $\sqrt{t}$. ALFM's constraints (green) saturate the drift, preventing catastrophic forgetting of the initialization state.}
     \label{fig:drift_sim}
 \end{figure}
-
 \textbf{Proposition 4.3 (Latency Overhead).} The total latency overhead is $\tau_{\mathrm{ALFM}} = \tau_{\mathrm{proj}} + \tau_{\mathrm{NEP}} + \tau_{\mathrm{CE}}$.
 \emph{Proof.} The operations are sequential. Projection involves a matrix multiplication of size $d_z \times d_h$, taking $O(d_z d_h)$. NEP query with HNSW takes $O(\log |\N|)$. Consensus Engine inference is a small MLP/Logic block. Typical values on a standard NVIDIA T4 GPU ($\tau_{\mathrm{proj}} \approx 5\text{ms}$, $\tau_{\mathrm{NEP}} \approx 10\text{ms}$, $\tau_{\mathrm{CE}} \approx 10\text{ms}$) yield a total overhead of $\approx 25\text{ms}$. $\square$
+
+\begin{table}[htbp]
+    \centering
+    \caption{Projected latency breakdown by hardware tier and NEP size. All values in milliseconds. Backbone latency (not shown) dominates total inference time ($\approx 200$--$2000$ms for API-based models).}
+    \label{tab:latency}
+    \begin{tabular}{l c c c c c}
+        \toprule
+        \textbf{Hardware} & \textbf{$|\N|$} & $\tau_{\mathrm{proj}}$ & $\tau_{\mathrm{NEP}}$ & $\tau_{\mathrm{CE}}$ & \textbf{Total} \\
+        \midrule
+        NVIDIA T4 & 10K & 5 & 8 & 10 & 23 \\
+        NVIDIA T4 & 100K & 5 & 12 & 10 & 27 \\
+        NVIDIA T4 & 1M & 5 & 18 & 10 & 33 \\
+        \midrule
+        NVIDIA A100 & 10K & 2 & 5 & 4 & 11 \\
+        NVIDIA A100 & 100K & 2 & 7 & 4 & 13 \\
+        NVIDIA A100 & 1M & 2 & 11 & 4 & 17 \\
+        \midrule
+        CPU (M2 Pro) & 10K & 15 & 20 & 25 & 60 \\
+        CPU (M2 Pro) & 100K & 15 & 35 & 25 & 75 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 \textbf{Proposition 4.4 (NEP Precision Lower Bound).} Let failure modes be distributed as a mixture of $K$ isotropic Gaussians with variance $\sigma^2$ and minimum separation $\Delta$. If NEP contains at least one centroid for each mode, then for a similarity threshold equivalent to distance $d = \Delta/2$, the precision of retrieval is lower bounded by:
 \begin{equation}
@@ -466,7 +667,7 @@ We explicitly characterize scenarios where ALFM underperforms or fails:
 \subsection{Expected Performance}
 Table~\ref{tab:expected_perf} presents projected performance based on synthetic validation and theoretical analysis. These projections will be validated in planned real-world deployments.
 
-\begin{table}[h]
+\begin{table}[htbp]
     \centering
     \caption{Hypothesized performance targets. Values are extrapolations from synthetic validation (Section 4.2), not empirical measurements. Included to illustrate expected operating regime; confirmation pending real-world deployment.}
     \label{tab:expected_perf}
@@ -496,7 +697,7 @@ We introduced ALFM, a wrapper architecture that equips frozen foundation models 
 
 Table~\ref{tab:notation} summarizes the key symbols used in this paper.
 
-\begin{table}[h]
+\begin{table}[htbp]
     \centering
     \caption{Notation Summary}
     \label{tab:notation}
@@ -567,10 +768,111 @@ Table~\ref{tab:notation} summarizes the key symbols used in this paper.
     \item Parameters per adapter: $\approx 130$K
 \end{itemize}
 
+\subsection{Python API Example}
+The following listing demonstrates how ALFM wraps an existing backbone model. The interface is designed for minimal integration overhead.
+
+\begin{lstlisting}[language=Python, caption={ALFM Wrapper API}, label={lst:api}]
+from alfm import ALFMWrapper, NEPMemory, ConsensusEngine
+from alfm.adapters import TenantAdapter
+
+# Initialize with any backbone (OpenAI, Anthropic, local)
+backbone = OpenAIClient(model="gpt-4")
+alfm = ALFMWrapper(
+    backbone=backbone,
+    nep=NEPMemory(index_path="./nep_index"),
+    consensus=ConsensusEngine.from_pretrained("alfm-ce-v1"),
+    tenant_id="tenant_acme_corp"
+)
+
+# Standard inference with ALFM safety layer
+result = alfm.query(
+    prompt="Summarize the Q3 financial report",
+    context={"document": doc_text}
+)
+
+# Result includes action recommendation
+if result.action == "trust":
+    print(result.output)
+elif result.action == "abstain":
+    print(f"Abstaining: {result.reason}")
+    print(f"Risk signal: {result.risk_score:.2f}")
+elif result.action == "escalate":
+    escalate_to_human(result)
+
+# Record feedback for NEP learning
+alfm.record_failure(
+    context=result.context_embedding,
+    severity=4,
+    correction="Revenue figure was hallucinated",
+    failure_type="hallucination"
+)
+\end{lstlisting}
+
 \section{Latent Isometry and Failure Separation}
 \label{app:isometry}
 
 The backbone's native latent space often exhibits ``anisotropy'' (representation collapse), where semantic differences are not preserved in Euclidean distance. The projection layer $\phi$ is necessary to restore \emph{isometry}, ensuring that Euclidean distance in $z$-space corresponds to semantic distance in failure probability space. Without this, NEP queries would be noisy and unreliable. Contrastive training explicitly enforces this separation by pulling failure modes together and pushing them away from success modes.
+
+\section{Failure Taxonomy with Examples}
+\label{app:taxonomy}
+
+This appendix provides concrete examples for each of the five canonical failure types used in seed NEP initialization (Section~\ref{sec:validation}). These examples are domain-agnostic templates; production deployments should augment with domain-specific failure patterns.
+
+\subsection{Hallucination}
+Factual claims that contradict verifiable knowledge.
+
+\textbf{Example 1 (Healthcare):} ``The patient's A1C level of 5.2\% indicates poorly controlled diabetes.'' (Incorrect: 5.2\% is within normal range.)
+
+\textbf{Example 2 (Finance):} ``Apple Inc. reported Q3 2024 revenue of \$127 billion, a 15\% increase YoY.'' (Fabricated specific figure without source verification.)
+
+\textbf{Example 3 (Legal):} ``Under the GDPR Article 45, data transfers to the US are unconditionally permitted.'' (Incorrect: Schrems II invalidated Privacy Shield.)
+
+\subsection{Policy Violation}
+Outputs that violate explicit domain constraints or organizational rules.
+
+\textbf{Example 1 (Healthcare):} Recommending a specific dosage without physician oversight when policy requires ``consult your healthcare provider.''
+
+\textbf{Example 2 (Finance):} Providing specific investment advice (``Buy AAPL stock'') when policy restricts to educational content only.
+
+\textbf{Example 3 (Legal):} Offering legal interpretation as definitive advice rather than general information with disclaimer.
+
+\subsection{Reasoning Error}
+Logical inconsistencies, invalid inferences, or computational mistakes.
+
+\textbf{Example 1:} ``If revenue increased 20\% and costs increased 30\%, then profit margin improved.'' (Invalid inference: margin likely decreased.)
+
+\textbf{Example 2:} ``The contract expires in 90 days from March 1, 2024, which is May 30, 2024.'' (Incorrect: should be May 30 or May 31 depending on counting method, but calculation shown is wrong.)
+
+\textbf{Example 3:} ``Since A implies B, and B is true, therefore A must be true.'' (Affirming the consequent fallacy.)
+
+\subsection{Instruction Drift}
+Outputs that ignore, misinterpret, or only partially address user intent.
+
+\textbf{Example 1:} User asks for ``a bulleted summary'' but receives a narrative paragraph.
+
+\textbf{Example 2:} User requests ``risks only'' but output includes both risks and opportunities.
+
+\textbf{Example 3:} User specifies ``in formal tone'' but output uses casual language with contractions.
+
+\subsection{Unsafe Content}
+Outputs that could cause harm, violate safety guidelines, or contain inappropriate material.
+
+\textbf{Example 1:} Providing detailed instructions for activities that could be dangerous without appropriate safety warnings.
+
+\textbf{Example 2:} Generating content that could be used for social engineering or phishing.
+
+\textbf{Example 3:} Reproducing copyrighted material verbatim when asked to ``summarize.''
+
+\subsection{Severity Assignment Guidelines}
+Each failure type is assigned severity $s \in \{1, 2, 3, 4, 5\}$ based on potential impact:
+\begin{itemize}
+    \item $s=1$: Minor stylistic deviation, easily corrected
+    \item $s=2$: Noticeable error, low downstream impact
+    \item $s=3$: Material error requiring correction before use
+    \item $s=4$: Significant error with potential for harm or liability
+    \item $s=5$: Critical failure requiring immediate escalation
+\end{itemize}
+Hallucinations in high-stakes domains (medical, legal, financial) default to $s \ge 4$. Policy violations inherit severity from the violated policy's criticality tier.
 
 \bibliographystyle{apsrev4-2}
 \bibliography{alfm_refs}
