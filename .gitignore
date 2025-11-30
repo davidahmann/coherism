@@ -1,3 +1,4 @@
+# LaTeX build artifacts
 *.aux
 *.log
 *.out
@@ -7,13 +8,44 @@
 *.synctex.gz
 *.fdb_latexmk
 *.fls
-*.pdf
-simulation_data.dat
-venv/
-__pycache__/
-.DS_Store
-*.synctex.gz
-*.fdb_latexmk
-*.fls
+*Notes.bib
 
+# Keep PDFs in repo for easy access (comment out if preferred)
+# *.pdf
+
+# Data files (regeneratable)
+simulation_data.dat
+drift_data.txt
+nep_data.txt
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Security - NEVER commit these
+credentials.json
+token.json
+*.key
+*.pem
+*.p12
+.env
+.env.*
+secrets/
+*.secret
+
+# Automation folder (contains credentials)
 automation/

@@ -1,5 +1,7 @@
 # Coherism & ALFM: The Feedback Loop Project
 
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+
 This repository contains the source code and manuscripts for two parallel research initiatives exploring the role of **feedback loops** in fundamental physics and artificial intelligence.
 
 While operating at opposite ends of the abstraction spectrum—one at the theoretical frontier of quantum gravity, the other at the practical frontier of enterprise AI—both projects share a core intellectual DNA: the emergence of structure through error correction.
@@ -9,15 +11,15 @@ While operating at opposite ends of the abstraction spectrum—one at the theore
 ### 1. `physics/` - Coherism
 **Title:** *Coherism: A Variational Feedback Framework for Quantum Information and Spacetime Geometry*
 
-This directory contains the LaTeX source and figures for the "Coherism" preprint.
+This directory contains the LaTeX source for the "Coherism" preprint.
 
 *   **The Big Idea:** Gravity is not a fundamental force, but a feedback mechanism where spacetime curves to compensate for entropic "noise" in quantum fields.
 *   **Key Concept:** The **Coherence Functional**, a mathematical tool that derives Einstein's equations by minimizing the relative entropy between a quantum state and its geometric reference.
 *   **Files:**
-    *   `coherism.tex`: Main manuscript.
-    *   `references.bib`: Bibliography.
-    *   `figures/`: TikZ and PDF figures illustrating the feedback loop.
-    *   `generate_data.py`: A Python script simulating a 0D QFT harmonic oscillator to demonstrate "Coherist friction" (energy loss due to informational feedback).
+    *   `coherism.tex`: Main manuscript
+    *   `coherism_refs.bib`: Bibliography
+    *   `generate_data.py`: 0D QFT harmonic oscillator simulation
+    *   `coherism_frw_simulation.py`: FRW cosmology simulation demonstrating "Coherist friction"
 
 #### 🧬 The Feedback Loop (Coherism)
 ```mermaid
@@ -34,15 +36,18 @@ graph TD
 ### 2. `alfm/` - ALFM (AI Systems)
 **Title:** *ALFM: Adaptive Latent Feedback Model for Institutional Memory in Foundation Model Deployments*
 
-This directory contains the LaTeX source and validation logic for the ALFM framework.
+This directory contains the LaTeX source and validation code for the ALFM framework.
 
 *   **The Big Idea:** A wrapper architecture that enables frozen foundation models (like GPT-4) to "learn" from mistakes instantly without retraining.
-*   **Key Concept:** The **Negative Evidence Prior (NEP)**, a vector memory of failure modes that allows the model to exhibit "calibrated self-doubt" and avoid repeating errors.
+*   **Key Concepts:**
+    *   **Negative Evidence Prior (NEP):** Vector memory of failure modes for calibrated self-doubt
+    *   **Consensus Engine:** Multi-agent arbitration between semantic intuition and heuristic rules
+    *   **Three-Tier Adapters:** Safe continual learning with tenant isolation
 *   **Files:**
-    *   `alfm.tex`: Main manuscript.
-    *   `references.bib`: Bibliography.
-    *   `figures/`: Architecture diagrams.
-    *   `simulate_nep.py`: A Python simulation of the Negative Evidence Prior, demonstrating how contrastive projection retrieves failure modes using cosine similarity.
+    *   `alfm.tex`: Main manuscript (includes algorithm pseudocode, API examples, failure taxonomy)
+    *   `alfm_refs.bib`: Bibliography
+    *   `simulate_nep.py`: NEP validation simulation (precision-recall analysis)
+    *   `simulate_drift.py`: Adapter stability simulation
 
 #### 🧠 ALFM Architecture
 ```mermaid
@@ -87,5 +92,18 @@ pdflatex alfm.tex
 
 Both propose a "Universal Theory of Feedback"—one applied to the fabric of the universe, the other to the fabric of artificial intelligence.
 
+## 📄 License
+
+This work is licensed under [CC-BY 4.0](LICENSE). You are free to share and adapt with attribution.
+
+## 📖 Citation
+
+See [CITATION.cff](CITATION.cff) for citation information.
+
+## 🤝 Contributing
+
+Contributions welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) first.
+
 ---
-*Author: David Ahmann*
+*Author: David Ahmann*  
+*Toronto, Canada*
