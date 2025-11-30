@@ -1,6 +1,6 @@
 # Coherism: A Variational Feedback Framework for Quantum Information and Spacetime Geometry
 
-This directory contains the manuscript and supporting code for the Coherism paper, submitted to Physical Review D.
+This directory contains the manuscript and supporting code for the Coherism paper.
 
 ## Abstract
 
