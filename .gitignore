@@ -45,3 +45,6 @@ secrets/
 
 # Automation folder (contains credentials)
 automation/
+
+# JMLR Submission
+alfm_jmlr/
