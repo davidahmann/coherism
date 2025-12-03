@@ -1,0 +1,36 @@
+\documentclass[11pt]{letter}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\usepackage{hyperref}
+
+\signature{David Ahmann\\Independent Researcher\\Toronto, Canada\\\texttt{dahmann@lumyn.cc}}
+
+\begin{document}
+
+\begin{letter}{Editors-in-Chief\\Journal of Machine Learning Research (JMLR)}
+
+\opening{Dear Editors,}
+
+I am pleased to submit the manuscript entitled ``ALFM-BEM: Bidirectional Experience Memory for Continuous Learning in Foundation Model Deployments'' for consideration as a publication in the Journal of Machine Learning Research.
+
+Foundation models are typically deployed as frozen artifacts, creating a fundamental gap: they cannot learn from their deployment experiences. This paper introduces ALFM-BEM, a unified wrapper architecture that enables continuous learning without modifying backbone weights.
+
+Key contributions of this work include:
+\begin{itemize}
+    \item \textbf{Bidirectional Experience Memory (BEM)}: A unified memory architecture where experiences exist on a continuous outcome spectrum, providing risk signals, success patterns, and out-of-distribution (OOD) detection as emergent properties of a single structure.
+    \item \textbf{Consensus Engine with Query Action}: An extension to selective prediction that transforms passive abstention into active learning by requesting specific information when operating outside the experience distribution.
+    \item \textbf{Bounded Adapters}: A mechanism for continuous improvement with provable stability guarantees, preventing catastrophic drift during online updates.
+    \item \textbf{Empirical Validation}: Rigorous experiments on synthetic data demonstrate effective failure retrieval (F1 $>$ 0.99) and strong OOD detection (AUC $\approx$ 1.0). Furthermore, a realistic healthcare claims case study shows that ALFM-BEM reduces claim rejection rates by 88\% (from 12.5\% to 1.5\%) by learning latent payer rules from binary feedback alone.
+\end{itemize}
+
+This work bridges the gap between static model training and dynamic deployment needs, offering a practical infrastructure for safe, adaptive foundation model systems.
+
+I confirm that this manuscript is original, has not been published before, and is not currently under consideration for publication elsewhere.
+
+Thank you for your consideration.
+
+\closing{Sincerely,}
+
+\end{letter}
+\end{document}

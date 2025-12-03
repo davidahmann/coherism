@@ -63,6 +63,35 @@ graph LR
     Action -->|High Risk| Abstain[Abstain/Escalate]
 ```
 
+### 3. `alfm_bem/` - ALFM-BEM (Advanced AI Systems)
+**Title:** *ALFM-BEM: Bidirectional Experience Memory for Continuous Learning in Foundation Model Deployments*
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17804923.svg)](https://doi.org/10.5281/zenodo.17804923)
+
+This directory contains the source for the advanced ALFM-BEM architecture, extending the original ALFM with bidirectional memory and active learning.
+
+*   **The Big Idea:** Unifying failure and success memory into a single continuous spectrum, enabling "how did we succeed before?" queries alongside "how did we fail?".
+*   **Key Concepts:**
+    *   **Bidirectional Experience Memory (BEM):** Single structure for risk, success, and OOD detection
+    *   **Query Action:** Active learning capability to request information when OOD
+    *   **Healthcare Case Study:** Demonstrated 88% reduction in claim rejections
+*   **Files:**
+    *   `alfm_bem.tex`: JMLR-format manuscript
+    *   `experiments/`: Full experimental suite (Phase 1 & 2)
+
+#### 🔄 ALFM-BEM Architecture
+```mermaid
+graph LR
+    User[User Input] -->|Context| BB[Frozen Backbone]
+    User -->|Context| BEM[BEM Memory]
+    BEM -->|Risk/Success/Cov| CE[Consensus Engine]
+    BB -->|Latent State| CE
+    CE -->|Decision| Action{Action}
+    Action -->|Low Cov| Query[Query User]
+    Action -->|High Risk| Abstain[Abstain]
+    Action -->|Trust| Out[Output]
+    Out -->|Outcome| BEM
+```
+
 ---
 
 ## 🚀 Compilation
