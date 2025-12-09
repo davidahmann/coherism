@@ -45,6 +45,9 @@
 \newcommand{\sr}{s_{\mathrm{rel}}}
 \newcommand{\stot}{s_{\mathrm{tot}}}
 
+% Theorem environments
+\newtheorem{proposition}{Proposition}
+
 % ----------------------------------------------------------------------
 % TITLE & AUTHORS
 % ----------------------------------------------------------------------
@@ -885,6 +888,35 @@ Remaining open problems:
     \item The natural degravitation of vacuum energy due to $S(\sigma||\sigma)=0$.
 \end{itemize}
 
+\subsection{Comparison with Alternative Approaches}
+\label{sec:comparison}
+
+Several frameworks propose modifications to gravity based on quantum properties of matter. Table~\ref{tab:comparison} compares Coherism with the leading alternatives.
+
+\begin{table}[h]
+    \centering
+    \small
+    \begin{tabular}{@{}lccc@{}}
+        \hline\hline
+        Feature & Coherism & Penrose-Di\'{o}si & Stochastic \\
+        \hline
+        Collapse mechanism & No & Yes & No \\
+        State-dependent $G_{\mu\nu}$ & Yes & Yes & No \\
+        Coherent vs.\ thermal & \textbf{Yes} & No & No \\
+        Analog enhancement & \textbf{Yes} & No & Maybe \\
+        Semiclassical limit & Yes & Approx. & Yes \\
+        \hline\hline
+    \end{tabular}
+    \caption{Comparison of Coherism with Penrose-Di\'{o}si gravitational collapse and stochastic gravity. The key distinguishing feature is sensitivity to coherent vs.\ thermal states of identical energy.}
+    \label{tab:comparison}
+\end{table}
+
+\emph{The critical distinguishing prediction:} Coherism predicts different gravitational responses for coherent versus thermal states of \emph{identical mass and energy distribution}. Consider two samples: (A) a Bose-Einstein condensate of $N$ atoms, and (B) a thermal gas of $N$ atoms at the same temperature and density. Penrose-Di\'{o}si predicts collapse based on spatial superposition size but does not distinguish these states once the wavefunction has localized. Stochastic gravity treats both identically since $\langle T_{\mu\nu}\rangle$ is the same. Coherism uniquely predicts:
+\begin{equation}
+    \eta_{\mathrm{coh}} = \frac{a_{\mathrm{BEC}} - a_{\mathrm{thermal}}}{g} \sim 10^{-15},
+\end{equation}
+a \emph{qualitative} signature absent in competing frameworks. This coherent-vs-thermal test is the experimentum crucis for Coherism.
+
 Conceptually, this framework suggests that physical laws themselves may be viewed as self-consistency attractors of the geometry--information feedback loop: not arbitrary prescriptions but stable patterns favored by the reduction of informational tension.
 We do not attempt to formalize this idea here, but it shapes the broader research agenda.
 
@@ -1483,11 +1515,19 @@ This is beyond current LIGO sensitivity ($\sim 10^{-23}$) but could be probed by
         BEC free fall & $\Delta a/g$ & $< 10^{-15}$ & $10^{-15}$ \\
         GW phase & $\delta h/h$ & $10^{-26}$ & $10^{-23}$ \\
         CMB $r$ & $\delta r/r$ & $10^{-10}$ & $10^{-2}$ \\
+        \hline
+        \multicolumn{4}{c}{\emph{Analog gravity (primary test)}} \\
+        \hline
+        BEC density & $\delta\rho/\rho_0$ & $10^{-6}$ & $10^{-7}$ \\
+        Phonon spectrum & $\delta N_k/N_k$ & $10^{-5}$ & $10^{-3}$ \\
+        $g^{(2)}$ correlation & $\delta g^{(2)}$ & $10^{-4}$ & $10^{-3}$ \\
         \hline\hline
     \end{tabular}
-    \caption{Experimental predictions from Coherism. Current sensitivities: MICROSCOPE (BEC), LIGO (GW), Planck (CMB).}
+    \caption{Experimental predictions from Coherism. \emph{Top:} Gravitational tests (2--3 orders below current sensitivity). \emph{Bottom:} Analog gravity tests in BEC sonic horizons (within current reach). The analog predictions constitute the critical near-term test of the framework.}
     \label{tab:predictions}
 \end{table}
+
+\emph{Critical path:} The analog gravity predictions are within reach of current BEC experiments at MIT, JILA, Technion, and MPQ. A null result at $\delta\rho/\rho_0 < 10^{-7}$ for coherent phonon injection would falsify the acoustic implementation and cast significant doubt on the gravitational extrapolation. Conversely, observation of the predicted $10^{-6}$ density modulation---specifically for coherent but not thermal phonon injection---would provide the first direct evidence of informational backreaction on geometry.
 
 % ----------------------------------------------------------------------
 \section{Numerical Simulation: Coupled FRW Evolution}
@@ -1949,6 +1989,43 @@ This is recovered from Eq.~\eqref{eq:lindblad-rate} in the high-temperature limi
 with $\sigma[g]$ the thermal state at temperature $T = \hbar \kappa_H / (2\pi k_B)$.
 
 \emph{This derivation is complete and first-principles.} The Lindblad structure is not an assumption---it follows from quantum field theory in curved spacetime.
+
+% ----------------------------------------------------------------------
+\section{Uniqueness of the Reference State $\sigma[g]$}
+\label{appendix:uniqueness}
+% ----------------------------------------------------------------------
+
+A potential concern is that the map $g \mapsto \sigma[g]$ involves arbitrary choices. Here we argue that $\sigma[g]$ is essentially unique given physically motivated axioms.
+
+\subsection{Axioms for the Reference State}
+
+We require $\sigma_{\Ddom}[g]$ on a causal diamond $\Ddom$ to satisfy:
+\begin{enumerate}
+    \item \textbf{Hadamard condition:} The two-point function has the standard short-distance singularity structure, ensuring finite renormalized expectation values.
+    \item \textbf{KMS property:} $\sigma$ is a thermal equilibrium state with respect to the modular flow generated by the diamond's causal structure.
+    \item \textbf{Maximal entropy:} Subject to energy constraints from the local geometry, $\sigma$ maximizes von Neumann entropy.
+    \item \textbf{Local Lorentz invariance:} In the local inertial frame at the diamond's center, $\sigma$ reduces to the Minkowski vacuum restricted to the diamond.
+\end{enumerate}
+
+\subsection{Uniqueness Theorem (Sketch)}
+
+\begin{proposition}
+For a causal diamond $\Ddom$ of proper size $L \gg L_P$ in a spacetime with curvature radius $R_{\mathrm{curv}} \gg L$, the state $\sigma_{\Ddom}[g]$ satisfying axioms (1)--(4) is unique up to corrections of order $(L/R_{\mathrm{curv}})^2$.
+\end{proposition}
+
+\emph{Proof sketch:} By axiom (4), in the local inertial frame the state must approach the Minkowski vacuum. By the Bisognano-Wichmann theorem, this vacuum restricted to a Rindler wedge (approximating the diamond) is a KMS state at the Unruh temperature $T = a/2\pi$. Axiom (2) then fixes $\sigma$ to be this thermal state. Axiom (3) is automatically satisfied since the KMS state maximizes entropy at fixed modular energy. The Hadamard condition (1) is satisfied by construction. Curvature corrections enter at order $(L/R_{\mathrm{curv}})^2$ through the failure of exact boost symmetry. \qed
+
+\subsection{Robustness Under Perturbations}
+
+Consider a one-parameter family of reference states $\sigma_\epsilon = \sigma[g] + \epsilon \, \delta\sigma$ where $\delta\sigma$ is a Hadamard perturbation. The relative entropy varies as:
+\begin{equation}
+    S(\rho || \sigma_\epsilon) = S(\rho || \sigma) - \epsilon \, \mathrm{tr}(\rho \, \sigma^{-1} \delta\sigma) + O(\epsilon^2).
+\end{equation}
+The linear term vanishes when $\rho = \sigma$ (equilibrium), so near-equilibrium predictions are insensitive to the choice of $\sigma$ at first order. The informational stress tensor $\Theta_{\mu\nu}$ inherits this robustness:
+\begin{equation}
+    \Theta_{\mu\nu}[\sigma_\epsilon] = \Theta_{\mu\nu}[\sigma] + O(\epsilon^2, (\rho - \sigma)^2).
+\end{equation}
+This demonstrates that small ambiguities in defining $\sigma[g]$ produce only second-order corrections to physical predictions.
 
 % ======================================================================
 % ACKNOWLEDGMENTS

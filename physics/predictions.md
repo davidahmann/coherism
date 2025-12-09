@@ -12,12 +12,13 @@ In a Bose-Einstein Condensate (BEC) simulating a black hole (sonic horizon), Coh
 ### Experimental Protocol
 1.  **Setup:** Create a "draining vortex" or "waterfall" potential in a 2D $^{87}$Rb BEC (standard configuration in labs like JILA, MIT, Technion).
 2.  **Injection:** Inject a **coherent phonon pulse** (sound wave) toward the sonic horizon using Bragg spectroscopy or a localized potential paddle.
-    *   *Control:* Inject a thermal phonon pulse of equivalent energy.
+    * *Control:* Inject a thermal phonon pulse of equivalent energy.
 3.  **Measurement:** Use phase-contrast imaging to photograph the density profile near the horizon with high spatial resolution.
 
 ### Prediction vs. Null Hypothesis
-*   **Coherism Prediction:** A stationary density modulation of order $\delta\rho/\rho_0 \sim 10^{-6}$ appears *only* for the coherent pulse and vanishes (or is suppressed by orders of magnitude) for the thermal control.
-*   **Standard Physics (Null):** The density profile remains smooth to $10^{-7}$ precision, or shows no statistically significant difference between coherent and thermal pulses of equal energy (accounting for standard non-linearities).
+
+* **Coherism Prediction:** A stationary density modulation of order $\delta\rho/\rho_0 \sim 10^{-6}$ appears *only* for the coherent pulse and vanishes (or is suppressed by orders of magnitude) for the thermal control.
+* **Standard Physics (Null):** The density profile remains smooth to $10^{-7}$ precision, or shows no statistically significant difference between coherent and thermal pulses of equal energy (accounting for standard non-linearities).
 
 ### Novelty
 Existing experiments focus on the passive backreaction of spontaneous Hawking radiation (quantum noise). This protocol proposes an **active, driven test** using a coherent driver to amplify the informational stress term $\Theta_{\mu\nu}$, turning a "noise hunting" experiment into a high-signal-to-noise "response" experiment.
@@ -34,13 +35,14 @@ Coherism predicts that a "coherent" object falls with a slightly different accel
 ### Experimental Protocol
 1.  **Setup:** Vacuum drop tower or fountain.
 2.  **Test Masses:**
-    *   Mass A: Bose-Einstein Condensate ($^{87}$Rb), representing a macroscopic coherent state.
-    *   Mass B: Thermal gas of $^{87}$Rb, representing an incoherent state.
+    * Mass A: Bose-Einstein Condensate ($^{87}$Rb), representing a macroscopic coherent state.
+    * Mass B: Thermal gas of $^{87}$Rb, representing an incoherent state.
 3.  **Procedure:** Perform a simultaneous differential free-fall test.
 
 ### Prediction
-*   **Coherism:** $\eta = \frac{a_{BEC} - a_{thermal}}{a_{avg}} \approx 10^{-15}$.
-*   **Falsification:** A null result at $10^{-16}$ precision would constrain the gravitational coupling $\kappa$ to be negligible for this effect.
+
+* **Coherism:** $\eta = \frac{a_{BEC} - a_{thermal}}{a_{avg}} \approx 10^{-15}$.
+* **Falsification:** A null result at $10^{-16}$ precision would constrain the gravitational coupling $\kappa$ to be negligible for this effect.
 
 ---
 
@@ -56,8 +58,9 @@ The "informational weight" of a spatial superposition creates an additional phas
 2.  **Measurement:** Measure the phase shift accumulated by atoms in a large spatial superposition.
 
 ### Prediction
-*   **Coherism:** A fractional deviation of $\delta\phi/\phi \sim 10^{-11}$ from the standard GR prediction ($k_{eff} g T^2$).
-*   **Falsification:** Null result at $10^{-12}$ precision.
+
+* **Coherism:** A fractional deviation of $\delta\phi/\phi \sim 10^{-11}$ from the standard GR prediction ($k_{eff} g T^2$).
+* **Falsification:** Null result at $10^{-12}$ precision.
 
 ---
 
@@ -69,8 +72,35 @@ The "informational weight" of a spatial superposition creates an additional phas
 The universe's expansion history deviates from $\Lambda$CDM because the "coherence fluid" has an equation of state $w \approx -0.994$ rather than exactly $-1$ (derived from Appendix: FRW Cosmology in the main paper).
 
 ### Protocol
-*   Analyze next-generation CMB data (e.g., CMB-S4) for specific deviations in the equation of state parameter $w(a)$ and the tensor-to-scalar ratio.
-*   *Note:* This effect is likely too small to distinguish from other dark energy models without corroborating evidence from the BEC experiment.
+
+* Analyze next-generation CMB data (e.g., CMB-S4) for specific deviations in the equation of state parameter $w(a)$ and the tensor-to-scalar ratio.
+* *Note:* This effect is likely too small to distinguish from other dark energy models without corroborating evidence from the BEC experiment.
+
+---
+
+## 5. The Distinguishing Test: Coherent vs. Thermal
+
+**Status:** *Experimentum Crucis*
+**Predicted Magnitude:** $\eta_{\mathrm{coh}} \sim 10^{-15}$
+
+This is the **unique signature** that distinguishes Coherism from competing frameworks (Penrose-Diósi, stochastic gravity).
+
+### Why This Test Matters
+
+| Framework | Coherent vs. Thermal Distinction? |
+|-----------|-----------------------------------|
+| **Coherism** | **Yes** — Different Θ_μν for same energy |
+| Penrose-Diósi | No — Based on superposition size, not coherence |
+| Stochastic Gravity | No — Same ⟨T_μν⟩ for both |
+
+### Experimental Protocol (Distinguishing Test)
+
+Compare free-fall acceleration of:
+
+* **Sample A:** BEC of N atoms (coherent)
+* **Sample B:** Thermal gas of N atoms (incoherent)
+
+Both have identical mass, energy, and density. Only Coherism predicts a difference.
 
 ---
 
@@ -78,6 +108,16 @@ The universe's expansion history deviates from $\Lambda$CDM because the "coheren
 
 **Focus:** The **Analog Gravity (BEC)** experiment is the critical path for validation.
 
-*   **Why:** The effective coupling in the analog system is $\sim 60$ orders of magnitude stronger than in gravitational systems.
-*   **Feasibility:** Requires standard cold-atom laboratory hardware (2D BEC, draining vortex, imaging).
-*   **Verdict:** A null result in the BEC density modulation test ($< 10^{-7}$) would falsify the analog gravity predictions and cast significant doubt on the gravitational implementation. A positive result ($\sim 10^{-6}$) specific to coherent injection would provide the first direct evidence of informational backreaction.
+* **Why:** The effective coupling in the analog system is $\sim 60$ orders of magnitude stronger than in gravitational systems.
+* **Feasibility:** Requires standard cold-atom laboratory hardware (2D BEC, draining vortex, imaging).
+* **Verdict:** A null result in the BEC density modulation test ($< 10^{-7}$) would falsify the analog gravity predictions and cast significant doubt on the gravitational implementation. A positive result ($\sim 10^{-6}$) specific to coherent injection would provide the first direct evidence of informational backreaction.
+
+## Comparison with Alternative Frameworks
+
+| Feature | Coherism | Penrose-Diósi | Stochastic Gravity |
+|---------|----------|---------------|-------------------|
+| Collapse mechanism | No | Yes | No |
+| State-dependent gravity | Yes | Yes | No |
+| Coherent vs. thermal | **Yes** | No | No |
+| Analog enhancement | **Yes** | No | Maybe |
+| Semiclassical limit | Yes | Approx. | Yes |

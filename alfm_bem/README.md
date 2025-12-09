@@ -1,6 +1,6 @@
 # ALFM-BEM: Bidirectional Experience Memory for Continuous Learning in Foundation Model Deployments
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17804923.svg)](https://doi.org/10.5281/zenodo.17804923)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17868262.svg)](https://doi.org/10.5281/zenodo.17868262)
 
 This directory contains the manuscript and supporting code for the ALFM-BEM paper.
 

@@ -1,6 +1,6 @@
 # Coherism: A Variational Feedback Framework for Quantum Information and Spacetime Geometry
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17766365.svg)](https://doi.org/10.5281/zenodo.17766365)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17868263.svg)](https://doi.org/10.5281/zenodo.17868263)
 
 This directory contains the manuscript and supporting code for the Coherism paper.
 
@@ -81,6 +81,8 @@ latexmk -pdf coherism.tex
 2. **Two independent derivations** of the coupling constant κ (holographic and entropic)
 3. **Lindblad generator** derived from Unruh-DeWitt detector dynamics
 4. **Analog gravity predictions**: density modulations δρ/ρ₀ ~ 10⁻⁶ within experimental reach
+5. **Unique distinguishing test**: Coherent vs. thermal states produce different gravitational effects (η ~ 10⁻¹⁵), a signature absent in Penrose-Diósi and stochastic gravity
+6. **Reference state uniqueness**: σ[g] uniquely determined by Hadamard, KMS, maximum entropy, and local Lorentz invariance axioms
 
 ## License
 

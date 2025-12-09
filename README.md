@@ -10,17 +10,23 @@ While operating at opposite ends of the abstraction spectrum—one at the theore
 
 ### 1. `physics/` - Coherism
 **Title:** *Coherism: A Variational Feedback Framework for Quantum Information and Spacetime Geometry*
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17766365.svg)](https://doi.org/10.5281/zenodo.17766365)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17868263.svg)](https://doi.org/10.5281/zenodo.17868263)
 
 This directory contains the LaTeX source for the "Coherism" preprint.
 
 *   **The Big Idea:** Gravity is not a fundamental force, but a feedback mechanism where spacetime curves to compensate for entropic "noise" in quantum fields.
 *   **Key Concept:** The **Coherence Functional**, a mathematical tool that derives Einstein's equations by minimizing the relative entropy between a quantum state and its geometric reference.
+*   **Key Results:**
+    *   Informational stress tensor Θ_μν for Schwarzschild, FRW, Rindler, and acoustic geometries
+    *   Unique distinguishing test: coherent vs. thermal states (η ~ 10⁻¹⁵)
+    *   Analog gravity predictions: δρ/ρ₀ ~ 10⁻⁶ within experimental reach
+    *   Reference state uniqueness via Hadamard/KMS/maximum entropy axioms
 *   **Files:**
     *   `coherism.tex`: Main manuscript
     *   `coherism_refs.bib`: Bibliography
     *   `generate_data.py`: 0D QFT harmonic oscillator simulation
     *   `coherism_frw_simulation.py`: FRW cosmology simulation demonstrating "Coherist friction"
+    *   `predictions.md`: Falsifiable predictions and experimental protocols
 
 #### 🧬 The Feedback Loop (Coherism)
 ```mermaid
@@ -65,7 +71,7 @@ graph LR
 
 ### 3. `alfm_bem/` - ALFM-BEM (Advanced AI Systems)
 **Title:** *ALFM-BEM: Bidirectional Experience Memory for Continuous Learning in Foundation Model Deployments*
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17804923.svg)](https://doi.org/10.5281/zenodo.17804923)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17868262.svg)](https://doi.org/10.5281/zenodo.17868262)
 
 This directory contains the source for the advanced ALFM-BEM architecture, extending the original ALFM with bidirectional memory and active learning. **Prepared for JMLR submission.**
 
@@ -75,9 +81,10 @@ This directory contains the source for the advanced ALFM-BEM architecture, exten
     *   **Query Action:** Active learning capability to request information when OOD
     *   **Bounded Adapters:** Continual learning with provable stability guarantees
 *   **Key Results:**
-    *   Failure retrieval F1 ≈ 0.59, Success retrieval rate ≈ 0.70 (unique to BEM)
-    *   OOD detection AUC > 0.99 for clustered patterns
-    *   Healthcare case study: 88% reduction in claim rejections
+    *   Failure retrieval F1 > 0.99 on synthetic failure modes
+    *   OOD detection AUC ≈ 1.0 for clustered patterns
+    *   Healthcare case study: 88% reduction in claim rejections (12.5% → 1.5%)
+    *   Query action improves success rates by 8.0% in high-uncertainty scenarios
 *   **Files:**
     *   `alfm_bem.tex`: JMLR-format manuscript
     *   `cover_letter.tex`: JMLR submission cover letter
