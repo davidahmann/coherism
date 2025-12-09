@@ -1,0 +1,51 @@
+{
+  "gradual": {
+    "fixed_mean_acc": 0.5320736842105264,
+    "adaptive_mean_acc": 0.5362842105263158,
+    "fixed_worst_acc": 0.32,
+    "adaptive_worst_acc": 0.32,
+    "domain_boundaries": [
+      500,
+      1000,
+      1500
+    ]
+  },
+  "sudden": {
+    "baseline_acc": 0.53,
+    "fixed_final_acc": 0.5,
+    "adaptive_final_acc": 0.52,
+    "fixed_recovery_steps": 0,
+    "adaptive_recovery_steps": 0,
+    "fixed_worst_acc": 0.2222222222222222,
+    "adaptive_worst_acc": 0.2222222222222222
+  },
+  "fewshot": {
+    "n_shots": [
+      1,
+      5,
+      10,
+      20,
+      50
+    ],
+    "fixed_acc": [
+      0.6,
+      0.47,
+      0.48,
+      0.53,
+      0.5
+    ],
+    "adaptive_acc": [
+      0.58,
+      0.48,
+      0.47,
+      0.54,
+      0.49
+    ]
+  },
+  "forgetting": {
+    "pre_adapt_acc_a": 0.6,
+    "post_adapt_acc_a": 0.51,
+    "post_adapt_acc_b": 0.52,
+    "forgetting": 0.08999999999999997
+  }
+}

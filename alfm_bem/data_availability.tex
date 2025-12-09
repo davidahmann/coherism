@@ -1,21 +1,48 @@
 \documentclass[11pt]{article}
 \usepackage{jmlr2e}
+\usepackage{hyperref}
 
 \begin{document}
 
-\section*{Data Availability Statement}
+\section*{Data and Code Availability Statement}
 
-The code and data used to produce the results in this paper are available in the following public repository:
+All code, data, and materials required to reproduce the results in this paper are publicly available.
 
+\subsection*{Code Repository}
+
+The complete implementation is available at:
 \begin{center}
 \url{https://github.com/davidahmann/coherism/tree/main/alfm_bem}
 \end{center}
 
-This repository includes:
+\subsection*{Contents}
+
+The repository includes:
 \begin{itemize}
-    \item Source code for the ALFM-BEM architecture (Bidirectional Experience Memory, Consensus Engine, Bounded Adapters).
-    \item Scripts for reproducing the synthetic experiments (Phase 1) and the healthcare claims case study (Phase 2).
-    \item Instructions for generating all figures and tables presented in the manuscript.
+    \item \textbf{Source code}: Complete implementation of the ALFM-BEM architecture, including:
+    \begin{itemize}
+        \item Bidirectional Experience Memory (BEM) with risk, success, and coverage signals
+        \item Consensus Engine with Trust, Abstain, Escalate, and Query actions
+        \item Bounded Adapters with gradient clipping, norm projection, and EMA smoothing
+        \item Contrastive Projection layer for high-dimensional embedding spaces
+    \end{itemize}
+    \item \textbf{Experiments}: Scripts to reproduce all experimental results:
+    \begin{itemize}
+        \item \texttt{ablation\_study.py}: Multi-seed ablation comparing BEM, RAG, and NEP baselines
+        \item \texttt{threshold\_sensitivity.py}: Parameter sensitivity analysis
+        \item \texttt{domain\_shift\_experiment.py}: Adapter stability under distribution shift
+        \item \texttt{real\_backbone\_experiment.py}: Integration with sentence-transformers
+        \item \texttt{healthcare\_simulator.py}: Healthcare claims processing case study
+    \end{itemize}
+    \item \textbf{Documentation}: Instructions for installation, configuration, and reproducing all figures and tables
 \end{itemize}
+
+\subsection*{Reproducibility}
+
+All experiments use fixed random seeds for reproducibility. The multi-seed experiments report mean $\pm$ standard deviation over 5--10 seeds to establish statistical significance. Hardware requirements are modest: experiments run on standard CPU (M2 Pro) or GPU (NVIDIA T4/A100).
+
+\subsection*{License}
+
+This work is licensed under CC-BY 4.0 (Creative Commons Attribution 4.0 International).
 
 \end{document}

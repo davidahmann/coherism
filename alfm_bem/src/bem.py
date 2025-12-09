@@ -107,21 +107,31 @@ class BidirectionalExperienceMemory:
         self.risk_sensitivity = risk_sensitivity
         self.decay_rate = decay_rate
         self.tenant_id = tenant_id
-        
+
         # Coverage signal configuration
         self.coverage_mode = coverage_mode
         self.kde_bandwidth = kde_bandwidth
         self.knn_k = knn_k
         self.use_knn_index = use_knn_index
-        
+
         # Unified storage — no separate failure/success stores
         self.experiences: List[Experience] = []
-        
+
         # Index structures for efficient retrieval
         self._embedding_matrix: Optional[np.ndarray] = None
         self._kde_model = None
         self._knn_index = None
         self._last_update_time = datetime.min
+        self._needs_reindex = False
+
+        # For legacy coverage mode
+        self._mean_embedding: Optional[np.ndarray] = None
+        self._cov_embedding: Optional[np.ndarray] = None
+
+        # Anti-poisoning: velocity tracking per source
+        self._feedback_velocity: Dict[str, float] = defaultdict(float)
+        self._feedback_history: Dict[str, List[datetime]] = defaultdict(list)
+        self._quarantine: List[Experience] = []
 
     def add_experience(
         self, 
@@ -442,12 +452,12 @@ class BidirectionalExperienceMemory:
     def vacuum(self, max_size: int = 10000, cluster_threshold: float = 0.95):
         """
         Memory hygiene: merge redundant experiences and prune old ones.
-        
+
         This prevents unbounded growth while preserving coverage.
         """
         if len(self.experiences) <= max_size:
             return
-        
+
         # Simple approach: keep most confirmed and most recent
         self.experiences.sort(
             key=lambda e: (e.confirmation_count, e.timestamp),
@@ -455,6 +465,120 @@ class BidirectionalExperienceMemory:
         )
         self.experiences = self.experiences[:max_size]
         self._needs_reindex = True
+        self._embedding_matrix = None
+        self._kde_model = None
+        self._knn_index = None
+
+    def check_feedback_velocity(
+        self,
+        source_id: str,
+        gamma: float = 0.95,
+        threshold_sigma: float = 3.0
+    ) -> bool:
+        """
+        Anti-poisoning: Check if feedback velocity is anomalously high.
+
+        Implements exponential moving average of feedback rate per source.
+        Returns True if source should be quarantined.
+
+        Paper reference: Section 3.6, Equation for v_u(t)
+        """
+        now = datetime.now()
+        self._feedback_history[source_id].append(now)
+
+        # Update EMA velocity
+        old_velocity = self._feedback_velocity[source_id]
+        self._feedback_velocity[source_id] = gamma * old_velocity + (1 - gamma) * 1.0
+
+        # Compute global statistics
+        all_velocities = list(self._feedback_velocity.values())
+        if len(all_velocities) < 5:
+            return False  # Not enough data
+
+        mean_v = np.mean(all_velocities)
+        std_v = np.std(all_velocities) + 1e-10
+
+        # Anomaly detection
+        if self._feedback_velocity[source_id] > mean_v + threshold_sigma * std_v:
+            return True  # Anomalous velocity
+
+        return False
+
+    def add_experience_with_validation(
+        self,
+        embedding: np.ndarray,
+        outcome: float,
+        context_hash: str,
+        source_id: str = "unknown",
+        tenant_id: str = "default",
+        domain_id: str = "default",
+        **kwargs
+    ) -> Optional[str]:
+        """
+        Add experience with full anti-poisoning validation.
+
+        Returns:
+            None if successful, error message if rejected/quarantined
+        """
+        # Check velocity
+        if self.check_feedback_velocity(source_id):
+            # Quarantine instead of immediate add
+            exp = Experience(
+                embedding=embedding / (np.linalg.norm(embedding) + 1e-10),
+                outcome=outcome,
+                context_hash=context_hash,
+                timestamp=datetime.now(),
+                tenant_id=tenant_id,
+                domain_id=domain_id,
+                **kwargs
+            )
+            self._quarantine.append(exp)
+            return f"Quarantined: High feedback velocity from {source_id}"
+
+        # Check conflict
+        conflict = self.check_conflict(embedding, outcome)
+        if conflict:
+            return conflict
+
+        # Normal add
+        self.add_experience(
+            embedding=embedding,
+            outcome=outcome,
+            context_hash=context_hash,
+            tenant_id=tenant_id,
+            domain_id=domain_id,
+            **kwargs
+        )
+        return None
+
+    def process_quarantine(self, admin_approved_ids: List[str] = None):
+        """
+        Process quarantined experiences.
+
+        Args:
+            admin_approved_ids: List of context_hashes approved by admin
+        """
+        if admin_approved_ids is None:
+            admin_approved_ids = []
+
+        approved = []
+        rejected = []
+
+        for exp in self._quarantine:
+            if exp.context_hash in admin_approved_ids:
+                self.experiences.append(exp)
+                approved.append(exp.context_hash)
+            else:
+                rejected.append(exp.context_hash)
+
+        # Clear quarantine
+        self._quarantine = [e for e in self._quarantine
+                           if e.context_hash not in admin_approved_ids]
+
+        if approved or rejected:
+            self._embedding_matrix = None  # Invalidate cache
+
+        return {"approved": len(approved), "rejected": len(rejected)}
 
     def check_conflict(self, z: np.ndarray, outcome: float) -> Optional[str]:
         """

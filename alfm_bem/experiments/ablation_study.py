@@ -440,13 +440,114 @@ def run_ablation_study(seed: int = 42, verbose: bool = True):
         print(f"{'OOD AUC (Clustered)':<30} {results['RAG']['ood_clustered']['auc']:>10.2f} {results['NEP']['ood_clustered']['auc']:>10.2f} {results['BEM']['ood_clustered']['auc']:>10.2f}")
         print(f"{'OOD AUC (Distributed)':<30} {results['RAG']['ood_distributed']['auc']:>10.2f} {results['NEP']['ood_distributed']['auc']:>10.2f} {results['BEM']['ood_distributed']['auc']:>10.2f}")
     
+    if verbose:
+        print("\nAnalysis:")
+        print(f"  - RAG has no success retrieval (no outcome awareness)")
+        print(f"  - NEP has no success retrieval (only stores failures)")
+        print(f"  - BEM provides success retrieval: {results['BEM']['success_retrieval']['success_rate']:.2f}")
+
     return results
-    print("\nAnalysis:")
-    print(f"  - RAG has no success retrieval (no outcome awareness)")
-    print(f"  - NEP has no success retrieval (only stores failures)")
-    print(f"  - BEM provides success retrieval: {results['BEM']['success_retrieval']['success_rate']:.2f}")
-    
+
+
+def run_multi_seed_ablation(n_seeds: int = 10, verbose: bool = True) -> Dict:
+    """
+    Run ablation study with multiple seeds for statistical significance.
+
+    Returns mean ± std for each metric across seeds.
+    """
+    all_results = []
+
+    print("=" * 60)
+    print(f"Multi-Seed Ablation Study (N={n_seeds})")
+    print("=" * 60)
+
+    for seed in range(n_seeds):
+        if verbose:
+            print(f"\nRunning seed {seed + 1}/{n_seeds}...")
+        results = run_ablation_study(seed=seed, verbose=False)
+        all_results.append(results)
+
+    # Aggregate results
+    metrics = [
+        ("failure_retrieval", "f1"),
+        ("failure_retrieval", "precision"),
+        ("failure_retrieval", "recall"),
+        ("success_retrieval", "success_rate"),
+        ("ood_clustered", "auc"),
+        ("ood_distributed", "auc")
+    ]
+
+    systems = ["RAG", "NEP", "BEM"]
+
+    aggregated = {}
+    for system in systems:
+        aggregated[system] = {}
+        for metric_group, metric_name in metrics:
+            values = [r[system][metric_group][metric_name] for r in all_results]
+            aggregated[system][f"{metric_group}_{metric_name}"] = {
+                "mean": np.mean(values),
+                "std": np.std(values),
+                "values": values
+            }
+
+    # Print summary with confidence intervals
+    print("\n" + "=" * 90)
+    print("Statistical Summary (Mean ± Std over {} seeds)".format(n_seeds))
+    print("=" * 90)
+
+    print(f"\n{'Metric':<35} {'RAG':>15} {'NEP':>15} {'BEM':>15}")
+    print("-" * 90)
+
+    for metric_group, metric_name in metrics:
+        key = f"{metric_group}_{metric_name}"
+        label = f"{metric_group.replace('_', ' ').title()} {metric_name.upper()}"
+
+        rag = aggregated["RAG"][key]
+        nep = aggregated["NEP"][key]
+        bem = aggregated["BEM"][key]
+
+        print(f"{label:<35} {rag['mean']:>6.3f}±{rag['std']:.3f} {nep['mean']:>6.3f}±{nep['std']:.3f} {bem['mean']:>6.3f}±{bem['std']:.3f}")
+
+    # Statistical significance test (paired t-test: BEM vs RAG, BEM vs NEP)
+    from scipy import stats
+
+    print("\n" + "=" * 90)
+    print("Statistical Significance (Paired t-test, α=0.05)")
+    print("=" * 90)
+
+    key_metrics = [
+        ("failure_retrieval_f1", "Failure F1"),
+        ("ood_distributed_auc", "OOD AUC (Distributed)")
+    ]
+
+    for key, label in key_metrics:
+        bem_vals = aggregated["BEM"][key]["values"]
+        rag_vals = aggregated["RAG"][key]["values"]
+        nep_vals = aggregated["NEP"][key]["values"]
+
+        # BEM vs RAG
+        t_stat_rag, p_val_rag = stats.ttest_rel(bem_vals, rag_vals)
+        sig_rag = "✓ Significant" if p_val_rag < 0.05 else "✗ Not significant"
+
+        # BEM vs NEP
+        t_stat_nep, p_val_nep = stats.ttest_rel(bem_vals, nep_vals)
+        sig_nep = "✓ Significant" if p_val_nep < 0.05 else "✗ Not significant"
+
+        print(f"\n{label}:")
+        print(f"  BEM vs RAG: t={t_stat_rag:.3f}, p={p_val_rag:.4f} → {sig_rag}")
+        print(f"  BEM vs NEP: t={t_stat_nep:.3f}, p={p_val_nep:.4f} → {sig_nep}")
+
+    return aggregated
 
 
 if __name__ == "__main__":
-    results = run_ablation_study()
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--multi-seed", action="store_true", help="Run multi-seed experiment")
+    parser.add_argument("--n-seeds", type=int, default=10, help="Number of seeds")
+    args = parser.parse_args()
+
+    if args.multi_seed:
+        results = run_multi_seed_ablation(n_seeds=args.n_seeds)
+    else:
+        results = run_ablation_study()

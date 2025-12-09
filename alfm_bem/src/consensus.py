@@ -23,7 +23,12 @@ import numpy as np
 from enum import Enum
 from dataclasses import dataclass
 from typing import List, Dict, Any, Optional, Tuple
-from constants import DEFAULT_RISK_THRESHOLD, DEFAULT_CONFIDENCE_THRESHOLD
+try:
+    from constants import DEFAULT_RISK_THRESHOLD, DEFAULT_CONFIDENCE_THRESHOLD
+except ImportError:
+    # Fallback defaults if constants not in path
+    DEFAULT_RISK_THRESHOLD = 0.6
+    DEFAULT_CONFIDENCE_THRESHOLD = 0.7
 
 
 class Action(Enum):

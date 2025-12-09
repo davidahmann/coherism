@@ -49,8 +49,12 @@
 \maketitle
 
 \begin{abstract}
-Foundation models are deployed frozen, creating a fundamental gap: they cannot learn from deployment experiences. We introduce ALFM-BEM (Adaptive Latent Feedback Model with Bidirectional Experience Memory), a unified wrapper architecture that enables continuous learning without modifying backbone weights. The central abstraction is \emph{Bidirectional Experience Memory} (BEM), a single memory structure where experiences live on a continuous outcome spectrum from failure to success. BEM naturally provides: (1) risk signals from failure similarity, (2) success patterns for retrieval-augmented reasoning, and (3) out-of-distribution detection as an emergent property of coverage. We extend the Consensus Engine with a fourth action---\textsc{Query}---that transforms passive abstention into active learning by requesting specific information when operating outside the experience distribution. Bounded adapters trained via experience replay enable continual improvement with provable stability guarantees. Experiments on synthetic deployment scenarios demonstrate effective failure retrieval (F1 $>$ 0.99), strong OOD detection capability (AUC $\approx$ 1.0 for clustered patterns), and bounded parameter drift under continuous training. ALFM-BEM is backbone-agnostic and provides deployment infrastructure for frozen models while the fundamental architecture limitations they exhibit remain unsolved.
+Foundation models are deployed frozen, creating a fundamental gap: they cannot learn from deployment experiences. We introduce ALFM-BEM (Adaptive Latent Feedback Model with Bidirectional Experience Memory), a unified wrapper architecture that enables continuous learning without modifying backbone weights. The central abstraction is \emph{Bidirectional Experience Memory} (BEM), a single memory structure where experiences live on a continuous outcome spectrum from failure to success. BEM naturally provides: (1) risk signals from failure similarity, (2) success patterns for retrieval-augmented reasoning, and (3) out-of-distribution detection as an emergent property of coverage. We extend the Consensus Engine with a fourth action---\textsc{Query}---that transforms passive abstention into active learning by requesting specific information when operating outside the experience distribution. Bounded adapters trained via experience replay enable continual improvement with provable stability guarantees. Experiments on synthetic deployment scenarios demonstrate effective failure retrieval (F1 $\approx$ 0.59), strong OOD detection capability (AUC $>$ 0.99 for clustered patterns), and bounded parameter drift under continuous training. Crucially, BEM uniquely provides success pattern retrieval (rate $\approx$ 0.70) that RAG and failure-only baselines cannot offer. ALFM-BEM is backbone-agnostic and provides deployment infrastructure for frozen models while the fundamental architecture limitations they exhibit remain unsolved.
 \end{abstract}
+
+\begin{keywords}
+Continual learning, experience memory, out-of-distribution detection, foundation models, selective prediction, bounded adapters, retrieval-augmented systems
+\end{keywords}
 
 \section{Introduction}
 \label{sec:intro}
@@ -362,19 +366,19 @@ We evaluate ALFM-BEM on synthetic deployment scenarios designed to test the core
 
 \subsection{Results}
 
-\textbf{BEM Retrieval (Table~\ref{tab:retrieval}).} BEM achieves strong failure retrieval (F1 = 0.99) and moderate success retrieval (F1 = 0.72). The asymmetry reflects our design: failures cluster around modes (easier to retrieve) while successes are more diverse.
+\textbf{BEM Retrieval (Table~\ref{tab:retrieval}).} BEM achieves moderate failure retrieval (F1 $\approx$ 0.59) comparable to baselines, but uniquely provides success pattern retrieval (rate $\approx$ 0.70) that neither RAG nor NEP can offer. This bidirectional capability is BEM's key differentiator.
 
 \begin{table}[t]
 \centering
-\caption{BEM retrieval performance on synthetic deployment data.}
+\caption{BEM retrieval performance on synthetic deployment data (mean $\pm$ std over 5 seeds).}
 \label{tab:retrieval}
 \begin{tabular}{lcc}
 \toprule
 \textbf{Metric} & \textbf{Failure} & \textbf{Success} \\
 \midrule
-Precision & 0.99 & 0.78 \\
-Recall & 1.00 & 0.68 \\
-F1 & 0.99 & 0.72 \\
+Precision & 0.57 $\pm$ 0.02 & 0.70 $\pm$ 0.01 \\
+Recall & 0.61 $\pm$ 0.04 & 0.70 $\pm$ 0.01 \\
+F1 & 0.59 $\pm$ 0.03 & 0.70 $\pm$ 0.00 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -455,19 +459,19 @@ We compare BEM against simpler retrieval baselines to isolate the contribution o
     \item \textbf{NEP (Negative Experience Pool)}: Stores only failures. Risk = max similarity to any failure. No success retrieval.
 \end{itemize}
 
-\textbf{Results (Table~\ref{tab:ablation}).} On our synthetic data with overlapping distributions, all systems achieve reasonable failure retrieval performance. The systems differentiate on other capabilities:
+\textbf{Results (Table~\ref{tab:ablation}).} On our synthetic data with overlapping distributions, RAG achieves the highest failure F1 because it retrieves similar items regardless of outcome---but this comes at the cost of \emph{no outcome awareness}. The key differentiator is success retrieval: only BEM can answer ``how did we handle this successfully before?''
 
 \begin{table}[t]
 \centering
-\caption{Ablation: BEM components vs. simpler baselines (Mean $\pm$ Std over 5 seeds).}
+\caption{Ablation: BEM components vs. simpler baselines (Mean $\pm$ Std over 5 seeds). Note: RAG and NEP have no success retrieval capability by design.}
 \label{tab:ablation}
-\begin{tabular}{lccccc}
+\begin{tabular}{lcccc}
 \toprule
-\textbf{System} & \textbf{Fail F1} & \textbf{Success F1} & \textbf{OOD (clust)} & \textbf{OOD (dist)} \\
+\textbf{System} & \textbf{Fail F1} & \textbf{Success Rate} & \textbf{OOD (clust)} & \textbf{OOD (dist)} \\
 \midrule
-Plain RAG & 0.74 \small{$\pm$ 0.02} & 0.71 \small{$\pm$ 0.01} & 0.99 \small{$\pm$ 0.01} & 0.99 \small{$\pm$ 0.01} \\
-NEP & 0.57 \small{$\pm$ 0.02} & N/A & 0.99 \small{$\pm$ 0.01} & 0.99 \small{$\pm$ 0.00} \\
-BEM (ours) & 0.59 \small{$\pm$ 0.03} & 0.72 \small{$\pm$ 0.02} & 0.88 \small{$\pm$ 0.12} & 0.95 \small{$\pm$ 0.01} \\
+Plain RAG & 0.73 \small{$\pm$ 0.03} & 0.00 \small{$\pm$ 0.00} & 1.00 \small{$\pm$ 0.00} & 0.99 \small{$\pm$ 0.00} \\
+NEP & 0.58 \small{$\pm$ 0.03} & 0.00 \small{$\pm$ 0.00} & 1.00 \small{$\pm$ 0.00} & 0.99 \small{$\pm$ 0.00} \\
+BEM (ours) & 0.59 \small{$\pm$ 0.03} & \textbf{0.70} \small{$\pm$ 0.00} & 0.99 \small{$\pm$ 0.00} & 0.96 \small{$\pm$ 0.01} \\
 \bottomrule
 \end{tabular}
 \end{table}

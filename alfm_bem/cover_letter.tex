@@ -14,21 +14,60 @@
 
 I am pleased to submit the manuscript entitled ``ALFM-BEM: Bidirectional Experience Memory for Continuous Learning in Foundation Model Deployments'' for consideration as a publication in the Journal of Machine Learning Research.
 
-Foundation models are typically deployed as frozen artifacts, creating a fundamental gap: they cannot learn from their deployment experiences. This paper introduces ALFM-BEM, a unified wrapper architecture that enables continuous learning without modifying backbone weights.
+\section*{Summary}
 
-Key contributions of this work include:
+Foundation models are typically deployed as frozen artifacts, creating a fundamental gap: they cannot learn from their deployment experiences. This paper introduces ALFM-BEM, a unified wrapper architecture that enables continuous learning without modifying backbone weights. Key contributions include:
 \begin{itemize}
-    \item \textbf{Bidirectional Experience Memory (BEM)}: A unified memory architecture where experiences exist on a continuous outcome spectrum, providing risk signals, success patterns, and out-of-distribution (OOD) detection as emergent properties of a single structure.
-    \item \textbf{Consensus Engine with Query Action}: An extension to selective prediction that transforms passive abstention into active learning by requesting specific information when operating outside the experience distribution.
-    \item \textbf{Bounded Adapters}: A mechanism for continuous improvement with provable stability guarantees, preventing catastrophic drift during online updates.
-    \item \textbf{Empirical Validation}: Rigorous experiments on synthetic data demonstrate effective failure retrieval (F1 $>$ 0.99) and strong OOD detection (AUC $\approx$ 1.0). Furthermore, a realistic healthcare claims case study shows that ALFM-BEM reduces claim rejection rates by 88\% (from 12.5\% to 1.5\%) by learning latent payer rules from binary feedback alone.
+    \item \textbf{Bidirectional Experience Memory (BEM)}: A unified memory architecture where experiences exist on a continuous outcome spectrum, providing risk signals, success patterns, and out-of-distribution detection as emergent properties of a single structure.
+    \item \textbf{Consensus Engine with Query Action}: An extension to selective prediction that transforms passive abstention into active learning.
+    \item \textbf{Bounded Adapters}: Continuous improvement with provable stability guarantees (Proposition 4.4).
+    \item \textbf{Empirical Validation}: Experiments demonstrate effective failure retrieval (F1 $\approx$ 0.59), strong OOD detection (AUC $>$ 0.99 for clustered patterns), and unique success pattern retrieval (rate $\approx$ 0.70) that baselines cannot provide.
 \end{itemize}
 
-This work bridges the gap between static model training and dynamic deployment needs, offering a practical infrastructure for safe, adaptive foundation model systems.
+\section*{Previous Publications}
 
-I confirm that this manuscript is original, has not been published before, and is not currently under consideration for publication elsewhere.
+This manuscript has not been published previously at any workshop or conference. This is an original submission.
 
-Thank you for your consideration.
+\section*{Co-Author Consent}
+
+I am the sole author of this manuscript and consent to its review by JMLR.
+
+\section*{Conflicts of Interest}
+
+I declare no conflicts of interest with any JMLR action editors or reviewers. I have no financial relationships with entities that could be perceived to influence this work.
+
+\section*{Funding Disclosure}
+
+This research was conducted independently without external funding. No grants, stipends, donations, or third-party support were received for any aspect of this work, including data collection, computing resources, or development.
+
+\section*{Suggested Action Editors}
+
+Based on expertise in memory-augmented neural networks, continual learning, and foundation model deployment:
+\begin{enumerate}
+    \item \textbf{Finale Doshi-Velez} -- Expertise in interpretable ML and safe deployment
+    \item \textbf{Been Kim} -- Expertise in interpretability and model understanding
+    \item \textbf{Percy Liang} -- Expertise in foundation models and robustness
+    \item \textbf{Jacob Steinhardt} -- Expertise in ML safety and distribution shift
+    \item \textbf{Zachary Lipton} -- Expertise in deployment and calibration
+\end{enumerate}
+
+\section*{Suggested Reviewers}
+
+\begin{enumerate}
+    \item \textbf{Yonatan Geifman} (Technion) -- Expert on selective prediction
+    \item \textbf{David Rolnick} (Mila) -- Expert on experience replay and continual learning
+    \item \textbf{Dan Hendrycks} (Center for AI Safety) -- Expert on OOD detection
+    \item \textbf{Yaniv Taigman} (Meta) -- Expert on memory networks
+    \item \textbf{Charles Packer} (UC Berkeley) -- Expert on memory systems for LLMs (MemGPT)
+\end{enumerate}
+
+\section*{Keywords}
+
+Continual learning, experience memory, out-of-distribution detection, foundation models, selective prediction, bounded adapters, retrieval-augmented systems
+
+\section*{Paper Length Justification}
+
+The manuscript is approximately 15 pages (main text) plus appendices, well within JMLR guidelines.
 
 \closing{Sincerely,}
 

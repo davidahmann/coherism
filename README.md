@@ -67,16 +67,23 @@ graph LR
 **Title:** *ALFM-BEM: Bidirectional Experience Memory for Continuous Learning in Foundation Model Deployments*
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17804923.svg)](https://doi.org/10.5281/zenodo.17804923)
 
-This directory contains the source for the advanced ALFM-BEM architecture, extending the original ALFM with bidirectional memory and active learning.
+This directory contains the source for the advanced ALFM-BEM architecture, extending the original ALFM with bidirectional memory and active learning. **Prepared for JMLR submission.**
 
 *   **The Big Idea:** Unifying failure and success memory into a single continuous spectrum, enabling "how did we succeed before?" queries alongside "how did we fail?".
 *   **Key Concepts:**
     *   **Bidirectional Experience Memory (BEM):** Single structure for risk, success, and OOD detection
     *   **Query Action:** Active learning capability to request information when OOD
-    *   **Healthcare Case Study:** Demonstrated 88% reduction in claim rejections
+    *   **Bounded Adapters:** Continual learning with provable stability guarantees
+*   **Key Results:**
+    *   Failure retrieval F1 ≈ 0.59, Success retrieval rate ≈ 0.70 (unique to BEM)
+    *   OOD detection AUC > 0.99 for clustered patterns
+    *   Healthcare case study: 88% reduction in claim rejections
 *   **Files:**
     *   `alfm_bem.tex`: JMLR-format manuscript
-    *   `experiments/`: Full experimental suite (Phase 1 & 2)
+    *   `cover_letter.tex`: JMLR submission cover letter
+    *   `data_availability.tex`: Code/data availability statement
+    *   `src/`: Core implementation (BEM, Consensus Engine, Adapters)
+    *   `experiments/`: Full experimental suite (`ablation_study.py`, `threshold_sensitivity.py`, `domain_shift_experiment.py`, `real_backbone_experiment.py`, `healthcare_simulator.py`)
 
 #### 🔄 ALFM-BEM Architecture
 ```mermaid
@@ -107,13 +114,25 @@ pdflatex coherism.tex
 pdflatex coherism.tex
 ```
 
-**To compile the AI paper:**
+**To compile the AI paper (ALFM):**
 ```bash
 cd alfm
 pdflatex alfm.tex
 bibtex alfm
 pdflatex alfm.tex
 pdflatex alfm.tex
+```
+
+**To compile ALFM-BEM (JMLR submission):**
+```bash
+cd alfm_bem
+pdflatex alfm_bem.tex
+bibtex alfm_bem
+pdflatex alfm_bem.tex
+pdflatex alfm_bem.tex
+# Also compile cover letter and data availability
+pdflatex cover_letter.tex
+pdflatex data_availability.tex
 ```
 
 ## 🔗 The Connection
