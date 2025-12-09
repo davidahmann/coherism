@@ -299,18 +299,90 @@ class ContrastiveProjection:
         
         return grad_W1, grad_b1, grad_W2, grad_b2
 
-    def fit(self, embeddings: List[np.ndarray], outcomes: List[float], n_epochs: int = 100):
-        """
-        Train projection using outcome-weighted contrastive pairs.
-        """
-        # Construct positive/negative pairs
+    def evaluate(self, embeddings: List[np.ndarray], outcomes: List[float]) -> float:
+        """Compute loss on validation set."""
         pairs = construct_contrastive_pairs(embeddings, outcomes)
+        if not pairs:
+            return 0.0
         
-        # Train with SGD on InfoNCE loss
+        total_loss = 0.0
+        for pair in pairs:
+            # Forward pass only
+            z_a = self.forward(pair.anchor)
+            z_p = self.forward(pair.positive)
+            z_ns = [self.forward(n) for n in pair.negatives]
+            
+            sim_p = np.dot(z_a, z_p) / self.temperature
+            sim_ns = [np.dot(z_a, z_n) / self.temperature for z_n in z_ns]
+            
+            numerator = np.exp(sim_p)
+            denominator = numerator + sum(np.exp(s) for s in sim_ns)
+            total_loss += -np.log(numerator / (denominator + 1e-10))
+            
+        return total_loss / len(pairs)
+
+    def fit(
+        self, 
+        embeddings: List[np.ndarray], 
+        outcomes: List[float], 
+        validation_data: Optional[Tuple[List[np.ndarray], List[float]]] = None,
+        n_epochs: int = 100,
+        initial_lr: float = 1e-3,
+        patience: int = 10
+    ):
+        """
+        Train projection with early stopping and LR scheduling.
+        """
+        # Construct positive/negative pairs for training
+        train_pairs = construct_contrastive_pairs(embeddings, outcomes)
+        
+        best_val_loss = float('inf')
+        patience_counter = 0
+        current_lr = initial_lr
+        
+        # Save best weights
+        best_weights = {
+            'W1': self.W1.copy(), 'b1': self.b1.copy(),
+            'W2': self.W2.copy(), 'b2': self.b2.copy()
+        }
+        
         for epoch in range(n_epochs):
-            loss = self.train_step(pairs, learning_rate=1e-3)
-            if epoch % 20 == 0:
-                print(f"  Epoch {epoch}: loss={loss:.4f}")
+            # Training step
+            train_loss = self.train_step(train_pairs, learning_rate=current_lr)
+            
+            # Validation step
+            if validation_data:
+                val_loss = self.evaluate(validation_data[0], validation_data[1])
+            else:
+                val_loss = train_loss  # Use train loss if no validation set
+            
+            if epoch % 10 == 0:
+                print(f"  Epoch {epoch}: train_loss={train_loss:.4f}, val_loss={val_loss:.4f}, lr={current_lr:.6f}")
+            
+            # Early stopping check
+            if val_loss < best_val_loss - 1e-4:
+                best_val_loss = val_loss
+                patience_counter = 0
+                best_weights = {
+                    'W1': self.W1.copy(), 'b1': self.b1.copy(),
+                    'W2': self.W2.copy(), 'b2': self.b2.copy()
+                }
+            else:
+                patience_counter += 1
+                
+            # LR Scheduling (reduce on plateau)
+            if patience_counter >= patience // 2:
+                current_lr = max(initial_lr * 0.1, current_lr * 0.9)
+                
+            if patience_counter >= patience:
+                print(f"  Early stopping at epoch {epoch}")
+                break
+        
+        # Restore best weights
+        self.W1 = best_weights['W1']
+        self.b1 = best_weights['b1']
+        self.W2 = best_weights['W2']
+        self.b2 = best_weights['b2']
     
     def save(self, path: str):
         """Save projection weights."""

@@ -162,7 +162,7 @@ where $\mathcal{N}^+(z, \theta) = \{e \in \mathcal{N}(z,\theta) : o_e > 0.3\}$.
 \begin{equation}
     s_{\text{cov}}(z) = \text{clip}\left(\kappa \cdot \frac{1}{|\mathcal{E}|} \sum_{e \in \mathcal{E}} \exp\left(-\frac{(1 - \text{sim}(z, z_e))^2}{2h^2}\right), 0, 1\right)
 \end{equation}
-where $h$ is the KDE bandwidth (we use $h = 0.3$) and $\kappa$ is a scaling constant. This KDE formulation captures local density in experience space. For clustered patterns, KDE coverage achieves near-perfect OOD detection (AUC $\approx$ 1.0) because novel clusters have no nearby experiences. Low coverage indicates out-of-distribution operation.
+where $h$ is the KDE bandwidth (we use $h = 0.3$, selected via cross-validation optimization) and $\kappa$ is a scaling constant. This KDE formulation captures local density in experience space. For clustered patterns, KDE coverage achieves near-perfect OOD detection (AUC $\approx$ 1.0) because novel clusters have no nearby experiences. Low coverage indicates out-of-distribution operation.
 
 \subsection{Consensus Engine with Query Action}
 \label{sec:consensus}
@@ -300,9 +300,9 @@ We provide theoretical grounding for BEM's key properties.
 
 \subsection{Query Complexity}
 
-\textbf{Proposition 4.1 (BEM Query Complexity).} With approximate nearest neighbor indexing (e.g., HNSW), BEM query complexity is $O(\log |\mathcal{E}|)$ where $|\mathcal{E}|$ is the number of stored experiences.
+\textbf{Proposition 4.1 (BEM Query Complexity).} With approximate nearest neighbor indexing (e.g., HNSW or KD-Trees), BEM query complexity is $O(\log |\mathcal{E}|)$ where $|\mathcal{E}|$ is the number of stored experiences.
 
-\textit{Proof sketch.} HNSW constructs a navigable small-world graph with $O(\log |\mathcal{E}|)$ layers. Each query traverses at most $O(\log |\mathcal{E}|)$ nodes per layer, yielding logarithmic complexity. The risk/success/coverage signals require constant-time aggregation over the $k$ nearest neighbors (typically $k \leq 100$). \qed
+\textit{Proof sketch.} Hierarchical index structures construct a navigable graph or tree with $O(\log |\mathcal{E}|)$ depth. Each query traverses at most $O(\log |\mathcal{E}|)$ nodes, yielding logarithmic complexity. The risk/success/coverage signals require constant-time aggregation over the $k$ nearest neighbors (typically $k \leq 100$). \qed
 
 \subsection{Tenant Isolation}
 

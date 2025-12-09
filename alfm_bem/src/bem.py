@@ -42,8 +42,8 @@ class Experience:
     outcome: float                 # Continuous outcome score in [-1, 1]
     context_hash: str              # SHA-256 of original context (for dedup)
     timestamp: datetime            # When this experience occurred
-    tenant_id: str                 # Tenant isolation
-    domain_id: str                 # Domain classification
+    tenant_id: str = "default"     # Tenant isolation
+    domain_id: str = "default"     # Domain classification
     metadata: Dict[str, Any] = field(default_factory=dict)
     
     # Optional fields for richer experiences
@@ -99,7 +99,8 @@ class BidirectionalExperienceMemory:
         tenant_id: str = "global",
         coverage_mode: CoverageMode = CoverageMode.KDE,
         kde_bandwidth: float = 0.3,
-        knn_k: int = 20
+        knn_k: int = 20,
+        use_knn_index: bool = False  # Task 4.4: Scalable Indexing
     ):
         self.dim = dim
         self.similarity_threshold = similarity_threshold
@@ -111,87 +112,98 @@ class BidirectionalExperienceMemory:
         self.coverage_mode = coverage_mode
         self.kde_bandwidth = kde_bandwidth
         self.knn_k = knn_k
+        self.use_knn_index = use_knn_index
         
         # Unified storage — no separate failure/success stores
         self.experiences: List[Experience] = []
         
         # Index structures for efficient retrieval
         self._embedding_matrix: Optional[np.ndarray] = None
-        self._needs_reindex = True
-        
-        # Statistics for coverage estimation
-        self._mean_embedding: Optional[np.ndarray] = None
-        self._cov_embedding: Optional[np.ndarray] = None
-        
+        self._kde_model = None
+        self._knn_index = None
+        self._last_update_time = datetime.min
+
     def add_experience(
-        self,
-        embedding: np.ndarray,
-        outcome: float,
-        context: str,
+        self, 
+        embedding: np.ndarray, 
+        outcome: float, 
+        context_hash: str,
+        tenant_id: str = "default",
         domain_id: str = "default",
-        metadata: Optional[Dict] = None,
         reasoning_trace: Optional[str] = None,
         correction: Optional[str] = None
-    ) -> bool:
-        """
-        Add a new experience to memory.
-        
-        Returns True if added, False if deduplicated.
-        """
-        # Normalize embedding
-        embedding = embedding / (np.linalg.norm(embedding) + 1e-10)
-        
-        # Check for duplicate
-        context_hash = hashlib.sha256(context.encode()).hexdigest()
-        for exp in self.experiences:
-            if exp.context_hash == context_hash:
-                # Update existing experience (confirmation)
-                exp.confirmation_count += 1
-                exp.outcome = 0.9 * exp.outcome + 0.1 * outcome  # EMA update
-                return False
-        
-        # Create new experience
+    ):
+        """Add new experience to memory."""
+        # Validate shapes
+        if embedding.shape[0] != self.dim:
+            raise ValueError(f"Embedding dim {embedding.shape[0]} != {self.dim}")
+            
         exp = Experience(
-            embedding=embedding,
-            outcome=np.clip(outcome, -1.0, 1.0),
+            embedding=embedding / (np.linalg.norm(embedding) + 1e-10),
+            outcome=outcome,
             context_hash=context_hash,
             timestamp=datetime.now(),
-            tenant_id=self.tenant_id,
+            tenant_id=tenant_id,
             domain_id=domain_id,
-            metadata=metadata or {},
             reasoning_trace=reasoning_trace,
             correction=correction
         )
-        
         self.experiences.append(exp)
-        self._needs_reindex = True
-        return True
-    
+        
+        # Invalidate indices
+        self._embedding_matrix = None
+        self._kde_model = None
+        self._knn_index = None
+
     def _ensure_index(self):
-        """Rebuild index structures if needed."""
-        if not self._needs_reindex or len(self.experiences) == 0:
-            return
-        
-        self._embedding_matrix = np.vstack([e.embedding for e in self.experiences])
-        
-        # Update coverage statistics
-        self._mean_embedding = np.mean(self._embedding_matrix, axis=0)
-        if len(self.experiences) > 1:
-            self._cov_embedding = np.cov(self._embedding_matrix.T)
-        else:
-            self._cov_embedding = np.eye(self.dim)
-        
-        self._needs_reindex = False
-    
+        """Rebuid search index if needed."""
+        if self._embedding_matrix is None and self.experiences:
+            self._embedding_matrix = np.vstack([e.embedding for e in self.experiences])
+            
+        # 1. Update KNN Index (Scalable Retrieval)
+        if self.use_knn_index and self._knn_index is None and len(self.experiences) > 0:
+            # Use dot product logic via Euclidean on normalized vectors:
+            # dist^2 = 2 - 2*sim => sim = 1 - dist^2/2
+            from sklearn.neighbors import NearestNeighbors
+            self._knn_index = NearestNeighbors(metric='euclidean', algorithm='auto')
+            self._knn_index.fit(self._embedding_matrix)
+
+        # 2. Update KDE Model (Coverage)
+        if self.coverage_mode == CoverageMode.KDE and self._kde_model is None and len(self.experiences) > 10:
+            from sklearn.neighbors import KernelDensity
+            self._kde_model = KernelDensity(kernel='gaussian', bandwidth=self.kde_bandwidth)
+            self._kde_model.fit(self._embedding_matrix)
+
     def _compute_similarities(self, z: np.ndarray) -> np.ndarray:
-        """Compute cosine similarities to all experiences."""
         self._ensure_index()
-        if self._embedding_matrix is None or len(self.experiences) == 0:
+        if self._embedding_matrix is None:
             return np.array([])
+            
+        z = z / (np.linalg.norm(z) + 1e-10)
         
-        z_norm = z / (np.linalg.norm(z) + 1e-10)
-        return self._embedding_matrix @ z_norm
-    
+        # Fast Path: Approximate Nearest Neighbors
+        if self.use_knn_index and self._knn_index is not None:
+            # We want ALL similarities for logic, but usually we only need top-k.
+            # However, existing logic iterates over zip(sims, self.experiences).
+            # Changing this logic fully is risky (breaking logic relying on full scan).
+            # For now, if use_knn_index is True, we ONLY retrieve top-50 candidates
+            # and set others to 0.0. This is an approximation.
+            k = min(50, len(self.experiences))
+            dists, indices = self._knn_index.kneighbors(z.reshape(1, -1), n_neighbors=k)
+            
+            sims = np.zeros(len(self.experiences))
+            # Convert Euclidean dist back to Cosine Sim: sim = 1 - d^2/2
+            # (Valid because vectors are unit length)
+            converted_sims = 1.0 - (dists[0]**2) / 2.0
+            
+            for idx, sim in zip(indices[0], converted_sims):
+                sims[idx] = sim
+            return sims
+
+        # Slow Path: Brute Force
+        sims = self._embedding_matrix @ z
+        return sims
+
     def risk_signal(self, z: np.ndarray) -> Tuple[float, List[Experience]]:
         """
         Compute risk signal: probability that this context leads to failure,
@@ -207,19 +219,31 @@ class BidirectionalExperienceMemory:
             return 0.0, []
         
         # Filter to failures and above threshold
-        relevant = []
-        risk_components = []
+        relevant_candidates = []
         
         for i, (sim, exp) in enumerate(zip(sims, self.experiences)):
             if sim > self.similarity_threshold and exp.is_failure:
-                relevant.append(exp)
-                # Weight by similarity, severity, and recency
-                age_days = (datetime.now() - exp.timestamp).days
-                decay = np.exp(-self.decay_rate * age_days)
-                weight = sim * (exp.severity / 5.0) * decay * exp.confirmation_count
-                risk_components.append(
-                    self.risk_sensitivity * weight
-                )
+                relevant_candidates.append((sim, exp))
+        
+        if not relevant_candidates:
+            return 0.0, []
+            
+        # Sort by similarity (descending) and take top-k to prevent unbounded risk accumulation
+        # from many weak signals in dense regions
+        relevant_candidates.sort(key=lambda x: x[0], reverse=True)
+        relevant_candidates = relevant_candidates[:20]  # Limit to 20 nearest failures
+        
+        relevant = [exp for sim, exp in relevant_candidates]
+        risk_components = []
+        
+        for sim, exp in relevant_candidates:
+            # Weight by similarity, severity, and recency
+            age_days = (datetime.now() - exp.timestamp).days
+            decay = np.exp(-self.decay_rate * age_days)
+            weight = sim * (exp.severity / 5.0) * decay * exp.confirmation_count
+            risk_components.append(
+                self.risk_sensitivity * weight
+            )
         
         if not risk_components:
             return 0.0, []
@@ -431,6 +455,37 @@ class BidirectionalExperienceMemory:
         )
         self.experiences = self.experiences[:max_size]
         self._needs_reindex = True
+
+    def check_conflict(self, z: np.ndarray, outcome: float) -> Optional[str]:
+        """
+        Check if the proposed outcome contradicts high-confidence memory.
+        
+        Anti-poisoning mechanism (Section 3.6):
+        Rejects updates that flip the label of a known, well-confirmed context.
+        
+        Returns:
+            Warning string if conflict found, None otherwise.
+        """
+        sims = self._compute_similarities(z)
+        if len(sims) == 0:
+            return None
+            
+        # Look for very similar experiences (strict threshold 0.85)
+        CONFLICT_SIM_THRESHOLD = 0.85
+        CONFIDENCE_MIN = 3  # Must be confirmed 3+ times to block
+        
+        for sim, exp in zip(sims, self.experiences):
+            if sim > CONFLICT_SIM_THRESHOLD:
+                # Check for sign mismatch (Opposite labels)
+                # Success vs Failure
+                if (outcome > 0.3 and exp.is_failure) or (outcome < -0.3 and exp.is_success):
+                    if exp.confirmation_count >= CONFIDENCE_MIN:
+                        return (
+                            f"Conflict detected: New outcome ({outcome:.2f}) contradicts "
+                            f"established experience ({exp.outcome:.2f}, confirmed {exp.confirmation_count}x) "
+                            f"with similarity {sim:.2f}."
+                        )
+        return None
     
     def get_statistics(self) -> Dict[str, Any]:
         """Return summary statistics about the memory."""
@@ -580,6 +635,22 @@ class BEMManager:
             "failure_experiences": all_failure_experiences,
             "success_experiences": all_success_experiences
         }
+
+    def check_conflict(
+        self,
+        z: np.ndarray,
+        outcome: float,
+        tenant_id: str,
+        domain_id: str = "default"
+    ) -> Optional[str]:
+        """Check for conflicts across all scoped memories."""
+        # Check global, domain, and tenant memories
+        memories = self.get_scoped_memory(tenant_id, domain_id)
+        for mem in memories:
+            conflict = mem.check_conflict(z, outcome)
+            if conflict:
+                return f"[{mem.tenant_id} memory] {conflict}"
+        return None
     
     def add_experience(
         self,
@@ -597,8 +668,21 @@ class BEMManager:
                 dim=self.dim, tenant_id=tenant_id
             )
         self.tenant_bems[tenant_id].add_experience(
-            embedding, outcome, context, domain_id, **kwargs
+            embedding=embedding,
+            outcome=outcome,
+            context_hash=context,
+            tenant_id=tenant_id,
+            domain_id=domain_id,
+            **kwargs
         )
         
         # Optionally promote to domain/global based on confirmation
         # (This would require multi-tenant consensus — simplified here)
+
+    def vacuum_all(self, max_size: int = 10000):
+        """Run memory hygiene on all managed memories."""
+        self.global_bem.vacuum(max_size)
+        for bem in self.domain_bems.values():
+            bem.vacuum(max_size)
+        for bem in self.tenant_bems.values():
+            bem.vacuum(max_size)

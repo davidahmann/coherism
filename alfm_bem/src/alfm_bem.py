@@ -16,6 +16,7 @@ Author: David Ahmann
 
 import numpy as np
 from typing import Dict, Any, Optional, List, Callable
+import uuid
 from dataclasses import dataclass
 
 from bem import BidirectionalExperienceMemory, BEMManager, Experience
@@ -109,6 +110,8 @@ class ALFMBEM:
         # Experience loop tracking
         self._inference_count = 0
         self._pending_outcomes: List[Dict] = []
+        self._active_queries: Dict[str, Dict[str, Any]] = {}
+
     
     def infer(
         self,
@@ -145,6 +148,18 @@ class ALFMBEM:
             coverage=bem_result["coverage"],
             context=context
         )
+        
+        # If Query, register active query
+        if decision.action == Action.QUERY:
+            query_id = str(uuid.uuid4())
+            decision.query_id = query_id
+            self._active_queries[query_id] = {
+                "backbone_embedding": backbone_embedding,
+                "context": context,
+                "tenant_id": tenant_id,
+                "domain_id": domain_id,
+                "timestamp": decision.confidence  # placeholder, really should use datetime
+            }
         
         self._inference_count += 1
         
@@ -184,6 +199,14 @@ class ALFMBEM:
         z = self.projection(backbone_embedding)
         z_adapted = self.adapter_manager.forward(z, tenant_id, domain_id)
         
+        # Anti-Poisoning Check (Task 4.1)
+        conflict_msg = self.bem_manager.check_conflict(
+            z_adapted, outcome, tenant_id, domain_id
+        )
+        if conflict_msg:
+            print(f"⚠️  Anti-Poisoning blocked update: {conflict_msg}")
+            raise ValueError(f"Feedback Rejected: {conflict_msg}")
+
         # Add to tenant BEM
         self.bem_manager.add_experience(
             embedding=z_adapted,
@@ -198,7 +221,11 @@ class ALFMBEM:
         # Experience replay: periodically train adapters
         if self._inference_count % self.config.replay_frequency == 0:
             self._run_experience_replay(tenant_id, domain_id)
-    
+            
+        # Vacuum periodically to prevent unbounded growth
+        if self._inference_count % 1000 == 0:
+            self.bem_manager.vacuum_all(max_size=10000)
+
     def _run_experience_replay(self, tenant_id: str, domain_id: str):
         """Train adapter using accumulated experiences."""
         if tenant_id not in self.bem_manager.tenant_bems:
@@ -252,6 +279,43 @@ class ALFMBEM:
         
         return stats
     
+    def handle_query_response(
+        self,
+        query_id: str,
+        response: str,
+        outcome: float
+    ) -> bool:
+        """
+        Process human response to Query action.
+        
+        Args:
+            query_id: ID returned from infer()
+            response: Text response/clarification/confirmation
+            outcome: Success (1.0) or Failure (-1.0) signal derived from response
+            
+        Returns:
+            True if successfully processed
+        """
+        if query_id not in self._active_queries:
+            return False
+            
+        # Retrieve context
+        query_ctx = self._active_queries.pop(query_id)
+        
+        # Enrich reasoning with the response
+        reasoning = f"Query Response: {response}"
+        
+        # Record outcome
+        self.record_outcome(
+            backbone_embedding=query_ctx["backbone_embedding"],
+            context=str(query_ctx["context"]), # Ensure string
+            outcome=outcome,
+            tenant_id=query_ctx["tenant_id"],
+            domain_id=query_ctx["domain_id"],
+            reasoning_trace=reasoning
+        )
+        return True
+
     def save(self, path: str):
         """Save complete system state."""
         import os

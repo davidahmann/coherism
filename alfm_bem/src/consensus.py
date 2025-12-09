@@ -23,6 +23,7 @@ import numpy as np
 from enum import Enum
 from dataclasses import dataclass
 from typing import List, Dict, Any, Optional, Tuple
+from constants import DEFAULT_RISK_THRESHOLD, DEFAULT_CONFIDENCE_THRESHOLD
 
 
 class Action(Enum):
@@ -61,6 +62,7 @@ class ConsensusDecision:
     explanation: str                     # Human-readable explanation
     query_type: Optional[QueryType] = None  # If action is QUERY
     query_content: Optional[str] = None     # Specific query to ask
+    query_id: Optional[str] = None          # Unique ID for tracking response
 
 
 class SemanticAgent:
@@ -72,8 +74,8 @@ class SemanticAgent:
     
     def __init__(
         self,
-        risk_threshold: float = 0.6,
-        success_threshold: float = 0.7,
+        risk_threshold: float = DEFAULT_RISK_THRESHOLD,
+        success_threshold: float = DEFAULT_CONFIDENCE_THRESHOLD,
         coverage_threshold: float = 0.3
     ):
         self.risk_threshold = risk_threshold
@@ -92,7 +94,7 @@ class SemanticAgent:
         Returns:
             (recommendation, confidence, explanation)
         """
-        # High risk → suggest abstain/escalate
+        # High risk -> suggest abstain/escalate
         if risk > self.risk_threshold:
             severity = "critical" if risk > 0.85 else "high"
             return (
@@ -101,7 +103,7 @@ class SemanticAgent:
                 f"Similar to past failures ({severity} risk: {risk:.2f})"
             )
         
-        # Low coverage → suggest query
+        # Low coverage -> suggest query
         if coverage < self.coverage_threshold:
             return (
                 "query",
@@ -109,7 +111,7 @@ class SemanticAgent:
                 f"Outside experience distribution (coverage: {coverage:.2f})"
             )
         
-        # High success evidence → suggest trust
+        # High success evidence -> suggest trust
         if success > self.success_threshold:
             return (
                 "trust",
@@ -117,7 +119,7 @@ class SemanticAgent:
                 f"Similar to past successes (confidence: {success:.2f})"
             )
         
-        # Moderate signals → uncertain
+        # Moderate signals -> uncertain
         return (
             "uncertain",
             0.5,

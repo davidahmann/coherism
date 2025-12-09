@@ -1,38 +1,34 @@
 """
-Healthcare Claim Simulator
-==========================
+Healthcare Claim Simulator (Comparative Study)
+==============================================
 
 Simulates a stream of medical claims submitted to a Payer with hidden rejection rules.
-ALFM-BEM acts as the "Pre-Submission Scrubber", learning to predict rejections
-based on past outcomes.
+Compares three approaches for Pre-Submission Scrubbing:
+1. ALFM-BEM: Risk based on outcome-weighted neighbors.
+2. RAG: Retrieval of top-k similar failures.
+3. NEP: Density estimation (OOD detection).
 
 Rules (Hidden from Agent):
-1. Medical Necessity: CPT 99213 (Office Visit) requires Diagnosis J01.90 (Strep) or J20.9 (Bronchitis).
-2. Age Limit: CPT 90658 (Flu Shot) only allowed for age > 3.
-3. Modifier Required: CPT 25111 (Removal of Ganglion Cyst) requires modifier RT or LT.
-
-Author: David Ahmann
+1. Medical Necessity: CPT 99213 requires Dx J01.90/J20.9.
+2. Age Limit: CPT 90658 only allowed for age > 3.
+3. Modifier Required: CPT 25111 requires modifier RT/LT.
 """
 
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 import sys
 from pathlib import Path
 from dataclasses import dataclass
 from typing import List, Tuple, Optional, Dict
 import random
+from abc import ABC, abstractmethod
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from bem import BidirectionalExperienceMemory, CoverageMode
 
-# =============================================================================
-# 1. Domain Entities
-# =============================================================================
-
+# ... (Domain Entities & Generator - Same as before)
 @dataclass
 class Claim:
     id: str
@@ -45,10 +41,6 @@ class Claim:
     def __str__(self):
         return f"Claim({self.cpt_code}, {self.diagnosis_code}, Age={self.patient_age}, Mod={self.modifier})"
 
-# =============================================================================
-# 2. Synthetic Data Generator
-# =============================================================================
-
 class ClaimGenerator:
     def __init__(self):
         self.cpt_codes = ["99213", "90658", "25111", "99203", "71045"]
@@ -56,216 +48,230 @@ class ClaimGenerator:
         self.modifiers = ["", "RT", "LT", "25", "59"]
         
     def generate(self, claim_id: int) -> Claim:
-        # Generate random base attributes
         cpt = random.choice(self.cpt_codes)
-        
-        # Correlate diagnosis slightly to make it realistic (but still noisy)
-        if cpt == "99213":
-            dx = random.choice(["J01.90", "J20.9", "R05"]) # Mostly respiratory
-        elif cpt == "25111":
-            dx = "M67.4" # Ganglion
-        elif cpt == "90658":
-            dx = "Z23" # Vaccination
-        else:
-            dx = random.choice(self.diagnosis_codes)
-            
+        if cpt == "99213": dx = random.choice(["J01.90", "J20.9", "R05"]) 
+        elif cpt == "25111": dx = "M67.4"
+        elif cpt == "90658": dx = "Z23"
+        else: dx = random.choice(self.diagnosis_codes)
         age = random.randint(1, 80)
         mod = random.choice(self.modifiers) if random.random() > 0.5 else ""
-        
-        return Claim(
-            id=str(claim_id),
-            provider_id=f"PROV_{random.randint(1, 5)}",
-            cpt_code=cpt,
-            diagnosis_code=dx,
-            patient_age=age,
-            modifier=mod
-        )
-
-# =============================================================================
-# 3. Payer Rules Engine (Ground Truth)
-# =============================================================================
+        return Claim(str(claim_id), f"PROV_{random.randint(1,5)}", cpt, dx, age, mod)
 
 class PayerEngine:
-    """The 'World' that provides feedback."""
-    
     def adjudicate(self, claim: Claim) -> Tuple[float, str]:
-        """Returns (outcome, reason). Outcome: +1.0 (Paid), -1.0 (Rejected)."""
-        
-        # Rule 1: Medical Necessity
-        if claim.cpt_code == "99213":
-            if claim.diagnosis_code not in ["J01.90", "J20.9"]:
-                return -1.0, "DENIAL: Medical Necessity (Dx mismatch)"
-        
-        # Rule 2: Age Limit
-        if claim.cpt_code == "90658":
-            if claim.patient_age <= 3:
-                return -1.0, "DENIAL: Age Limit (< 3 years)"
-                
-        # Rule 3: Modifier Required
-        if claim.cpt_code == "25111":
-            if claim.modifier not in ["RT", "LT"]:
-                return -1.0, "DENIAL: Missing/Invalid Modifier"
-                
+        if claim.cpt_code == "99213" and claim.diagnosis_code not in ["J01.90", "J20.9"]:
+            return -1.0, "DENIAL: Medical Necessity"
+        if claim.cpt_code == "90658" and claim.patient_age <= 3:
+            return -1.0, "DENIAL: Age Limit"
+        if claim.cpt_code == "25111" and claim.modifier not in ["RT", "LT"]:
+            return -1.0, "DENIAL: Missing Modifier"
         return 1.0, "PAID"
 
-# =============================================================================
-# 4. ALFM-BEM Integration
-# =============================================================================
-
 class SymbolicProjector:
-    """Maps categorical claims to dense vectors for BEM."""
-    
     def __init__(self, dim: int = 64):
         self.dim = dim
-        # Random projection matrices for each feature
         np.random.seed(42)
         self.cpt_proj = {c: np.random.randn(dim) for c in ["99213", "90658", "25111", "99203", "71045"]}
         self.dx_proj = {d: np.random.randn(dim) for d in ["J01.90", "J20.9", "R05", "M67.4", "Z23"]}
         self.mod_proj = {m: np.random.randn(dim) for m in ["", "RT", "LT", "25", "59"]}
+        self.age_seeds = {a: np.random.randn(dim) for a in range(10)} # Age buckets
         
     def project(self, claim: Claim) -> np.ndarray:
-        # Simple additive embedding: vec = E(cpt) + E(dx) + E(mod) + E(age_bucket)
-        v_cpt = self.cpt_codes_vec(claim.cpt_code)
-        v_dx = self.dx_codes_vec(claim.diagnosis_code)
-        v_mod = self.mod_codes_vec(claim.modifier)
-        
-        # Age bucket embedding (random vector for each bucket)
-        age_bucket = claim.patient_age // 10
-        np.random.seed(age_bucket) # Deterministic per bucket
-        v_age = np.random.randn(self.dim)
-        
+        v_cpt = self.cpt_proj.get(claim.cpt_code, np.zeros(self.dim))
+        v_dx = self.dx_proj.get(claim.diagnosis_code, np.zeros(self.dim))
+        v_mod = self.mod_proj.get(claim.modifier, np.zeros(self.dim))
+        bucket = claim.patient_age // 10
+        if bucket not in self.age_seeds: self.age_seeds[bucket] = np.random.randn(self.dim)
+        v_age = self.age_seeds[bucket]
         vec = v_cpt + v_dx + v_mod + v_age
         return vec / (np.linalg.norm(vec) + 1e-10)
 
-    def cpt_codes_vec(self, code):
-        if code not in self.cpt_proj: return np.zeros(self.dim)
-        return self.cpt_proj[code]
+# --- Agents ---
+
+class BaseAgent(ABC):
+    def __init__(self, name: str):
+        self.name = name
+        self.projector = SymbolicProjector()
+        
+    @abstractmethod
+    def process(self, claim: Claim) -> Tuple[str, float]:
+        pass
     
-    def dx_codes_vec(self, code):
-        if code not in self.dx_proj: return np.zeros(self.dim)
-        return self.dx_proj[code]
+    @abstractmethod
+    def learn(self, claim: Claim, outcome: float):
+        pass
 
-    def mod_codes_vec(self, code):
-        if code not in self.mod_proj: return np.zeros(self.dim)
-        return self.mod_proj[code]
-
-
-class HealthcareBEM:
+class BEMAgent(BaseAgent):
     def __init__(self):
-        self.projector = SymbolicProjector(dim=64)
-        self.bem = BidirectionalExperienceMemory(
-            dim=64,
-            similarity_threshold=0.85, # High threshold for specific rules
-            coverage_mode=CoverageMode.KDE
-        )
+        super().__init__("BEM")
+        # High similarity for precision
+        self.bem = BidirectionalExperienceMemory(dim=64, similarity_threshold=0.85)
         self.risk_threshold = 0.6
         
     def process(self, claim: Claim) -> Tuple[str, float]:
-        """Returns (Action, RiskScore). Action in {SUBMIT, ABSTAIN}."""
         vec = self.projector.project(claim)
         risk, _ = self.bem.risk_signal(vec)
-        
-        if risk > self.risk_threshold:
-            return "ABSTAIN", risk
+        if risk > self.risk_threshold: return "ABSTAIN", risk
         return "SUBMIT", risk
-    
+        
     def learn(self, claim: Claim, outcome: float):
         vec = self.projector.project(claim)
-        # Store experience
         self.bem.add_experience(vec, outcome, str(claim))
 
-# =============================================================================
-# 5. Simulation Loop
-# =============================================================================
+class RAGAgent(BaseAgent):
+    """
+    Retrieves Top-K failures. If any match is found > threshold, Abstain.
+    This mimics a 'Retrieval-Based Guardrail'.
+    """
+    def __init__(self):
+        super().__init__("RAG")
+        self.failures = [] # List of (embedding, claim_str)
+        self.threshold = 0.85 # Same as BEM sim threshold
+        self.k = 5
+        
+    def process(self, claim: Claim) -> Tuple[str, float]:
+        vec = self.projector.project(claim)
+        # Naive linear scan for top-k (simulation scale is small)
+        if not self.failures: return "SUBMIT", 0.0
+        
+        sims = [np.dot(vec, f_vec) for f_vec, _ in self.failures]
+        if not sims: return "SUBMIT", 0.0
+        
+        max_sim = max(sims)
+        if max_sim > self.threshold:
+            # RAG says: "This looks like a known failure"
+            return "ABSTAIN", max_sim
+        return "SUBMIT", max_sim
+        
+    def learn(self, claim: Claim, outcome: float):
+        if outcome < 0:
+            vec = self.projector.project(claim)
+            self.failures.append((vec, str(claim)))
 
-def run_simulation(n_claims: int = 2000):
-    print(f"Starting Healthcare Simulation (N={n_claims})...")
+class NEPAgent(BaseAgent):
+    """
+    Novelty Detection (NEP).
+    Abstains if coverage (density) is low.
+    Assumes low density = Risk.
+    Does NOT use failure labels directly for decision, only coverage.
+    """
+    def __init__(self):
+        super().__init__("NEP")
+        self.bem = BidirectionalExperienceMemory(dim=64, coverage_mode=CoverageMode.KDE)
+        self.coverage_threshold = 0.3 # If coverage < 0.3, Abstain
+        
+    def process(self, claim: Claim) -> Tuple[str, float]:
+        vec = self.projector.project(claim)
+        success, _ = self.bem.success_signal(vec) # Unused
+        risk, _ = self.bem.risk_signal(vec) # Unused
+        coverage = self.bem.coverage_signal(vec)
+        
+        if coverage < self.coverage_threshold:
+            return "ABSTAIN", (1.0 - coverage) # Inverse coverage as risk
+        return "SUBMIT", (1.0 - coverage)
+        
+    def learn(self, claim: Claim, outcome: float):
+        # NEP simply observes distribution
+        vec = self.projector.project(claim)
+        self.bem.add_experience(vec, outcome, str(claim))
+
+
+def run_simulation(n_claims: int = 1500):
+    print(f"Starting Multi-Agent Simulation (N={n_claims})...")
     
-    generator = ClaimGenerator()
+    gen = ClaimGenerator()
     payer = PayerEngine()
-    agent = HealthcareBEM()
     
-    history = []
+    agents = [BEMAgent(), RAGAgent(), NEPAgent()]
     
-    # Metrics
-    window_size = 100
-    rejection_rates = []
-    abstain_rates = []
+    # Store results per agent
+    results = {a.name: {'rej': [], 'abs': []} for a in agents}
+    history = {a.name: {'outcomes': [], 'actions': []} for a in agents}
     
-    recent_outcomes = [] # 1=Paid, 0=Rejected (for submitted claims)
-    recent_actions = [] # 1=Abstain, 0=Submit
+    window = 100
     
-    for i in range(n_claims):
-        claim = generator.generate(i)
+    # Use SAME random seed for claim generation per step could be tricky if we want them to see SAME claims.
+    # We will generate a list of claims upfront.
+    claims = [gen.generate(i) for i in range(n_claims)]
+    
+    for i, claim in enumerate(claims):
         
-        # 1. Agent Decision
-        action, risk = agent.process(claim)
+        # Ground truth (what happens if submitted)
+        gt_outcome, reason = payer.adjudicate(claim)
         
-        # 2. Outcome
-        if action == "ABSTAIN":
-            # Human review simulates "fixing" the claim or confirming rejection
-            # For simplicity, we assume human review catches the error (costly but safe)
-            # We don't send to payer, so no rejection recorded.
-            # But we query payer "offline" to learn.
-            outcome, reason = payer.adjudicate(claim)
-            final_status = "ABSTAINED"
-            recent_actions.append(1)
-        else:
-            # Submit to payer
-            outcome, reason = payer.adjudicate(claim)
-            final_status = "PAID" if outcome > 0 else "REJECTED"
-            recent_actions.append(0)
+        for agent in agents:
+            # Decision
+            action, risk = agent.process(claim)
             
-            if final_status == "REJECTED":
-                recent_outcomes.append(0)
+            # Record Action
+            if action == "ABSTAIN":
+                history[agent.name]['actions'].append(1.0)
+                # If abstained, we assume humans catch it (Safe)
+                # Effective outcome = 1.0 (Safe)? Or do we count it as "Handled"?
+                # Rejection Rate = (Failures) / (Total).
+                # If Abstained and it WAS a failure -> Success (Safe).
+                # If Abstained and it WAS valid -> False Positive (Cost).
+                #
+                # Here we plot "Rejection Rate of Sent Claims" vs "Abstain Rate".
+                if gt_outcome < 0:
+                    history[agent.name]['outcomes'].append(1.0) # Caught!
+                else:
+                    history[agent.name]['outcomes'].append(1.0) # Valid claim held back (Safe but costly)
             else:
-                recent_outcomes.append(1)
-        
-        # 3. Learn (BEM learns from ALL outcomes, even if abstained/simulated)
-        agent.learn(claim, outcome)
-        
-        history.append({
-            "id": i,
-            "cpt": claim.cpt_code,
-            "risk": risk,
-            "action": action,
-            "status": final_status,
-            "reason": reason
-        })
-        
-        # 4. Metrics (Rolling Window)
-        if len(recent_outcomes) > window_size: recent_outcomes.pop(0)
-        if len(recent_actions) > window_size: recent_actions.pop(0)
-        
+                history[agent.name]['actions'].append(0.0)
+                # Submitted
+                if gt_outcome > 0:
+                    history[agent.name]['outcomes'].append(1.0) # Paid
+                else:
+                    history[agent.name]['outcomes'].append(0.0) # Rejected (Failure)
+            
+            # Learn
+            agent.learn(claim, gt_outcome)
+            
+        # Logging
         if i % 50 == 0 and i > 0:
-            rej_rate = 1.0 - (sum(recent_outcomes) / len(recent_outcomes) if recent_outcomes else 1.0)
-            abs_rate = sum(recent_actions) / len(recent_actions) if recent_actions else 0.0
+            for agent in agents:
+                acts = history[agent.name]['actions'][-window:]
+                outs = history[agent.name]['outcomes'][-window:]
+                
+                abstain_rate = sum(acts) / len(acts)
+                # Failure Rate = 1 - Success Rate
+                # Success Rate = sum(outs) / len(outs)
+                failure_rate = 1.0 - (sum(outs) / len(outs))
+                
+                results[agent.name]['rej'].append(failure_rate)
+                results[agent.name]['abs'].append(abstain_rate)
             
-            rejection_rates.append(rej_rate)
-            abstain_rates.append(abs_rate)
-            
-            print(f"Step {i}: Rejection Rate={rej_rate:.2f}, Abstain Rate={abs_rate:.2f}")
+            # Print BEM stats as proxy
+            print(f"Step {i}: BEM Fail={results['BEM']['rej'][-1]:.2f} Abs={results['BEM']['abs'][-1]:.2f}")
 
-    # Plotting
-    plt.figure(figsize=(10, 6))
-    steps = np.arange(len(rejection_rates)) * 50
-    plt.plot(steps, rejection_rates, label="Rejection Rate (Submitted)", color="red")
-    plt.plot(steps, abstain_rates, label="Human Review Rate", color="blue", linestyle="--")
-    plt.xlabel("Claims Processed")
-    plt.ylabel("Rate")
-    plt.title("ALFM-BEM Learning Curve: Healthcare Claims")
+    # Plot
+    plt.figure(figsize=(12, 5))
+    steps = np.arange(len(results['BEM']['rej'])) * 50
+    
+    # Subplot 1: Failure Rate (Lower is Better)
+    plt.subplot(1, 2, 1)
+    for name in results:
+        plt.plot(steps, results[name]['rej'], label=name, linewidth=2)
+    plt.title("Failure Rate (Risk)")
+    plt.xlabel("Claims")
+    plt.ylabel("Failure Rate")
     plt.legend()
     plt.grid(True, alpha=0.3)
-    plt.savefig("learning_curve.pdf")
-    print("Saved learning_curve.pdf")
     
-    # Analysis
-    df = pd.DataFrame(history)
-    print("\nTop Rejection Reasons (Initial):")
-    print(df[df.index < 200][df.status == "REJECTED"].reason.value_counts())
+    # Subplot 2: Abstention Rate (Cost)
+    plt.subplot(1, 2, 2)
+    for name in results:
+        plt.plot(steps, results[name]['abs'], label=name, linewidth=2, linestyle='--')
+    plt.title("Abstention Rate (Cost)")
+    plt.xlabel("Claims")
+    plt.ylabel("Abstain Rate")
+    plt.legend()
+    plt.grid(True, alpha=0.3)
     
-    print("\nTop Rejection Reasons (Final):")
-    print(df[df.index > n_claims - 200][df.status == "REJECTED"].reason.value_counts())
+    plt.tight_layout()
+    plt.savefig("healthcare_comparison.pdf")
+    print("Saved healthcare_comparison.pdf")
 
 if __name__ == "__main__":
     run_simulation()

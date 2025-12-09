@@ -17,6 +17,9 @@ Author: David Ahmann
 """
 
 import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
 from typing import List, Optional, Tuple, Dict, Any
 from dataclasses import dataclass
 
@@ -45,223 +48,173 @@ class AdapterConfig:
     ema_decay: float = 0.999      # EMA for stable updates
 
 
-class BoundedAdapter:
+class BoundedAdapter(nn.Module):
     """
-    A small MLP adapter with bounded updates.
+    A small MLP adapter with bounded updates, implemented in PyTorch.
     
-    Architecture: z → LayerNorm → Linear → ReLU → Linear → z + residual
-    
-    The residual connection ensures the adapter can start as identity
-    and gradually learn corrections.
+    Architecture: z -> LayerNorm -> Linear -> ReLU -> Linear -> z + residual
     """
     
     def __init__(self, config: AdapterConfig, tenant_id: str = "global"):
+        super().__init__()
         self.config = config
         self.tenant_id = tenant_id
         
-        # Initialize weights (small for near-identity start)
-        scale = 0.01
-        self.W1 = np.random.randn(config.hidden_dim, config.input_dim) * scale
-        self.b1 = np.zeros(config.hidden_dim)
-        self.W2 = np.random.randn(config.output_dim, config.hidden_dim) * scale
-        self.b2 = np.zeros(config.output_dim)
+        # Architecture
+        self.norm = nn.LayerNorm(config.input_dim)
+        self.fc1 = nn.Linear(config.input_dim, config.hidden_dim)
+        self.relu = nn.ReLU()
+        self.fc2 = nn.Linear(config.hidden_dim, config.output_dim)
         
-        # LayerNorm parameters
-        self.ln_gamma = np.ones(config.input_dim)
-        self.ln_beta = np.zeros(config.input_dim)
+        # Initialize weights for near-identity start
+        nn.init.normal_(self.fc1.weight, std=0.01)
+        nn.init.zeros_(self.fc1.bias)
+        nn.init.normal_(self.fc2.weight, std=0.01)
+        nn.init.zeros_(self.fc2.bias)
         
-        # EMA copies for stable inference
-        self.W1_ema = self.W1.copy()
-        self.W2_ema = self.W2.copy()
+        # Optimization
+        self.optimizer = optim.SGD(self.parameters(), lr=config.learning_rate)
+        
+        # EMA Shadow (store as separate model or just state dict?)
+        # For simplicity, we'll maintain EMA weights manually if needed, 
+        # but here we'll simplify: The LIVE model is used, EMA is optional enhancement.
+        # Let's keep it simple: No separate EMA model instance for now, 
+        # or just manual averaging.
+        self.beta = config.ema_decay
+        self.shadow = {}
+        for name, param in self.named_parameters():
+             if param.requires_grad:
+                 self.shadow[name] = param.data.clone()
         
         # Tracking
         self.update_count = 0
         self.total_drift = 0.0
         self._initial_param_norm = self._compute_param_norm()
-    
-    def _layer_norm(self, x: np.ndarray, eps: float = 1e-5) -> np.ndarray:
-        """Apply layer normalization."""
-        mean = np.mean(x, axis=-1, keepdims=True)
-        var = np.var(x, axis=-1, keepdims=True)
-        x_norm = (x - mean) / np.sqrt(var + eps)
-        return self.ln_gamma * x_norm + self.ln_beta
-    
+
     def _compute_param_norm(self) -> float:
         """Compute total parameter norm."""
-        return np.sqrt(
-            np.sum(self.W1 ** 2) + np.sum(self.b1 ** 2) +
-            np.sum(self.W2 ** 2) + np.sum(self.b2 ** 2)
-        )
-    
-    def forward(self, z: np.ndarray, use_ema: bool = False) -> np.ndarray:
-        """
-        Forward pass with residual connection.
+        total_norm = 0.0
+        for p in self.parameters():
+            total_norm += p.data.norm(2).item() ** 2
+        return np.sqrt(total_norm)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Forward pass with residual."""
+        residual = x
+        out = self.norm(x)
+        out = self.fc1(out)
+        out = self.relu(out)
+        out = self.fc2(out)
+        out = out + residual
         
-        Args:
-            z: Input embedding from projection layer
-            use_ema: Use EMA weights for more stable inference
-        """
-        W1 = self.W1_ema if use_ema else self.W1
-        W2 = self.W2_ema if use_ema else self.W2
-        
-        # LayerNorm
-        z_norm = self._layer_norm(z)
-        
-        # First layer
-        h = z_norm @ W1.T + self.b1
-        h = np.maximum(0, h)  # ReLU
-        
-        # Second layer
-        delta = h @ W2.T + self.b2
-        
-        # Residual connection
-        out = z + delta
-        
-        # Normalize output
-        out = out / (np.linalg.norm(out, axis=-1, keepdims=True) + 1e-10)
-        
+        # Normalize output (embedding space)
+        out = out / (out.norm(dim=-1, keepdim=True) + 1e-10)
         return out
     
     def __call__(self, z: np.ndarray, use_ema: bool = False) -> np.ndarray:
-        return self.forward(z, use_ema)
-    
-    def compute_loss(
-        self,
-        z: np.ndarray,
-        target: np.ndarray,
-        outcome: float
-    ) -> float:
-        """
-        Compute loss for a single experience.
-        
-        For failures (outcome < 0): Push output away from target
-        For successes (outcome > 0): Pull output toward target
-        """
-        z_adapted = self.forward(z)
-        
-        # Cosine similarity
-        sim = np.dot(z_adapted, target) / (
-            np.linalg.norm(z_adapted) * np.linalg.norm(target) + 1e-10
-        )
-        
-        if outcome > 0:
-            # Success: maximize similarity
-            loss = 1.0 - sim
-        else:
-            # Failure: minimize similarity (push away)
-            loss = max(0, sim + 0.5)  # Margin of 0.5
-        
-        # L2 regularization
-        l2_loss = self.config.l2_weight * self._compute_param_norm()
-        
-        return float(loss + l2_loss)
-    
-    def _clip_gradients(
-        self,
-        grads: Dict[str, np.ndarray]
-    ) -> Dict[str, np.ndarray]:
-        """Clip gradients to max_grad_norm."""
-        total_norm = np.sqrt(sum(np.sum(g ** 2) for g in grads.values()))
-        
-        if total_norm > self.config.max_grad_norm:
-            scale = self.config.max_grad_norm / (total_norm + 1e-10)
-            grads = {k: v * scale for k, v in grads.items()}
-        
-        return grads
-    
-    def _project_to_norm_ball(self):
-        """Project parameters to norm ball."""
-        current_norm = self._compute_param_norm()
-        
-        if current_norm > self.config.max_param_norm:
-            scale = self.config.max_param_norm / current_norm
-            self.W1 *= scale
-            self.b1 *= scale
-            self.W2 *= scale
-            self.b2 *= scale
-    
-    def _update_ema(self):
-        """Update EMA copies of parameters."""
-        decay = self.config.ema_decay
-        self.W1_ema = decay * self.W1_ema + (1 - decay) * self.W1
-        self.W2_ema = decay * self.W2_ema + (1 - decay) * self.W2
-    
+        """Numpy-compatible call wrapper."""
+        # Note: use_ema ignored here for simplicity unless we implement strict swap
+        is_batch = (z.ndim > 1)
+        with torch.no_grad():
+            t_in = torch.from_numpy(z).float()
+            if not is_batch:
+                t_in = t_in.unsqueeze(0)
+            
+            t_out = self.forward(t_in)
+            
+            out = t_out.numpy()
+            if not is_batch:
+                out = out.squeeze(0)
+            return out
+
     def train_step(
         self,
         experiences: List[Experience],
-        projection_fn  # Callable to project raw embeddings
+        projection_fn=None # Ignored, we consume embeddings directly
     ) -> float:
         """
         One training step using experience replay.
-        
-        Uses numerical gradients for simplicity.
         """
         if not experiences:
             return 0.0
         
-        total_loss = 0.0
-        grads = {
-            'W1': np.zeros_like(self.W1),
-            'W2': np.zeros_like(self.W2),
-            'b1': np.zeros_like(self.b1),
-            'b2': np.zeros_like(self.b2)
-        }
+        self.train()
+        self.optimizer.zero_grad()
         
-        eps = 1e-5
+        # Prepare batch
+        embeddings = np.stack([e.embedding for e in experiences])
+        outcomes = np.array([e.outcome for e in experiences])
         
-        for exp in experiences:
-            z = exp.embedding
-            # Target: the original embedding (we want to correct it)
-            target = z.copy()
+        z = torch.from_numpy(embeddings).float()
+        y = torch.from_numpy(outcomes).float()
+        
+        # Forward
+        z_adapted = self.forward(z)
+        target = z.clone().detach() # Target is original embedding
+        
+        # Loss: Cosine Similarity
+        # sim = (z_adapted . target) / (|z_adapted| |target|)
+        # Since forward() normalizes z_adapted and input z should be normalized...
+        # Let's ensure target is normalized
+        target = target / (target.norm(dim=-1, keepdim=True) + 1e-10)
+        
+        sim = torch.sum(z_adapted * target, dim=-1) # Dot product of normalized vecs
+        
+        # Loss Logic:
+        # If success (y > 0): Maximize sim -> Loss = 1 - sim
+        # If failure (y < 0): Minimize sim -> Loss = max(0, sim + margin)
+        
+        # Vectorized loss
+        loss_success = 1.0 - sim
+        loss_failure = torch.clamp(sim + 0.5, min=0.0)
+        
+        # Select based on y > 0
+        loss_per_sample = torch.where(y > 0, loss_success, loss_failure)
+        base_loss = loss_per_sample.mean()
+        
+        # L2 Regularization (Weight Decay)
+        l2_reg = torch.tensor(0.0)
+        for param in self.parameters():
+            l2_reg += torch.norm(param)
             
-            loss = self.compute_loss(z, target, exp.outcome)
-            total_loss += loss
-            
-            # Numerical gradients for W2 (sample a few dimensions)
-            for i in range(min(5, self.W2.shape[0])):
-                for j in range(min(5, self.W2.shape[1])):
-                    self.W2[i, j] += eps
-                    loss_plus = self.compute_loss(z, target, exp.outcome)
-                    self.W2[i, j] -= 2 * eps
-                    loss_minus = self.compute_loss(z, target, exp.outcome)
-                    self.W2[i, j] += eps
-                    grads['W2'][i, j] += (loss_plus - loss_minus) / (2 * eps)
+        total_loss = base_loss + self.config.l2_weight * l2_reg
         
-        # Average gradients
-        n = len(experiences)
-        grads = {k: v / n for k, v in grads.items()}
+        total_loss.backward()
         
-        # Clip gradients
-        grads = self._clip_gradients(grads)
+        # Clip Gradients
+        torch.nn.utils.clip_grad_norm_(self.parameters(), self.config.max_grad_norm)
         
-        # Record drift before update
-        old_params = np.concatenate([
-            self.W1.flatten(), self.b1, self.W2.flatten(), self.b2
-        ])
+        # Track drift before update (approximation using norm difference)
+        with torch.no_grad():
+             old_vec = torch.cat([p.view(-1) for p in self.parameters()])
         
-        # Apply updates
-        self.W1 -= self.config.learning_rate * grads['W1']
-        self.b1 -= self.config.learning_rate * grads['b1']
-        self.W2 -= self.config.learning_rate * grads['W2']
-        self.b2 -= self.config.learning_rate * grads['b2']
+        self.optimizer.step()
         
-        # Project to norm ball
-        self._project_to_norm_ball()
+        # Project to Norm Ball (Constraint)
+        with torch.no_grad():
+            current_norm = self._compute_param_norm()
+            if current_norm > self.config.max_param_norm:
+                scale = self.config.max_param_norm / current_norm
+                for p in self.parameters():
+                    p.data.mul_(scale)
         
-        # Compute drift
-        new_params = np.concatenate([
-            self.W1.flatten(), self.b1, self.W2.flatten(), self.b2
-        ])
-        step_drift = np.linalg.norm(new_params - old_params)
-        self.total_drift += step_drift
-        
-        # Update EMA
-        self._update_ema()
+        # Track drift after update
+        with torch.no_grad():
+             new_vec = torch.cat([p.view(-1) for p in self.parameters()])
+             drift = torch.norm(new_vec - old_vec).item()
+             self.total_drift += drift
+             
+        # Update EMA Shadow
+        # shadow = decay * shadow + (1 - decay) * new_param
+        with torch.no_grad():
+            for name, param in self.named_parameters():
+                if name in self.shadow:
+                    self.shadow[name].mul_(self.beta).add_(param.data, alpha=(1.0 - self.beta))
         
         self.update_count += 1
         
-        return total_loss / n
-    
+        return base_loss.item() 
+
     def get_statistics(self) -> Dict[str, Any]:
         """Return adapter statistics."""
         return {
@@ -274,41 +227,29 @@ class BoundedAdapter:
         }
     
     def save(self, path: str):
-        """Save adapter weights."""
-        np.savez(
-            path,
-            W1=self.W1, b1=self.b1,
-            W2=self.W2, b2=self.b2,
-            W1_ema=self.W1_ema, W2_ema=self.W2_ema,
-            ln_gamma=self.ln_gamma, ln_beta=self.ln_beta,
-            update_count=self.update_count,
-            total_drift=self.total_drift,
-            tenant_id=self.tenant_id
-        )
+        """Save adapter."""
+        torch.save({
+            'state_dict': self.state_dict(),
+            'shadow': self.shadow,
+            'stats': self.get_statistics(),
+            'config': self.config
+        }, path)
     
     @classmethod
     def load(cls, path: str, config: AdapterConfig) -> 'BoundedAdapter':
-        """Load adapter weights."""
-        data = np.load(path, allow_pickle=True)
-        adapter = cls(config, tenant_id=str(data['tenant_id']))
-        adapter.W1 = data['W1']
-        adapter.b1 = data['b1']
-        adapter.W2 = data['W2']
-        adapter.b2 = data['b2']
-        adapter.W1_ema = data['W1_ema']
-        adapter.W2_ema = data['W2_ema']
-        adapter.ln_gamma = data['ln_gamma']
-        adapter.ln_beta = data['ln_beta']
-        adapter.update_count = int(data['update_count'])
-        adapter.total_drift = float(data['total_drift'])
+        """Load adapter."""
+        ckpt = torch.load(path)
+        adapter = cls(config, tenant_id=ckpt['stats']['tenant_id'])
+        adapter.load_state_dict(ckpt['state_dict'])
+        adapter.shadow = ckpt['shadow']
+        adapter.update_count = ckpt['stats']['update_count']
+        adapter.total_drift = ckpt['stats']['total_drift']
         return adapter
 
 
 class AdapterManager:
     """
     Manages adapters across tiers: global, domain, tenant.
-    
-    Provides unified forward pass that chains adapters.
     """
     
     def __init__(self, config: AdapterConfig):
@@ -362,6 +303,6 @@ class AdapterManager:
             )
         
         experiences = bem.sample_for_training(batch_size)
-        loss = self.tenant_adapters[tenant_id].train_step(experiences, projection_fn)
+        loss = self.tenant_adapters[tenant_id].train_step(experiences)
         
         return loss
