@@ -55,7 +55,7 @@
 \begin{document}
 
 \title{%
-Coherism: A Variational Feedback Framework for Quantum Information and Spacetime Geometry
+Coherence-Dependent Backreaction in Semiclassical and Analog Gravity: Testable Predictions from Informational Stress
 }
 
 \author{David Ahmann}
@@ -68,15 +68,7 @@ Coherism: A Variational Feedback Framework for Quantum Information and Spacetime
 % ----------------------------------------------------------------------
 
 \begin{abstract}
-We propose a variational framework that couples quantum information and spacetime geometry through a single functional of the quantum state $\rho$ and the metric $g_{\mu\nu}$. The central object is a \emph{coherence functional} $\Cfunc[g,\rho;\mu]$, built from (i) the relative entropy of $\rho$ with respect to a locally geometry-adapted reference state $\sigma[g]$, (ii) a coarse-grained generalized entropy inside causal diamonds, and (iii) a scale-dependent geometric action. Variation with respect to $g_{\mu\nu}$ defines an \emph{informational stress tensor} $\Tmn[g,\rho;\mu]$ that augments the semiclassical Einstein equations,
-\begin{equation*}
-    G_{\mu\nu} + \Lambda g_{\mu\nu}
-    = 8\pi G\big(\langle T_{\mu\nu} \rangle_{\rho}
-    + \Tmn[g,\rho;\mu]\big),
-\end{equation*}
-while variation with respect to $\rho$ yields a geometry-dependent open-system evolution
-$\dot{\rho} = -i[H,\rho] + \mathcal{L}_g[\rho]$.
-We derive explicit expressions for $\Tmn$ in Schwarzschild and FRW geometries, provide two independent derivations of the coupling constant $\kappa$ (holographic and entropic), and solve the coupled equations analytically for a Gaussian wavepacket in Rindler spacetime. The Lindblad generator $\mathcal{L}_g$ is derived from first principles using the Unruh-DeWitt detector framework. Crucially, we show that analog gravity systems (BEC sonic horizons) provide an enhancement of $\sim 60$ orders of magnitude in the effective coupling, yielding predictions---density modulations $\delta\rho/\rho_0 \sim 10^{-6}$---within reach of current experiments. The framework reproduces semiclassical gravity and stochastic gravity in appropriate limits while predicting coherence-dependent deviations from the Weak Equivalence Principle.
+We derive a testable prediction for analog gravity experiments in Bose-Einstein condensates: coherent phonon injection near a sonic horizon produces density modulations $\delta\rho/\rho_0 \sim 10^{-6}$, while thermal phonon injection of identical energy produces no such effect. This coherent-versus-thermal signature---measurable with current BEC technology at laboratories including MIT, JILA, and Technion---constitutes a qualitative test absent in competing frameworks (Penrose-Di\'{o}si, stochastic gravity). The prediction emerges from an \emph{informational stress tensor} $\Tmn$ that we derive by varying a coherence functional $\Cfunc[g,\rho;\mu]$ built from relative entropy, generalized entropy, and a geometric action. In analog systems, the effective coupling $\kappa_{\mathrm{eff}} \sim 10^{-8}$ is 62 orders of magnitude larger than the gravitational coupling, bringing predictions within experimental reach. We provide: (i) explicit derivations of $\Tmn$ for Schwarzschild, FRW, Rindler, and acoustic geometries; (ii) two independent derivations of $\kappa$ (holographic and entropic); (iii) a first-principles derivation of the Lindblad generator from Unruh-DeWitt dynamics; and (iv) an experimental protocol with falsification criteria. The framework reduces to semiclassical gravity when $\rho \approx \sigma[g]$ and predicts coherence-dependent Weak Equivalence Principle violations ($\eta_{\mathrm{coh}} \sim 10^{-15}$) for gravitational tests. A null result at $\delta\rho/\rho_0 < 10^{-7}$ for the BEC experiment would falsify the acoustic implementation.
 \end{abstract}
 
 \maketitle
@@ -92,34 +84,43 @@ We derive explicit expressions for $\Tmn$ in Schwarzschild and FRW geometries, p
 \label{sec:intro}
 % ======================================================================
 
-General relativity (GR) and quantum mechanics (QM) are two of the most successful theories in physics, yet they remain conceptually and mathematically misaligned.
-GR describes spacetime as a smooth, dynamical geometry obeying nonlinear Einstein equations, while QM describes matter and radiation through linear evolution in Hilbert space.
-Semiclassical gravity uses the expectation value $\langle T_{\mu\nu}\rangle$ as a source in Einstein's equations, but this hybrid description is widely regarded as incomplete at high energies or in regimes where quantum fluctuations of stress--energy are large.
+Can analog gravity experiments distinguish quantum coherence from thermal noise? We show that a minimal extension of semiclassical gravity predicts \emph{yes}---and that this prediction is testable with current Bose-Einstein condensate (BEC) technology.
 
-Over the past decades, several lines of work have shifted the focus from quantizing the metric to understanding the \emph{information-theoretic} structure underlying gravity.
-These include thermodynamic derivations of Einstein's equations~\cite{Jacobson1995}, entanglement-based formulations in AdS/CFT, quantum energy conditions, stochastic gravity, and relativistic quantum information.
-Common to these approaches is the idea that entropy, entanglement, and modular structure play a central role in the emergence or consistency of spacetime geometry.
+The key result is this: when coherent phonons are injected toward a sonic horizon in a BEC, our framework predicts a density modulation $\delta\rho/\rho_0 \sim 10^{-6}$ near the horizon. When \emph{thermal} phonons of identical energy are injected, no such modulation appears. This coherent-versus-thermal signature is absent in standard semiclassical gravity (where both produce identical $\langle T_{\mu\nu}\rangle$), absent in Penrose-Di\'{o}si models (which depend on superposition size, not coherence), and absent in stochastic gravity (which treats both states identically). The effect is within reach of current experiments at MIT~\cite{Ketterle2002}, JILA~\cite{Cornell1995}, Technion~\cite{Steinhauer2016}, and MPQ~\cite{Bloch2008}.
 
-In parallel, interpretations of semiclassical gravity inspired by Penrose~\cite{Penrose1996}, Diósi~\cite{Diosi1989} and others suggest that gravity may be sensitive not only to \emph{energy density} but also to \emph{quantum superposition and coherence}.
-These ideas are still tentative but have motivated experimental proposals in atomic interferometry and optomechanics that test gravity's response to coherent quantum states.
+\subsection{The Physical Question}
 
-This work is motivated by a simple, structural question:
-\emph{Can one write a covariant variational principle in which the metric and quantum state co-evolve so as to reduce a precisely defined notion of informational mismatch between them?}
-If so, one might hope to:
-(i) recover GR and standard QM as limiting cases;
-(ii) identify an additional ``informational'' stress tensor that encodes how persistent coherence feeds back on geometry; and
-(iii) derive concrete, albeit small, deviations from the Weak Equivalence Principle or from $\Lambda$CDM cosmology that are, in principle, observable.
+Semiclassical gravity uses the expectation value $\langle T_{\mu\nu}\rangle$ as a source in Einstein's equations~\cite{HuVerdaguer2008}. This hybrid description treats two quantum states identically if they have the same stress-energy expectation value---even if one is a pure coherent state and the other is an incoherent thermal mixture. But should gravity truly be blind to this distinction?
 
-We call the resulting framework \emph{Coherism}.
-The name emphasizes the focus on \emph{relative entropy}, understood as a measure of distinguishability, as a dynamical player in the geometry--state feedback loop.
+Several lines of evidence suggest otherwise. Thermodynamic derivations of Einstein's equations~\cite{Jacobson1995} and entanglement-based formulations in AdS/CFT implicate entropy and information geometry in the structure of spacetime. Penrose~\cite{Penrose1996} and Di\'{o}si~\cite{Diosi1989} proposed that gravity couples to quantum superposition in ways beyond $\langle T_{\mu\nu}\rangle$. More recently, relativistic quantum information studies have shown that curved spacetime modifies coherence properties of quantum fields.
+
+\subsection{Our Approach and Main Results}
+
+We construct a \emph{coherence functional} $\Cfunc[g,\rho;\mu]$ that measures the informational mismatch between a quantum state $\rho$ and a geometry-adapted reference state $\sigma[g]$. Variation with respect to the metric defines an \emph{informational stress tensor} $\Tmn$ that augments the semiclassical Einstein equations:
+\begin{equation}
+    G_{\mu\nu} + \Lambda g_{\mu\nu}
+    = 8\pi G\big(\langle T_{\mu\nu} \rangle_{\rho}
+    + \Tmn[g,\rho;\mu]\big).
+    \label{eq:intro-einstein}
+\end{equation}
+When $\rho \approx \sigma[g]$, we have $\Tmn \approx 0$ and standard semiclassical gravity is recovered. When $\rho$ is a coherent state distinct from the thermal reference, $\Tmn \neq 0$ and new effects appear.
+
+The framework, which we call \emph{Coherism}, yields the following concrete results:
+\begin{enumerate}
+    \item \textbf{Analog gravity prediction (primary test):} In BEC sonic horizons, $\kappa_{\mathrm{eff}} \sim 10^{-8}$ is 62 orders of magnitude larger than the gravitational coupling, yielding $\delta\rho/\rho_0 \sim 10^{-6}$---measurable with current phase-contrast imaging.
+    \item \textbf{Gravitational predictions:} WEP violation $\eta_{\mathrm{coh}} \sim 10^{-15}$, atom interferometer phase shift $\delta\phi/\phi \sim 10^{-11}$ (both 2--3 orders below current sensitivity).
+    \item \textbf{Falsification criterion:} A null result at $\delta\rho/\rho_0 < 10^{-7}$ for coherent phonon injection would falsify the acoustic implementation.
+    \item \textbf{Distinguishing test:} Coherent vs.\ thermal states of identical energy produce different $\Tmn$---a qualitative signature absent in competing frameworks.
+\end{enumerate}
+
+\subsection{Framework Overview}
 
 The basic picture is sketched in Fig.~\ref{fig:feedback-loop}.
 At a given coarse-graining scale $\mu^{-1}$, the metric $g_{\mu\nu}$ induces a family of local reference states $\sigma[g]$ on causal diamonds.
 The actual quantum state $\rho$ may differ from $\sigma[g]$ in its entanglement and correlation structure.
 This mismatch is quantified by a local relative-entropy density $s_{\mathrm{rel}}(x;\mu)$ and a generalized entropy density $s_{\mathrm{tot}}(x;\mu)$.
-We define a global coherence functional $\Cfunc[g,\rho;\mu]$ built from these densities together with a geometric action.
-Stationarity of $\Cfunc$ under variations of $g_{\mu\nu}$ and $\rho$ then yields coupled evolution equations:
-an Einstein-like equation sourced by both $\langle T_{\mu\nu}\rangle$ and an informational stress $\Tmn$, and a Lindblad-type equation in which geometry enters not only through $H[g]$ but also through a dissipative term $\mathcal{L}_g[\rho]$ that drives $\rho$ toward compatibility with $\sigma[g]$.
+Stationarity of $\Cfunc$ under variations of $g_{\mu\nu}$ and $\rho$ yields coupled evolution equations:
+an Einstein-like equation sourced by both $\langle T_{\mu\nu}\rangle$ and an informational stress $\Tmn$, and a Lindblad-type equation in which geometry enters through a dissipative term $\mathcal{L}_g[\rho]$ that drives $\rho$ toward compatibility with $\sigma[g]$.
 
 \begin{figure*}[t]
     \centering
@@ -141,17 +142,9 @@ an Einstein-like equation sourced by both $\langle T_{\mu\nu}\rangle$ and an inf
     \label{fig:feedback-loop}
 \end{figure*}
 
-The goals of this paper are ambitious but concrete.
-We aim to:
-(i) define $\Cfunc[g,\rho;\mu]$ in 3+1 dimensions using objects that are already well-defined in quantum field theory on curved spacetime;
-(ii) derive explicit expressions for $\Tmn$ in physically relevant geometries (Schwarzschild, FRW, Rindler);
-(iii) derive the coupling constant $\kappa$ from first principles via two independent routes (holographic and entropic);
-(iv) solve the coupled equations analytically for a worked dynamical example;
-(v) derive the Lindblad generator $\mathcal{L}_g$ from the Unruh-DeWitt detector framework;
-(vi) demonstrate consistency with semiclassical and stochastic gravity limits; and
-(vii) exhibit falsifiable predictions, including analog gravity signatures within reach of current BEC experiments.
 We do not claim a UV-complete theory of quantum gravity, nor a derivation of all known laws from a single principle.
-Instead, this framework is presented as an \emph{effective field theory} (EFT) proposal for a feedback law that may organize, and slightly deform, the semiclassical frontier between GR and QM.
+This framework is presented as an \emph{effective field theory} (EFT) proposal for a feedback law that may organize, and slightly deform, the semiclassical frontier between GR and QM.
+The value of the framework will ultimately be decided by experiment---specifically, by the BEC analog gravity test described in Sec.~\ref{sec:experiments} and Appendix~\ref{appendix:analog}.
 
 The rest of the paper is organized as follows.
 In Sec.~\ref{sec:preliminaries} we review the necessary mathematical tools: causal diamonds, relative entropy, generalized entropy, and semiclassical gravity.

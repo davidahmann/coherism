@@ -1,14 +1,16 @@
 \documentclass[twoside,11pt]{article}
 
-% JMLR style
-\usepackage{jmlr2e}
+% JMLR style - use nohyperref so we can configure hyperref ourselves
+\usepackage[nohyperref]{jmlr2e}
 
-% Make links clickable and visible
-\hypersetup{
-    colorlinks=true,
-    linkcolor=blue,
-    citecolor=blue,
-    urlcolor=blue
+% Load hyperref with clickable colored links
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue,breaklinks=true]{hyperref}
+\urlstyle{same}
+
+% Make \url create clickable hyperlinks - must be done after document begins
+% to override the \providecommand in the .bbl file
+\AtBeginDocument{%
+  \renewcommand{\url}[1]{\href{#1}{\nolinkurl{#1}}}%
 }
 
 \usepackage{amsmath,amssymb,amsfonts}
@@ -16,7 +18,6 @@
 \usepackage{booktabs}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
-\usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows,positioning,calc}
