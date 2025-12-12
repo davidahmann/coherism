@@ -77,10 +77,21 @@ pdflatex alfm_bem
 
 ## Key Results
 
-1.  **Failure Retrieval** — BEM achieves F1 > 0.99 on synthetic failure modes.
-2.  **OOD Detection** — Coverage signal achieves AUC $\approx$ 1.0 for clustered OOD patterns.
-3.  **Healthcare Case Study** — ALFM-BEM reduces claim rejection rates by **88\%** (from 12.5\% to 1.5\%) by learning latent rules from binary feedback.
-4.  **Query Action** — Active clarification improves success rates by 8.0\% in high-uncertainty scenarios.
+1.  **Failure Retrieval** — BEM achieves F1 ≈ 0.59 on synthetic failure modes with success retrieval rate ≈ 0.70.
+2.  **OOD Detection** — Coverage signal achieves AUC ≈ 1.0 for clustered OOD patterns.
+3.  **Healthcare Case Study** — ALFM-BEM reduces claim rejection rates by **88%** (from 12.5% to 1.5%) by learning latent rules from binary feedback.
+4.  **Query Action** — Active clarification improves success rates by 8.0% in high-uncertainty scenarios.
+
+## Key Differentiators vs RAG
+
+| Property | RAG | BEM |
+|----------|-----|-----|
+| Stores | Documents/facts | Experiences (context + outcome) |
+| Learns from deployment | No | Yes |
+| Knows what failed | No | Yes |
+| Knows what succeeded | No | Yes |
+| OOD detection | No | Yes (coverage signal) |
+| Requires human curation | Yes | No (learns from outcomes) |
 
 ## Architecture Overview
 

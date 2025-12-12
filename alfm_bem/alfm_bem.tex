@@ -103,6 +103,25 @@ We propose ALFM-BEM, a wrapper architecture that addresses these gaps without mo
 
 \textbf{Retrieval-Augmented Generation.} RAG~\cite{Lewis2020} augments models with retrieved documents. BEM differs fundamentally: it stores experiences (context + outcome), not information. This enables learning from deployment: the system knows not just what to retrieve, but what worked and what failed in similar contexts.
 
+\begin{table}[t]
+\centering
+\caption{RAG vs. BEM: Conceptual comparison. RAG retrieves information; BEM retrieves experiences with outcomes.}
+\label{tab:rag_bem}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Property} & \textbf{RAG} & \textbf{BEM} \\
+\midrule
+Stores & Documents/facts & Experiences (context + outcome) \\
+Learns from deployment & \xmark & \cmark \\
+Knows what failed & \xmark & \cmark \\
+Knows what succeeded & \xmark & \cmark \\
+OOD detection & \xmark & \cmark~(coverage signal) \\
+Outcome-aware retrieval & \xmark & \cmark \\
+Requires human curation & \cmark & \xmark~(learns from outcomes) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \section{Architecture}
 \label{sec:arch}
 
@@ -543,14 +562,54 @@ ALFM-BEM does \textbf{not} address:
 
 ALFM-BEM is deployment infrastructure for frozen models, not a breakthrough toward AGI.
 
-\subsection{Limitations}
+\subsection{Limitations and Robustness}
+\label{sec:limitations}
+
+We discuss key assumptions, failure modes, and operational constraints.
+
+\subsubsection{Outcome Signal Reliability}
+
+BEM assumes outcome signals $o \in [-1, 1]$ are available and meaningful. This assumption has several failure modes:
+
+\textbf{Delayed feedback.} In many domains (e.g., healthcare claims, loan approvals), outcomes arrive days or weeks after inference. BEM handles this via asynchronous experience ingestion---experiences are timestamped at inference but outcomes are attached when available. The coverage signal remains valid immediately; risk/success signals update as outcomes arrive.
+
+\textbf{Noisy labels.} User feedback may be incorrect (e.g., marking a correct response as wrong). We mitigate this via: (1) confirmation thresholds requiring multiple independent confirmations for high-severity labels (Section~\ref{sec:antipoisoning}); (2) confidence decay that down-weights unconfirmed experiences over time; (3) cross-tenant consensus for global BEM updates.
+
+\textbf{Adversarial poisoning.} Malicious users could submit false outcomes to corrupt BEM. Section~\ref{sec:antipoisoning} details our multi-layered defense: anomaly detection on submission velocity, quarantine for suspicious patterns, and administrative approval for high-impact updates.
+
+\textbf{Outcome ambiguity.} Some interactions have no clear success/failure signal (e.g., open-ended conversations). BEM supports partial outcomes via the continuous spectrum; interactions without clear outcomes can be stored with $o \approx 0$ (neutral) and contribute to coverage without affecting risk/success signals.
+
+\subsubsection{Coverage Signal Failure Modes}
+
+The coverage signal detects OOD inputs as an emergent property of experience density. Known failure modes include:
+
+\textbf{False confidence (high coverage, wrong answer).} Coverage measures \emph{familiarity}, not \emph{correctness}. An input similar to many past experiences will have high coverage even if the backbone produces a wrong answer. Mitigation: the success signal provides outcome-aware confidence. High coverage with low success signal triggers the Query action.
+
+\textbf{Projection collapse.} If the contrastive projection layer maps semantically different inputs to similar embeddings, coverage becomes unreliable. We mitigate this via hard negative mining during projection training (Section~\ref{sec:arch}): experiences with divergent outcomes must map to different regions.
+
+\textbf{Distribution shift.} Gradual distribution shift can cause coverage to remain high even as the deployment distribution diverges from training. We recommend periodic coverage calibration: if mean coverage on a held-out sample drops below a threshold, the projection layer should be retrained.
+
+\textbf{Uniform OOD.} Coverage via KDE excels at detecting \emph{clustered} novel patterns (AUC $\approx$ 1.0) but has moderate performance on uniformly distributed OOD inputs (AUC $\approx$ 0.96). For domains where uniform OOD is expected, we recommend combining coverage with energy-based OOD detection on the backbone.
+
+\subsubsection{BEM Growth and Lifecycle}
+
+Memory grows with deployment, requiring lifecycle management:
+
+\textbf{Storage economics.} Each experience requires $\approx$256 bytes (64D float32 embedding + metadata). At 1M experiences, BEM requires $\approx$256MB storage. HNSW indexing adds $\approx$2$\times$ overhead. For cost-sensitive deployments, we recommend tiered storage: hot (recent, high-weight) experiences in memory, cold experiences on disk with lazy loading.
+
+\textbf{Memory pruning.} We implement time-based vacuuming: experiences older than a configurable TTL (default: 90 days) without re-confirmation are archived. High-weight experiences (frequently retrieved, strongly confirmed) are retained indefinitely. Pruning runs during maintenance windows.
+
+\textbf{Multi-tenant cost allocation.} Per-tenant BEM partitions enable usage-based billing. Each tenant's storage footprint is tracked; tenants exceeding quota receive Query actions prompting them to approve archival of old experiences.
+
+\textbf{Cold start.} New deployments have empty BEM. We provide cold-start strategies: (1) synthetic seeding from the failure taxonomy (Appendix~\ref{app:taxonomy}); (2) transfer from similar tenants (with consent); (3) conservative Consensus Engine thresholds that default to Query until coverage builds.
+
+\subsubsection{Experimental Limitations}
 
 \begin{itemize}
     \item Experiments use synthetic data in 64D; real-world validation with backbone embeddings is ongoing
-    \item OOD detection via KDE coverage is excellent for detecting novel clustered patterns but has moderate performance on uniformly distributed inputs
-    \item High-dimensional backbone embeddings (768D+) require contrastive projection for effective retrieval
+    \item Healthcare case study uses a simplified simulator; production payer rules are more complex
     \item Projection layer requires retraining when backbone changes
-    \item Memory grows with deployment; requires periodic vacuuming
+    \item Query action effectiveness depends on user willingness to provide clarification
 \end{itemize}
 
 \section{Conclusion}

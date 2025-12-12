@@ -1688,6 +1688,17 @@ This is measurable with current phase-contrast imaging.
 
 \emph{This prediction is within reach of current BEC experiments} at MIT, JILA, and MPQ.
 
+\subsection{Numerical Simulation}
+
+Figure~\ref{fig:bec-simulation} shows results from a numerical simulation of the BEC sonic horizon system using the parameters above. The simulation confirms the analytic estimate: coherent phonon injection produces a density modulation $\delta\rho/\rho_0 \approx 1.4 \times 10^{-6}$ near the horizon, while thermal phonon injection produces no signal. This is the central distinguishing prediction of the framework.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{bec_sonic_horizon_results.png}
+    \caption{\textbf{BEC sonic horizon simulation.} Left: Density modulation $|\delta\rho/\rho_0|$ as a function of radial distance from horizon for coherent phonon injection. The dashed blue line marks the predicted magnitude $10^{-6}$; the dotted red line marks the falsification threshold $10^{-7}$. Right: Comparison of maximum density modulation for coherent vs.\ thermal phonon injection. Coherent states produce $\delta\rho/\rho_0 \sim 10^{-6}$; thermal states produce zero signal. Parameters: $^{87}$Rb BEC, $c_s = 1\,\mathrm{mm/s}$, $\rho_0 = 10^{14}\,\mathrm{cm}^{-3}$, $\xi = 0.3\,\mu\mathrm{m}$, $r_H = 50\,\mu\mathrm{m}$, $N_{\mathrm{phonon}} = 10^3$.}
+    \label{fig:bec-simulation}
+\end{figure}
+
 % ----------------------------------------------------------------------
 \section{Entropic Derivation of $\kappa$}
 \label{appendix:entropic}
@@ -1982,6 +1993,8 @@ This is recovered from Eq.~\eqref{eq:lindblad-rate} in the high-temperature limi
 with $\sigma[g]$ the thermal state at temperature $T = \hbar \kappa_H / (2\pi k_B)$.
 
 \emph{This derivation is complete and first-principles.} The Lindblad structure is not an assumption---it follows from quantum field theory in curved spacetime.
+
+\emph{Non-Markovian extensions:} The Markovian approximation used here is valid for timescales $\tau \gg \Omega^{-1}$, where $\Omega$ is the detector gap. For rapidly varying geometries or strong-field regimes, non-Markovian corrections incorporating memory effects are expected to modify the dissipation timescales but not the qualitative coherence-dependence of $\Tmn$. A systematic treatment of such corrections will be presented elsewhere.
 
 % ----------------------------------------------------------------------
 \section{Uniqueness of the Reference State $\sigma[g]$}

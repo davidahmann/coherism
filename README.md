@@ -9,23 +9,26 @@ While operating at opposite ends of the abstraction spectrum—one at the theore
 ## 📂 Repository Structure
 
 ### 1. `physics/` - Coherism
-**Title:** *Coherism: A Variational Feedback Framework for Quantum Information and Spacetime Geometry*
+**Title:** *Coherence-Dependent Backreaction in Semiclassical and Analog Gravity: Testable Predictions from Informational Stress*
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17868263.svg)](https://doi.org/10.5281/zenodo.17868263)
 
-This directory contains the LaTeX source for the "Coherism" preprint.
+This directory contains the LaTeX source for the "Coherism" paper, prepared for *Classical and Quantum Gravity*.
 
-*   **The Big Idea:** Gravity is not a fundamental force, but a feedback mechanism where spacetime curves to compensate for entropic "noise" in quantum fields.
-*   **Key Concept:** The **Coherence Functional**, a mathematical tool that derives Einstein's equations by minimizing the relative entropy between a quantum state and its geometric reference.
+*   **The Big Idea:** An informational stress tensor Θ_μν augments semiclassical gravity, coupling quantum coherence to spacetime geometry in a testable way.
+*   **Key Concept:** The **Coherence Functional** built from relative entropy yields predictions distinguishing coherent from thermal quantum states.
+*   **Primary Prediction:** BEC density modulation δρ/ρ₀ ~ 10⁻⁶ for coherent phonon injection (zero for thermal)—measurable with current technology.
+*   **Falsification:** Null result at δρ/ρ₀ < 10⁻⁷ would falsify the acoustic implementation.
 *   **Key Results:**
     *   Informational stress tensor Θ_μν for Schwarzschild, FRW, Rindler, and acoustic geometries
+    *   Two independent derivations of coupling κ (holographic and entropic)
+    *   First-principles Lindblad generator from Unruh-DeWitt dynamics
     *   Unique distinguishing test: coherent vs. thermal states (η ~ 10⁻¹⁵)
-    *   Analog gravity predictions: δρ/ρ₀ ~ 10⁻⁶ within experimental reach
-    *   Reference state uniqueness via Hadamard/KMS/maximum entropy axioms
 *   **Files:**
-    *   `coherism.tex`: Main manuscript
+    *   `coherism.tex`: Main manuscript (revtex4-2, PRD format)
     *   `coherism_refs.bib`: Bibliography
-    *   `generate_data.py`: 0D QFT harmonic oscillator simulation
-    *   `coherism_frw_simulation.py`: FRW cosmology simulation demonstrating "Coherist friction"
+    *   `bec_sonic_horizon_simulation.py`: Primary experimental prediction simulation
+    *   `coherism_frw_simulation.py`: FRW cosmology simulation
+    *   `generate_data.py`: 0D QFT toy model
     *   `predictions.md`: Falsifiable predictions and experimental protocols
 
 #### 🧬 The Feedback Loop (Coherism)
@@ -81,10 +84,11 @@ This directory contains the source for the advanced ALFM-BEM architecture, exten
     *   **Query Action:** Active learning capability to request information when OOD
     *   **Bounded Adapters:** Continual learning with provable stability guarantees
 *   **Key Results:**
-    *   Failure retrieval F1 > 0.99 on synthetic failure modes
+    *   Failure retrieval F1 ≈ 0.59, success retrieval rate ≈ 0.70 (bidirectional capability RAG lacks)
     *   OOD detection AUC ≈ 1.0 for clustered patterns
     *   Healthcare case study: 88% reduction in claim rejections (12.5% → 1.5%)
     *   Query action improves success rates by 8.0% in high-uncertainty scenarios
+*   **Key Differentiator vs RAG:** BEM stores experiences with outcomes, not documents—enabling learning from deployment without human curation
 *   **Files:**
     *   `alfm_bem.tex`: JMLR-format manuscript
     *   `cover_letter.tex`: JMLR submission cover letter
