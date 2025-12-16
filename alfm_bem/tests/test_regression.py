@@ -55,24 +55,9 @@ class TestALFMBEM(unittest.TestCase):
         z = np.random.randn(self.dim)
         z /= np.linalg.norm(z)  # Normalize
         
-        # 1. Establish a high-confidence failure
-        # Add 3 identical experiences to confirm it
-        for i in range(3):
-            bem.add_experience(z, -1.0, f"failure_ctx_{i}")
-        
-        # Hack confirmation count for the last one to be 3 (or rely on logic if implemented)
-        # BEM deduplication logic increases confirmation count if context_hash matches.
-        # But we used unique hashes here. Let's just create one with confirmation=3 manually.
-        bem.experiences = []
-        exp_confirmed = Experience(
-            embedding=z,
-            outcome=-1.0,
-            context_hash="confirmed_fail",
-            timestamp=datetime.now(),
-            confirmation_count=5
-        )
-        bem.experiences.append(exp_confirmed)
-        bem._ensure_index()
+        # 1. Establish a high-confidence failure via re-confirmation
+        for _ in range(5):
+            bem.add_experience(z, -1.0, "confirmed_fail")
         
         # 2. Try to add a success with HIGH similarity (same vector)
         conflict = bem.check_conflict(z, 1.0) # Outcome 1.0 (Success) vs stored -1.0

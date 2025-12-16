@@ -24,7 +24,7 @@ from collections import defaultdict
 from enum import Enum
 import json
 import hashlib
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class CoverageMode(Enum):
@@ -93,7 +93,7 @@ class BidirectionalExperienceMemory:
     def __init__(
         self,
         dim: int = 768,
-        similarity_threshold: float = 0.7,
+        similarity_threshold: float = 0.5,
         risk_sensitivity: float = 0.8,
         decay_rate: float = 0.01,
         tenant_id: str = "global",
@@ -143,20 +143,49 @@ class BidirectionalExperienceMemory:
         reasoning_trace: Optional[str] = None,
         correction: Optional[str] = None
     ):
-        """Add new experience to memory."""
+        """Add new experience to memory.
+
+        If an experience with the same (context_hash, tenant_id, domain_id) already
+        exists, we treat this as a re-confirmation: we increment confirmation count,
+        refresh timestamp, and softly update the stored outcome/embedding.
+        """
         # Validate shapes
         if embedding.shape[0] != self.dim:
             raise ValueError(f"Embedding dim {embedding.shape[0]} != {self.dim}")
-            
+
+        now = datetime.now()
+        embedding = embedding / (np.linalg.norm(embedding) + 1e-10)
+
+        for exp in self.experiences:
+            if (
+                exp.context_hash == context_hash
+                and exp.tenant_id == tenant_id
+                and exp.domain_id == domain_id
+            ):
+                n = max(1, exp.confirmation_count)
+                exp.confirmation_count = n + 1
+                exp.timestamp = now
+                exp.outcome = (exp.outcome * n + outcome) / (n + 1)
+                exp.embedding = (exp.embedding * n + embedding) / (n + 1)
+                exp.embedding = exp.embedding / (np.linalg.norm(exp.embedding) + 1e-10)
+                if reasoning_trace is not None:
+                    exp.reasoning_trace = reasoning_trace
+                if correction is not None:
+                    exp.correction = correction
+                self._embedding_matrix = None
+                self._kde_model = None
+                self._knn_index = None
+                return
+
         exp = Experience(
-            embedding=embedding / (np.linalg.norm(embedding) + 1e-10),
+            embedding=embedding,
             outcome=outcome,
             context_hash=context_hash,
-            timestamp=datetime.now(),
+            timestamp=now,
             tenant_id=tenant_id,
             domain_id=domain_id,
             reasoning_trace=reasoning_trace,
-            correction=correction
+            correction=correction,
         )
         self.experiences.append(exp)
         
@@ -449,18 +478,47 @@ class BidirectionalExperienceMemory:
         
         return sampled_failures + sampled_successes
     
-    def vacuum(self, max_size: int = 10000, cluster_threshold: float = 0.95):
+    def vacuum(
+        self,
+        max_size: int = 10000,
+        cluster_threshold: float = 0.95,
+        ttl_days: Optional[int] = 90,
+        min_confirmations_to_keep: int = 3,
+        keep_abs_outcome_at_least: float = 0.8,
+    ):
         """
         Memory hygiene: merge redundant experiences and prune old ones.
 
         This prevents unbounded growth while preserving coverage.
         """
+        if not self.experiences:
+            return
+
+        now = datetime.now()
+
+        # Time-based TTL pruning for low-utility entries.
+        # Strongly confirmed or high-severity experiences are retained.
+        if ttl_days is not None:
+            cutoff = now - timedelta(days=ttl_days)
+            kept: List[Experience] = []
+            for exp in self.experiences:
+                if exp.timestamp >= cutoff:
+                    kept.append(exp)
+                    continue
+                if exp.confirmation_count >= min_confirmations_to_keep:
+                    kept.append(exp)
+                    continue
+                if abs(exp.outcome) >= keep_abs_outcome_at_least:
+                    kept.append(exp)
+                    continue
+            self.experiences = kept
+
         if len(self.experiences) <= max_size:
             return
 
-        # Simple approach: keep most confirmed and most recent
+        # Deterministic saturation policy: keep most confirmed, most severe, and most recent.
         self.experiences.sort(
-            key=lambda e: (e.confirmation_count, e.timestamp),
+            key=lambda e: (e.confirmation_count, abs(e.outcome), e.timestamp),
             reverse=True
         )
         self.experiences = self.experiences[:max_size]
@@ -786,6 +844,10 @@ class BEMManager:
         **kwargs
     ):
         """Add experience to appropriate memory based on scope."""
+        if not isinstance(context, str):
+            context = json.dumps(context, sort_keys=True, default=str)
+        context_hash = hashlib.sha256(context.encode("utf-8")).hexdigest()
+
         # Always add to tenant memory
         if tenant_id not in self.tenant_bems:
             self.tenant_bems[tenant_id] = BidirectionalExperienceMemory(
@@ -794,7 +856,7 @@ class BEMManager:
         self.tenant_bems[tenant_id].add_experience(
             embedding=embedding,
             outcome=outcome,
-            context_hash=context,
+            context_hash=context_hash,
             tenant_id=tenant_id,
             domain_id=domain_id,
             **kwargs
@@ -803,10 +865,10 @@ class BEMManager:
         # Optionally promote to domain/global based on confirmation
         # (This would require multi-tenant consensus — simplified here)
 
-    def vacuum_all(self, max_size: int = 10000):
+    def vacuum_all(self, max_size: int = 10000, ttl_days: Optional[int] = 90):
         """Run memory hygiene on all managed memories."""
-        self.global_bem.vacuum(max_size)
+        self.global_bem.vacuum(max_size=max_size, ttl_days=ttl_days)
         for bem in self.domain_bems.values():
-            bem.vacuum(max_size)
+            bem.vacuum(max_size=max_size, ttl_days=ttl_days)
         for bem in self.tenant_bems.values():
-            bem.vacuum(max_size)
+            bem.vacuum(max_size=max_size, ttl_days=ttl_days)

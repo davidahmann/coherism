@@ -127,6 +127,15 @@ Requires human curation & \cmark & \xmark~(learns from outcomes) \\
 
 ALFM-BEM wraps a frozen backbone $\mathcal{M}$ with four components connected by a closed experience loop. Figure~\ref{fig:arch} illustrates the architecture.
 
+\begin{center}
+\fbox{
+\begin{minipage}{0.95\linewidth}
+\textbf{ALFM-BEM Core Contract vs. Optional Modules.}
+\textbf{Core (minimum system):} frozen backbone $\rightarrow$ projection $\phi$ $\rightarrow$ \bem{} (risk/success/coverage) $\rightarrow$ Consensus Engine $\rightarrow$ \{Trust, Abstain, Escalate, Query\} $\rightarrow$ outcome feedback $\rightarrow$ \bem{} update.
+\textbf{Optional modules (engineering extensions):} bounded adapters with replay, multi-tenant scoping (global/domain/tenant), anti-poisoning validation, approximate indexing, and memory hygiene (vacuum/pruning).
+\end{minipage}}
+\end{center}
+
 \begin{figure}[t]
     \centering
     \begin{tikzpicture}[node distance=1.2cm, >=stealth, scale=0.85, transform shape]
@@ -157,6 +166,8 @@ ALFM-BEM wraps a frozen backbone $\mathcal{M}$ with four components connected by
 
 \textbf{Contrastive Dataset Construction.} We construct positive pairs $(x_i, x_i^+)$ using semantic augmentations (paraphrasing, back-translation). Negative pairs $(x_i, x_j^-)$ are mined from: (a) random batch negatives, and (b) \emph{hard negatives}---contexts that are semantically close but have divergent outcomes (success vs. failure). Specifically, we mine hard negatives by selecting successful contexts $x_j$ such that $\mathrm{sim}(\phi(x_i), \phi(x_j)) > \tau$ but $y_i \neq y_j$. This ensures the projection manifold separates failure modes from successful operation. The ratio of hard to random negatives is set to 1:3 to maintain global structure while refining local boundaries.
 
+\textbf{Claim 2.1 (Projection is a design necessity).} Raw backbone embeddings are unreliable retrieval keys for deployment memory: semantically similar inputs can be nearly orthogonal in high dimensions, while operationally distinct ``false friends'' can collide. ALFM-BEM therefore requires a learned projection $\phi$ trained with hard negatives (similar input, different outcome) to separate outcome-relevant confusables. Examples in audit-like workflows include name confusables (Smith/Smyth), unit/currency/date swaps, and document-type confusions (invoice vs.\ credit memo) where the surface form is similar but the correct action differs.
+
 \subsection{Bidirectional Experience Memory (BEM)}
 \label{sec:bem}
 
@@ -176,11 +187,15 @@ BEM is the central abstraction that unifies failure memory, success memory, and 
 \end{equation}
 where $\mathcal{N}(z, \theta) = \{e : \text{sim}(z, z_e) > \theta\}$ and $\alpha$ is sensitivity. This noisy-OR aggregation models the probability that at least one relevant failure mode is active.
 
+\textbf{Operational form.} In deployments, we weight each candidate by recency and confirmation count, and cap aggregation to the top-$k$ nearest failures to avoid risk inflation in dense regions. The reference implementation applies a weighted noisy-OR over the nearest failures with weights proportional to similarity, severity, and exponential time decay.
+
 \textbf{Definition 3.3 (Success Signal).} Analogously:
 \begin{equation}
     s_{\text{success}}(z) = \frac{1}{|\mathcal{N}^+(z,\theta)|} \sum_{e \in \mathcal{N}^+(z,\theta)} \text{sim}(z, z_e) \cdot o_e
 \end{equation}
 where $\mathcal{N}^+(z, \theta) = \{e \in \mathcal{N}(z,\theta) : o_e > 0.3\}$.
+
+\textbf{Note.} Experience retrieval is not a correctness oracle. It provides outcome-conditioned control evidence for the Consensus Engine; correctness still depends on the backbone and downstream verification.
 
 \textbf{Definition 3.4 (Coverage Signal).} The coverage signal measures how well $z$ is represented in the experience distribution---an emergent property, not a separate detector. We use kernel density estimation (KDE) over cosine similarities:
 \begin{equation}
@@ -294,7 +309,7 @@ These mechanisms operate asynchronously during maintenance windows, not during i
 \subsection{Latency Analysis}
 \label{sec:latency}
 
-\textbf{Latency Overhead.} The total latency overhead is $\tau_{\mathrm{ALFM}} = \tau_{\mathrm{proj}} + \tau_{\mathrm{BEM}} + \tau_{\mathrm{CE}}$. The operations are sequential. Projection involves a matrix multiplication of size $d_z \times d_h$. BEM query with HNSW takes $O(\log |\N|)$. Consensus Engine inference is a small MLP/Logic block. Typical values on a standard NVIDIA T4 GPU ($\tau_{\mathrm{proj}} \approx 5\text{ms}$, $\tau_{\mathrm{BEM}} \approx 10\text{ms}$, $\tau_{\mathrm{CE}} \approx 10\text{ms}$) yield a total overhead of $\approx 25\text{ms}$.
+\textbf{Latency Overhead.} The total latency overhead is $\tau_{\mathrm{ALFM}} = \tau_{\mathrm{proj}} + \tau_{\mathrm{BEM}} + \tau_{\mathrm{CE}}$. The operations are sequential. Projection involves a matrix multiplication of size $d_z \times d_h$. BEM query with approximate nearest-neighbor indexing takes $O(\log |\N|)$. Consensus Engine inference is a small MLP/Logic block. The values in Table~\ref{tab:latency} are illustrative estimates; exact latencies depend on indexing choice, batching, and hardware.
 
 \begin{table}[htbp]
     \centering
@@ -330,7 +345,7 @@ We provide theoretical grounding for BEM's key properties.
 
 \subsection{Tenant Isolation}
 
-\textbf{Proposition 4.2 (Tenant Isolation).} Experiences are cryptographically scoped: tenant $t$ can only read $\mathcal{E}_{\text{global}} \cup \mathcal{E}_{D(t)} \cup \mathcal{E}_t$. Cross-tenant leakage requires key compromise.
+\textbf{Proposition 4.2 (Tenant Isolation).} Experiences are scope-partitioned and access-controlled: tenant $t$ can only read $\mathcal{E}_{\text{global}} \cup \mathcal{E}_{D(t)} \cup \mathcal{E}_t$. Cross-tenant leakage requires an access-control failure.
 
 \textit{Proof sketch.} Each experience is tagged with $(t_e, d_e, \text{scope})$ where scope $\in \{\text{tenant}, \text{domain}, \text{global}\}$. Query filtering enforces: (1) global experiences are readable by all, (2) domain experiences by tenants in that domain, (3) tenant experiences only by that tenant. The index maintains separate partitions; queries cannot return experiences outside the accessible partition without the partition key. \qed
 
@@ -567,6 +582,8 @@ ALFM-BEM is deployment infrastructure for frozen models, not a breakthrough towa
 
 We discuss key assumptions, failure modes, and operational constraints.
 
+\textbf{Bounded interventions (whack-a-mole).} Outcome-conditioned updates can shift behavior into a different failure basin: suppressing one failure mode may expose another. ALFM-BEM mitigates this by bounding interventions (adapter drift constraints), mediating behavior changes through the Consensus Engine, and preferring Query/Escalate when uncertainty is high rather than aggressive updates.
+
 \subsubsection{Outcome Signal Reliability}
 
 BEM assumes outcome signals $o \in [-1, 1]$ are available and meaningful. This assumption has several failure modes:
@@ -597,7 +614,7 @@ Memory grows with deployment, requiring lifecycle management:
 
 \textbf{Storage economics.} Each experience requires $\approx$256 bytes (64D float32 embedding + metadata). At 1M experiences, BEM requires $\approx$256MB storage. HNSW indexing adds $\approx$2$\times$ overhead. For cost-sensitive deployments, we recommend tiered storage: hot (recent, high-weight) experiences in memory, cold experiences on disk with lazy loading.
 
-\textbf{Memory pruning.} We implement time-based vacuuming: experiences older than a configurable TTL (default: 90 days) without re-confirmation are archived. High-weight experiences (frequently retrieved, strongly confirmed) are retained indefinitely. Pruning runs during maintenance windows.
+\textbf{Memory pruning and bounds.} Each tenant operates under a fixed memory budget (e.g., max $N$ experiences or a storage quota). At saturation, the system deterministically retains the most useful experiences (high confirmation count, high severity, and recent) and prunes low-utility entries first. A time-to-live (TTL) policy can drop old, low-confirmation experiences while retaining strongly confirmed or high-severity failures indefinitely. Pruning runs during maintenance windows.
 
 \textbf{Multi-tenant cost allocation.} Per-tenant BEM partitions enable usage-based billing. Each tenant's storage footprint is tracked; tenants exceeding quota receive Query actions prompting them to approve archival of old experiences.
 
@@ -631,7 +648,7 @@ ALFM-BEM is designed to improve the safety and reliability of foundation model d
 Potential negative impacts and mitigations:
 \begin{itemize}
     \item \textbf{False sense of security}: BEM cannot detect novel failure modes not similar to past experiences. Mitigation: the coverage signal flags low-coverage (potentially novel) inputs for human review.
-    \item \textbf{Privacy concerns}: Experience memory stores deployment contexts. Mitigation: tenant isolation ensures experiences are cryptographically scoped; periodic vacuuming removes old experiences.
+    \item \textbf{Privacy concerns}: Experience memory stores deployment contexts. Mitigation: tenant isolation via scope-partitioning and access control; periodic vacuuming removes old experiences.
     \item \textbf{Gaming the system}: Adversaries could attempt to poison BEM with false experiences. Mitigation: outcome verification, anomaly detection on experience submissions, and rate limiting.
 \end{itemize}
 
@@ -648,11 +665,12 @@ ALFM-BEM does not change backbone model capabilities; it provides deployment inf
 \begin{algorithm}[H]
 \caption{BEM Risk Signal Computation}
 \begin{algorithmic}[1]
-\Require Query $z$, Memory $\mathcal{E}$, Threshold $\theta$, Sensitivity $\alpha$
+\Require Query $z$, Memory $\mathcal{E}$, Threshold $\theta$, Sensitivity $\alpha$, Cap $k$
 \State $\mathcal{R} \leftarrow \{e \in \mathcal{E} : \text{sim}(z, z_e) > \theta \land o_e < -0.3\}$
+\State $\mathcal{R} \leftarrow \textsc{TopK}(\mathcal{R}, k\text{ by }\text{sim}(z, z_e))$
 \State $s_{\text{risk}} \leftarrow 0$
 \For{$e \in \mathcal{R}$}
-    \State $w \leftarrow \alpha \cdot \text{sim}(z, z_e) \cdot |o_e| \cdot \text{decay}(e)$
+    \State $w \leftarrow \alpha \cdot \text{sim}(z, z_e) \cdot \frac{\text{sev}(e)}{5} \cdot \text{decay}(e) \cdot \text{conf}(e)$
     \State $s_{\text{risk}} \leftarrow 1 - (1 - s_{\text{risk}})(1 - w)$ \Comment{Noisy-OR}
 \EndFor
 \If{$|\mathcal{R}| > 1$}

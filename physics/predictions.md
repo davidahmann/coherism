@@ -66,15 +66,17 @@ The "informational weight" of a spatial superposition creates an additional phas
 
 ## 4. Cosmological "Dark Energy" Shift
 
-**Status:** Observational Consistency Check  
-**Predicted Magnitude:** Tensor-to-scalar ratio correction $\sim 10^{-10}$
+**Status:** Outlook / Future Work (Appendix Only)  
+**Predicted Magnitude:** Tensor-to-scalar ratio correction ~ 10⁻¹⁰
 
-The universe's expansion history deviates from $\Lambda$CDM because the "coherence fluid" has an equation of state $w \approx -0.994$ rather than exactly $-1$ (derived from Appendix: FRW Cosmology in the main paper).
+> **Note:** This prediction is phenomenological and not rigorously derived. It has been moved to the appendix in the current manuscript and is not part of the primary falsification pathway.
+
+The universe's expansion history could deviate from ΛCDM if "coherence energy" has an equation of state w ≈ -0.994 rather than exactly -1.
 
 ### Protocol
 
-* Analyze next-generation CMB data (e.g., CMB-S4) for specific deviations in the equation of state parameter $w(a)$ and the tensor-to-scalar ratio.
-* *Note:* This effect is likely too small to distinguish from other dark energy models without corroborating evidence from the BEC experiment.
+* Analyze next-generation CMB data (e.g., CMB-S4) for specific deviations.
+* *Note:* This effect is likely too small to distinguish without corroborating evidence from the BEC experiment.
 
 ---
 

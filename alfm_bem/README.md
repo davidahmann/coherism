@@ -14,6 +14,14 @@ Foundation models are deployed frozen, creating a fundamental gap: they cannot l
 2.  **Consensus Engine with Query Action** — Arbitrates between semantic signals and heuristic rules, capable of actively requesting information when OOD.
 3.  **Bounded Adapters** — Enables safe continuous improvement via experience replay with provable stability guarantees.
 
+## ALFM-BEM Core Contract
+
+To avoid a “stitched components” reading, the minimum system that proves the thesis is:
+
+- Frozen backbone → projection → BEM (risk/success/coverage) → consensus → action (Trust/Abstain/Escalate/Query) → outcome feedback → BEM update
+
+Adapters, multi-tenant scoping, anti-poisoning, approximate indexing, and vacuum/pruning are optional engineering extensions.
+
 ## Repository Contents
 
 ### Manuscript
@@ -29,12 +37,12 @@ Validates BEM's core mechanisms: failure retrieval, OOD detection, and parameter
 
 -   `experiments/phase1_runner.py` — Orchestrates multi-seed ablation, scale, and sensitivity experiments.
 -   `experiments/ablation_study.py` — Core logic for comparing BEM vs. RAG/NEP baselines.
--   `experiments/generate_figures.py` — Generates `ood_roc.pdf` and `drift.pdf`.
+-   `generate_figures.py` — Generates `ood_roc.pdf` and `drift.pdf`.
 
 **To reproduce:**
 ```bash
 python3 experiments/phase1_runner.py
-python3 experiments/generate_figures.py
+python3 generate_figures.py
 ```
 
 #### 2. Phase 2: Healthcare Claims Case Study
@@ -60,10 +68,12 @@ python3 experiments/healthcare_simulator.py
 -   Matplotlib
 -   Seaborn
 -   Pandas
+-   scikit-learn
+-   PyTorch (for adapters)
 
 Install dependencies:
 ```bash
-pip install numpy matplotlib seaborn pandas
+pip install numpy matplotlib seaborn pandas scikit-learn torch
 ```
 
 ## Compiling the Manuscript
@@ -81,6 +91,9 @@ pdflatex alfm_bem
 2.  **OOD Detection** — Coverage signal achieves AUC ≈ 1.0 for clustered OOD patterns.
 3.  **Healthcare Case Study** — ALFM-BEM reduces claim rejection rates by **88%** (from 12.5% to 1.5%) by learning latent rules from binary feedback.
 4.  **Query Action** — Active clarification improves success rates by 8.0% in high-uncertainty scenarios.
+
+Notes:
+- The paper’s equations present the base form; the reference implementation additionally weights by recency and confirmation count and caps aggregation to nearest neighbors for stability.
 
 ## Key Differentiators vs RAG
 

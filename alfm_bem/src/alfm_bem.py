@@ -35,7 +35,7 @@ class ALFMConfig:
     adapter_hidden_dim: int = 64  # Adapter hidden layer
     
     # BEM parameters
-    similarity_threshold: float = 0.7
+    similarity_threshold: float = 0.5
     risk_sensitivity: float = 0.8
     
     # Adapter parameters  
@@ -224,7 +224,7 @@ class ALFMBEM:
             
         # Vacuum periodically to prevent unbounded growth
         if self._inference_count % 1000 == 0:
-            self.bem_manager.vacuum_all(max_size=10000)
+            self.bem_manager.vacuum_all(max_size=10000, ttl_days=90)
 
     def _run_experience_replay(self, tenant_id: str, domain_id: str):
         """Train adapter using accumulated experiences."""

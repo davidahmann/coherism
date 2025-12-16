@@ -8,7 +8,12 @@ in a Bose-Einstein condensate.
 Key prediction: Coherent phonon injection produces δρ/ρ₀ ~ 10⁻⁶,
 while thermal phonons produce no modulation.
 
-This implements equations from Appendix N (Analog Gravity Predictions).
+This implements equations from the coherism.tex manuscript:
+- Eq. (N.7): κ_eff effective coupling
+- Eq. (N.8): Θ_tt informational stress tensor  
+- Eq. (N.9): δρ/ρ₀ density modulation
+
+See Appendix N (Analog Gravity Predictions) for derivations.
 """
 
 import numpy as np
@@ -206,48 +211,57 @@ def plot_results(results, save_path='bec_sonic_horizon_results.png'):
     r_H = results['r_H'] * 1e6
 
     # Left panel: Density modulation profile
-    ax1.semilogy(r, np.abs(results['delta_rho_coherent']), 'b-',
-                 linewidth=2, label='Coherent phonons')
+    ax1.plot(r, np.abs(results['delta_rho_coherent']), 'b-', linewidth=2,
+             label='Coherent phonons (Coherism)')
+    ax1.plot(r, np.abs(results['delta_rho_thermal']), color='gray', linestyle='--', linewidth=2,
+             label='Thermal / baseline (null)')
     ax1.axhline(y=1e-6, color='b', linestyle='--', alpha=0.5,
-                label=r'Prediction: $10^{-6}$')
-    ax1.axhline(y=1e-7, color='r', linestyle=':', alpha=0.5,
-                label=r'Falsification threshold: $10^{-7}$')
+                label=r'Target: $10^{-6}$')
+    ax1.axhline(y=1e-7, color='r', linestyle=':', alpha=0.7,
+                label=r'Falsify: $10^{-7}$')
     ax1.axvline(x=r_H, color='k', linestyle='-', alpha=0.3, linewidth=2)
-    ax1.text(r_H + 2, 1e-5, 'Horizon', fontsize=10, alpha=0.7)
+    ax1.text(r_H + 2, 1.6e-6, 'Horizon', fontsize=10, alpha=0.7)
 
     ax1.set_xlabel(r'Radial position $r$ ($\mu$m)', fontsize=12)
     ax1.set_ylabel(r'$|\delta\rho/\rho_0|$', fontsize=12)
     ax1.set_title('Density Modulation Near Sonic Horizon', fontsize=12)
-    ax1.set_ylim(1e-10, 1e-4)
+    ax1.set_ylim(0, 2.2e-6)
     ax1.set_xlim(r[0], r[-1])
-    ax1.legend(loc='upper right', fontsize=10)
+    ax1.legend(loc='upper right', fontsize=9)
     ax1.grid(True, alpha=0.3)
 
-    # Right panel: Coherent vs Thermal comparison (bar chart)
-    max_coh = np.max(np.abs(results['delta_rho_coherent']))
-    max_therm = np.max(np.abs(results['delta_rho_thermal']))
+    # Right panel: Scaling with injected phonon number + simple grid check
+    def max_modulation_within_Lcoh(r_vals_m, delta_rho_over_rho, r_h_m, l_coh_m):
+        mask = np.abs(r_vals_m - r_h_m) <= l_coh_m
+        return float(np.max(np.abs(delta_rho_over_rho[mask])))
 
-    categories = ['Coherent\nphonons', 'Thermal\nphonons']
-    values = [max_coh, max(max_therm, 1e-15)]  # Floor for log scale
-    colors = ['steelblue', 'coral']
+    r_h_m = results['r_H']
+    a = C_S * r_h_m
+    n_values = np.unique(np.round(np.logspace(2, 4, 9)).astype(int))
+    grid_sizes = [200, 500, 2000]
 
-    bars = ax2.bar(categories, values, color=colors, edgecolor='black', linewidth=1.5)
+    for n_grid in grid_sizes:
+        r_vals = np.linspace(0.2 * r_h_m, 3.0 * r_h_m, n_grid)
+        a_vals = []
+        for n_ph in n_values:
+            d_coh = simulate_horizon_profile(r_vals, r_h_m, a, n_ph, is_coherent=True)
+            a_vals.append(max_modulation_within_Lcoh(r_vals, d_coh, r_h_m, L_COH))
+        ax2.plot(n_values, a_vals, marker='o', linewidth=2, label=f'{n_grid} grid pts')
+
+    ax2.set_xscale('log')
     ax2.set_yscale('log')
-    ax2.set_ylabel(r'Max $|\delta\rho/\rho_0|$', fontsize=12)
-    ax2.set_title('Coherent vs Thermal: Key Distinguishing Test', fontsize=12)
-    ax2.set_ylim(1e-16, 1e-4)
+    ax2.set_xlabel(r'Injected phonons $N_{\mathrm{phonon}}$', fontsize=12)
+    ax2.set_ylabel(r'$A = \max_{|r-r_H|\leq L_{\mathrm{coh}}} |\delta\rho/\rho_0|$', fontsize=11)
+    ax2.set_title('Scaling + Grid Convergence Check', fontsize=12)
+    ax2.set_ylim(1e-10, 1e-4)
 
-    # Add value labels
-    ax2.text(0, max_coh * 2, f'{max_coh:.1e}', ha='center', fontsize=11, fontweight='bold')
-    ax2.text(1, 1e-14, '0\n(no signal)', ha='center', fontsize=11, color='coral', fontweight='bold')
-
-    # Add horizontal reference lines
     ax2.axhline(y=1e-6, color='blue', linestyle='--', alpha=0.5)
-    ax2.axhline(y=1e-7, color='red', linestyle=':', alpha=0.5)
-    ax2.text(1.4, 1.5e-6, r'Prediction', fontsize=9, color='blue', alpha=0.7)
-    ax2.text(1.4, 1.5e-7, r'Falsification', fontsize=9, color='red', alpha=0.7)
+    ax2.axhline(y=1e-7, color='red', linestyle=':', alpha=0.7)
+    ax2.text(1.4e4, 1.05e-6, r'$10^{-6}$ target', fontsize=9, color='blue', ha='right')
+    ax2.text(1.4e4, 1.15e-7, r'$10^{-7}$ falsify', fontsize=9, color='red', ha='right')
 
-    ax2.grid(True, alpha=0.3, axis='y')
+    ax2.legend(fontsize=9, loc='upper left')
+    ax2.grid(True, alpha=0.3, which='both')
 
     plt.tight_layout()
     plt.savefig(save_path, dpi=150, bbox_inches='tight')

@@ -59,7 +59,9 @@ Coherence-Dependent Backreaction in Semiclassical and Analog Gravity: Testable P
 }
 
 \author{David Ahmann}
+\email{dahmann@lumyn.cc}
 \affiliation{Independent Researcher, Toronto, Canada}
+% ORCID: 0009-0006-4066-8760
 
 \date{\today}
 
@@ -68,8 +70,10 @@ Coherence-Dependent Backreaction in Semiclassical and Analog Gravity: Testable P
 % ----------------------------------------------------------------------
 
 \begin{abstract}
-We derive a testable prediction for analog gravity experiments in Bose-Einstein condensates: coherent phonon injection near a sonic horizon produces density modulations $\delta\rho/\rho_0 \sim 10^{-6}$, while thermal phonon injection of identical energy produces no such effect. This coherent-versus-thermal signature---measurable with current BEC technology at laboratories including MIT, JILA, and Technion---constitutes a qualitative test absent in competing frameworks (Penrose-Di\'{o}si, stochastic gravity). The prediction emerges from an \emph{informational stress tensor} $\Tmn$ that we derive by varying a coherence functional $\Cfunc[g,\rho;\mu]$ built from relative entropy, generalized entropy, and a geometric action. In analog systems, the effective coupling $\kappa_{\mathrm{eff}} \sim 10^{-8}$ is 62 orders of magnitude larger than the gravitational coupling, bringing predictions within experimental reach. We provide: (i) explicit derivations of $\Tmn$ for Schwarzschild, FRW, Rindler, and acoustic geometries; (ii) two independent derivations of $\kappa$ (holographic and entropic); (iii) a first-principles derivation of the Lindblad generator from Unruh-DeWitt dynamics; and (iv) an experimental protocol with falsification criteria. The framework reduces to semiclassical gravity when $\rho \approx \sigma[g]$ and predicts coherence-dependent Weak Equivalence Principle violations ($\eta_{\mathrm{coh}} \sim 10^{-15}$) for gravitational tests. A null result at $\delta\rho/\rho_0 < 10^{-7}$ for the BEC experiment would falsify the acoustic implementation.
+We derive a testable prediction for analog gravity experiments in Bose-Einstein condensates: coherent phonon injection near a sonic horizon produces density modulations $\delta\rho/\rho_0 \sim 10^{-6}$, while thermal phonon injection of identical energy produces no such effect. This coherent-versus-thermal signature---measurable with current BEC technology---constitutes a qualitative test absent in competing frameworks (Penrose-Di\'{o}si, stochastic gravity). The prediction emerges from an \emph{informational stress tensor} $\Tmn$ derived by varying a coherence functional $\Cfunc[g,\rho;\mu]$ built from relative entropy and generalized entropy. In analog systems, the effective coupling $\kappa_{\mathrm{eff}} \sim 10^{-8}$ is 62 orders of magnitude larger than the gravitational coupling, bringing predictions within experimental reach. We provide: (i) explicit derivations of $\Tmn$ for Rindler and acoustic geometries; (ii) two independent derivations of $\kappa$ (holographic and entropic); (iii) a first-principles derivation of the Lindblad generator from Unruh-DeWitt dynamics; and (iv) an experimental protocol with falsification criteria. The framework reduces to semiclassical gravity when $\rho \approx \sigma[g]$. A null result at $\delta\rho/\rho_0 < 10^{-7}$ for the BEC experiment would falsify the acoustic implementation.
 \end{abstract}
+
+\keywords{analog gravity \and Bose-Einstein condensate \and quantum coherence \and semiclassical gravity \and relative entropy \and informational stress}
 
 \maketitle
 
@@ -107,10 +111,10 @@ When $\rho \approx \sigma[g]$, we have $\Tmn \approx 0$ and standard semiclassic
 
 The framework, which we call \emph{Coherism}, yields the following concrete results:
 \begin{enumerate}
-    \item \textbf{Analog gravity prediction (primary test):} In BEC sonic horizons, $\kappa_{\mathrm{eff}} \sim 10^{-8}$ is 62 orders of magnitude larger than the gravitational coupling, yielding $\delta\rho/\rho_0 \sim 10^{-6}$---measurable with current phase-contrast imaging.
-    \item \textbf{Gravitational predictions:} WEP violation $\eta_{\mathrm{coh}} \sim 10^{-15}$, atom interferometer phase shift $\delta\phi/\phi \sim 10^{-11}$ (both 2--3 orders below current sensitivity).
+    \item \textbf{Primary test (analog gravity):} In BEC sonic horizons, $\kappa_{\mathrm{eff}} \sim 10^{-8}$ is 62 orders of magnitude larger than the gravitational coupling, yielding $\delta\rho/\rho_0 \sim 10^{-6}$---measurable with current phase-contrast imaging.
     \item \textbf{Falsification criterion:} A null result at $\delta\rho/\rho_0 < 10^{-7}$ for coherent phonon injection would falsify the acoustic implementation.
     \item \textbf{Distinguishing test:} Coherent vs.\ thermal states of identical energy produce different $\Tmn$---a qualitative signature absent in competing frameworks.
+    \item \textbf{Gravitational extensions (outlook):} The framework predicts WEP violation $\eta_{\mathrm{coh}} \sim 10^{-15}$, currently 2--3 orders below sensitivity; these are discussed in Appendix~\ref{appendix:experiments-detailed}.
 \end{enumerate}
 
 \subsection{Framework Overview}
@@ -145,16 +149,16 @@ an Einstein-like equation sourced by both $\langle T_{\mu\nu}\rangle$ and an inf
 We do not claim a UV-complete theory of quantum gravity, nor a derivation of all known laws from a single principle.
 This framework is presented as an \emph{effective field theory} (EFT) proposal for a feedback law that may organize, and slightly deform, the semiclassical frontier between GR and QM.
 The value of the framework will ultimately be decided by experiment---specifically, by the BEC analog gravity test described in Sec.~\ref{sec:experiments} and Appendix~\ref{appendix:analog}.
+\emph{Scope:} We present an EFT-level variational framework with a falsifiable analog-gravity prediction; cosmology and tunneling discussions are qualitative outlook and are not used in any derivation, fit, or falsification criterion.
 
 The rest of the paper is organized as follows.
 In Sec.~\ref{sec:preliminaries} we review the necessary mathematical tools: causal diamonds, relative entropy, generalized entropy, and semiclassical gravity.
 In Sec.~\ref{sec:coherence-functional} we define the 3+1D coherence functional and the informational stress tensor.
 Sec.~\ref{sec:toy} summarizes a 1+1D toy model that recovers standard limits.
-Sec.~\ref{sec:wep} presents a coherence-dependent Weak Equivalence Principle violation as a worked example.
-Sec.~\ref{sec:cosmo} sketches cosmological implications, while Sec.~\ref{sec:bh} discusses black holes and generalized entropy.
 Sec.~\ref{sec:relations} relates Coherism to other approaches including stochastic gravity and entanglement-based gravity.
-Sec.~\ref{sec:experiments} outlines experimental prospects.
-Sec.~\ref{sec:discussion} discusses limitations and open problems, and Sec.~\ref{sec:conclusion} concludes.
+Sec.~\ref{sec:experiments} presents the primary analog gravity predictions and experimental protocol.
+Sec.~\ref{sec:discussion} discusses limitations, open problems, and gravitational extensions.
+Sec.~\ref{sec:conclusion} concludes.
 
 
 % ======================================================================
@@ -174,6 +178,10 @@ On each diamond we restrict the field algebra to a von Neumann algebra $\mathcal
 
 For a global quantum state $\rho$ on the full field algebra, we denote by $\rho_{\Ddom}$ the reduced state obtained by tracing out degrees of freedom outside $\Ddom(x;\mu)$.
 We similarly define a reference state $\sg$ that depends functionally on the metric $g_{\mu\nu}$ and restrict it to $\Ddom$ as $\sigma_{\Ddom}[g]$.
+
+\paragraph{What fixes the reference state $\sigma[g]$ (operationally).}
+In the controlled examples in this paper, $\sigma[g]$ is chosen as the standard geometry-adapted Hadamard/KMS state for the relevant causal diamond: Minkowski vacuum in flat space, Unruh/Hartle--Hawking-type vacua near horizons, Bunch--Davies vacuum in (quasi-)de~Sitter/FRW, and a thermal KMS state at the acoustic Hawking temperature for the BEC sonic horizon.
+The coarse-graining scale $\mu$ sets the diamond size and the smearing used to define $s_{\mathrm{rel}}(x;\mu)$; scheme dependence in absolute values is treated as a coarse-graining ambiguity, while physical predictions are organized around controlled limits (and, in particular, around variations and near-equilibrium expansions).
 
 % ----------------------------------------------------------------------
 \subsection{Relative entropy and generalized entropy}
@@ -226,6 +234,18 @@ The central equation is
     \label{eq:semi-einstein}
 \end{equation}
 where $G_{\mu\nu}$ is the Einstein tensor, $\Lambda$ the cosmological constant, $G$ Newton's constant, and $\langle T_{\mu\nu}\rangle_\rho$ the renormalized expectation value of the stress--energy tensor in the state $\rho$.
+
+\begin{center}
+\fbox{\parbox{0.95\columnwidth}{
+\textbf{Null-limit checklist (consistency limits).}
+\begin{itemize}
+    \item $\rho = \sigma[g] \Rightarrow \Theta_{\mu\nu} = 0$ (equilibrium / no informational mismatch).
+    \item Flat space with no coarse-graining ($\mu\to\infty$) $\Rightarrow$ geometric/coherence corrections vanish.
+    \item Weak field / near-equilibrium $\Rightarrow$ semiclassical Einstein equation (and Einstein--Langevin structure) recovered.
+    \item 1+1D conformal case $\Rightarrow$ Polyakov correspondence and stochastic-gravity limits recovered.
+\end{itemize}
+}}
+\end{center}
 
 This equation can be generalized to include stress--energy fluctuations in the Einstein--Langevin form~\cite{HuVerdaguer2008}, where a stochastic source term encodes quantum fluctuations.
 We will not need the full machinery here, but we will require that our informational stress tensor $\Tmn$ be consistent with the conservation law
@@ -595,183 +615,14 @@ This lends support to the interpretation of $\Cfunc$ as a Lyapunov functional fo
 
 
 % ======================================================================
-\section{Coherence-Dependent Weak Equivalence Principle Violation}
-\label{sec:wep}
+% [REMOVED FROM MAIN BODY - See Appendix for gravitational extensions]
+% The following sections have been moved to outlook/future work:
+% - Coherence-Dependent WEP Violation (formerly Sec V)
+% - Cosmological Feedback (formerly Sec VI)  
+% - Black Holes and Generalized Entropy (formerly Sec VII)
+% These predictions are 2-3 orders below current experimental sensitivity.
+% The primary testable prediction is the analog gravity BEC experiment.
 % ======================================================================
-
-We now present a simple worked example that illustrates how the informational stress tensor can, in principle, generate a small violation of the Weak Equivalence Principle (WEP) in a controlled setting.
-The goal is not to model a realistic experiment in full detail, but to produce a clean, falsifiable scaling law for coherence-dependent deviations in free fall.
-
-% ----------------------------------------------------------------------
-\subsection{Setup: equal energy, different coherence}
-% ----------------------------------------------------------------------
-
-Consider a weak-field, static metric in 3+1 dimensions,
-\begin{equation}
-    ds^2 = -(1+2\Phi(\mathbf{x}))\,dt^2 + (1-2\Phi(\mathbf{x}))\,\delta_{ij}dx^i dx^j,
-    \label{eq:weak-metric}
-\end{equation}
-with $|\Phi|\ll 1$ in the region of interest.
-We introduce two localized quantum systems, A and B, each with:
-\begin{itemize}
-    \item the same rest energy $E_0$,
-    \item the same spatial profile (same wavepacket shape), and
-    \item negligible internal pressure anisotropy.
-\end{itemize}
-The only difference is their internal quantum state.
-System A is prepared in a thermal or incoherent mixture $\rho_A$ in the energy eigenbasis.
-System B is prepared in a pure, phase-coherent superposition $\rho_B$ with significant off-diagonal elements and a longer coherence time.
-
-In standard semiclassical gravity, as long as
-\begin{equation}
-    \langle T_{\mu\nu}\rangle_{\rho_A}
-    =
-    \langle T_{\mu\nu}\rangle_{\rho_B}
-    \equiv \langle T_{\mu\nu}\rangle_0,
-    \label{eq:same-T}
-\end{equation}
-the effective gravitational mass and free-fall acceleration of A and B are identical, and the WEP holds.
-
-% ----------------------------------------------------------------------
-\subsection{Informational stress and effective mass}
-% ----------------------------------------------------------------------
-
-In the 3+1D Newtonian limit, the informational stress can be written schematically as
-\begin{equation}
-    \Tmn
-    =
-    (\beta-\alpha)\,\Delta\!\langle T_{\mu\nu}\rangle
-    + \kappa\,\Xi_{\mu\nu}[\rho],
-    \label{eq:theta-wep}
-\end{equation}
-where $\Xi_{\mu\nu}[\rho]$ vanishes for states that are diagonal in the energy basis and becomes nonzero when the state carries robust coherence across the relevant coherence time and length scales.
-The constant $\kappa$ controls the strength of coherence--gravity coupling.
-
-For the systems A and B described above, we have
-\begin{equation}
-    \Xi_{\mu\nu}[\rho_A] \approx 0,
-    \qquad
-    \Xi_{\mu\nu}[\rho_B] = \Xi^{\mathrm{coh}}_{\mu\nu} \neq 0.
-\end{equation}
-Assuming the reference state $\sigma[g]$ is chosen so that $\Delta\!\langle T_{\mu\nu}\rangle$ is negligible in the lab frame, we obtain
-\begin{align}
-    \Tmn^{(A)} &\approx 0, \\
-    \Tmn^{(B)} &\approx \kappa\,\Xi^{\mathrm{coh}}_{\mu\nu}.
-\end{align}
-
-In the Newtonian limit, one can define an effective gravitational potential $\Phi_{\mathrm{eff}}$ via a Poisson equation sourced by
-\begin{equation}
-    \nabla^2 \Phi = 4\pi G \big( \langle T_{00}\rangle + \Theta_{00} \big).
-\end{equation}
-For localized sources, the effective gravitational mass is given by the volume integral:
-\begin{align}
-    m_g^{(A)}
-    &= \int d^3x \, \langle T_{00}^{(A)} \rangle \approx E_0,
-    \\
-    m_g^{(B)}
-    &= \int d^3x \, \big( \langle T_{00}^{(B)} \rangle + \Theta_{00}^{(B)} \big)
-    = E_0 + \int d^3x \, \kappa\,\Xi^{\mathrm{coh}}_{00}.
-\end{align}
-Identifying $m_i = E_0$ as the inertial mass and $m_g^{(A,B)}$ as the effective gravitational masses, we have
-\begin{align}
-    m_g^{(A)}
-    &\approx E_0,
-    \\
-    m_g^{(B)}
-    &\approx E_0 + \delta m_{\mathrm{coh}},
-\end{align}
-where $\delta m_{\mathrm{coh}} = \kappa \int d^3x \, \Xi^{\mathrm{coh}}_{00}$.
-The fractional WEP violation is
-\begin{equation}
-    \eta_{\mathrm{coh}}
-    \equiv
-    \frac{(m_g/m_i)_B - (m_g/m_i)_A}{
-    \tfrac12[(m_g/m_i)_B + (m_g/m_i)_A]
-    }
-    \approx
-    \frac{\delta m_{\mathrm{coh}}}{E_0},
-    \label{eq:eta-coh}
-\end{equation}
-to first order in $\delta m_{\mathrm{coh}}/E_0$.
-
-Thus, in this framework, the coherent system B falls with a slightly different acceleration than the incoherent system A, even though their standard stress--energy tensors are identical.
-In the limit $\kappa\to 0$ or $\Xi^{\mathrm{coh}}_{00}\to 0$, we recover $m_g^{(A)}=m_g^{(B)}$ and the WEP is restored.
-
-\emph{Order-of-magnitude estimate and status of $\kappa$:} The coupling $\kappa$ can be derived from holographic principles (Appendix~\ref{appendix:holographic}), yielding
-\begin{equation}
-    \kappa = \alpha \frac{G_N}{L_{\mathrm{coh}}^2},
-\end{equation}
-where $L_{\mathrm{coh}}$ is the coherence length and $\alpha \sim O(1)$. For a Bose-Einstein condensate of $10^6$ $^{87}\mathrm{Rb}$ atoms with $L_{\mathrm{coh}} \sim 10\,\mathrm{\mu m}$, this gives $\eta_{\mathrm{coh}} < 10^{-15}$ (see Appendix~\ref{appendix:experiments-detailed} for detailed calculations).
-
-\emph{Important caveat:} This estimate should be interpreted as follows: \emph{if} the framework is correct, experiments can bound $\kappa$; \emph{alternatively}, a null result at the $10^{-15}$ level would constrain $\kappa < 10^{-70}$ or rule out the simplest version of this proposal. We do not claim a prediction of $\eta_{\mathrm{coh}} = 10^{-15}$; rather, we provide a scaling law $\eta_{\mathrm{coh}} \propto \kappa \cdot \Xi^{\mathrm{coh}}_{00}/E_0$ that experiments can test.
-
-% ----------------------------------------------------------------------
-\subsection{Interpretation and experimental prospects}
-% ----------------------------------------------------------------------
-
-Equation~\eqref{eq:eta-coh} provides a concrete, falsifiable scaling law.
-If the entropic feedback hypothesis is correct and the coherence-dependent informational stress couples to gravity with strength $\kappa$, then precision free-fall experiments comparing coherent and incoherent systems with the same rest energy should, in principle, detect or bound $\eta_{\mathrm{coh}}$.
-Atom interferometers, optomechanical resonators, and Bose--Einstein condensate drop tests provide candidate platforms.
-
-A detailed fully relativistic modeling of such experiments lies beyond the scope of this first paper.
-Here we emphasize only that this framework predicts a qualitatively new kind of equivalence-principle violation: not due to composition, charge, or spin, but due to the state-dependent coherence structure of the matter system.
-Even if $\eta_{\mathrm{coh}}$ is ultimately constrained to be extremely small, this would provide nontrivial bounds on $\kappa$ and on the allowed magnitude of entropic corrections.
-
-
-% ======================================================================
-\section{Cosmological Feedback and Dark Sector Phenomenology}
-\label{sec:cosmo}
-% ======================================================================
-
-\emph{Status of this section:} The cosmological application is \emph{phenomenological} and not derived rigorously from the 3+1D coherence functional. We present it as a sketch of how entropic corrections might manifest at cosmological scales, subject to the caveats below.
-
-In cosmology, the relevant degrees of freedom are coarse-grained over large scales.
-The entropic framework suggests that, beyond standard matter and radiation, there may be an effective contribution to the stress--energy tensor arising from the large-scale coherence or decoherence of the cosmic quantum state relative to the FRW geometry.
-
-\emph{Derivation gap:} Applying the coherence functional to cosmology requires specifying $\sigma[g]$ for an FRW background, which is not covered by our small-diamond construction (Sec.~\ref{sec:coherence-functional}). We \emph{assume} that an appropriate cosmological reference state exists (e.g., the Bunch-Davies vacuum for de Sitter) and proceed phenomenologically.
-
-Assuming a spatially flat FRW metric with scale factor $a(t)$, the entropic Einstein equation takes the schematic form
-\begin{equation}
-    3H^2
-    =
-    8\pi G\big(
-        \rho_{\mathrm{m}} + \rho_{\mathrm{r}}
-        + \rho_{\Lambda}
-        + \rho_{\mathrm{coh}}
-    \big),
-\end{equation}
-where $\rho_{\mathrm{coh}}$ is an effective energy density arising from $\Tmn$.
-A phenomenological ansatz (not derived) is
-\begin{equation}
-    \rho_{\mathrm{coh}}(t)
-    =
-    \kappa_{\mathrm{cos}}\,\Delta \Iop(t),
-\end{equation}
-where $\Delta \Iop(t) \equiv \int_{\Sigma_t} d^3x \sqrt{h} \, s_{\mathrm{rel}}(\rho || \sigma)$ is the total informational misalignment in the spatial slice, and $\kappa_{\mathrm{cos}}$ is an undetermined coupling (analogous to $\kappa$ in the WEP discussion).
-This may lead to effective contributions modeled by an equation of state $w(a) = -1 + w_a (1-a)$ and a modified growth index $\gamma = 0.55+\delta\gamma$.
-Current observational data (Planck, SH0ES) constrain $|w_a| \lesssim 0.3$ and $|\delta\gamma| \lesssim 0.05$, which would bound $\kappa_{\mathrm{cos}}$ if this framework is correct.
-A quantitative analysis would require integrating the entropic term into a Boltzmann code, as outlined in Appendix~\ref{appendix:boltzmann}.
-
-
-% ======================================================================
-\section{Black Holes, Coherence Flow, and Generalized Entropy}
-\label{sec:bh}
-% ======================================================================
-
-Black holes provide a natural laboratory for the interplay between geometry, entropy, and information.
-In the entropic picture, the region near the horizon is where the distinction between geometric and informational degrees of freedom becomes blurred: the reference state $\sigma[g]$ is dominated by the near-horizon vacuum structure, while infalling matter and radiation alter $\rho$.
-
-The generalized entropy associated with a surface near the horizon can be written as
-\begin{equation}
-    S_{\mathrm{gen}}
-    =
-    \frac{A}{4G}
-    + S_{\mathrm{out}}[\rho],
-\end{equation}
-where $A$ is the area and $S_{\mathrm{out}}$ the entropy of fields outside the surface.
-This framework suggests that the flow of coherence---captured by relative entropy between $\rho$ and $\sigma[g]$ in appropriately chosen diamonds---feeds back on the near-horizon geometry through $\Tmn$.
-In extreme cases, one might envision regimes where the geometry acts as a ``pure coherence sink'', with $\rho$ driven toward $\sigma[g]$ and the horizon area adjusting accordingly.
-We leave a detailed exploration to future work.
 
 
 % ======================================================================
@@ -780,6 +631,11 @@ We leave a detailed exploration to future work.
 % ======================================================================
 
 Here we briefly summarize how this framework relates to several existing lines of research.
+
+\paragraph{Priority and relation (one-paragraph summary).}
+Unlike Jacobson/Verlinde-style thermodynamic arguments~\cite{Jacobson1995,Verlinde2011}, we do not posit a thermodynamic postulate and then infer Einstein's equation; rather, we vary an explicit information-theoretic functional built from relative/generalized entropy to define an additional variational stress term $\Theta_{\mu\nu}$.
+Unlike stochastic gravity~\cite{HuVerdaguer2008}, which extends semiclassical gravity by adding stress--energy fluctuations as a noise source, we introduce a state-dependent \emph{mean} correction $\Theta_{\mu\nu}$ (with Einstein--Langevin behavior recovered only in appropriate near-equilibrium limits).
+Unlike Penrose--Di\'{o}si collapse models~\cite{Penrose1996,Diosi1989}, we do not introduce a collapse mechanism; the dynamics is open-system/backreaction-driven and the distinguishing experimental signature is coherent-versus-thermal response at fixed energy.
 
 \emph{Stochastic gravity:}
 the Einstein--Langevin equation already extends semiclassical gravity by incorporating stress--energy fluctuations.
@@ -795,7 +651,7 @@ In the context of AdS/CFT, the relative entropy term $\alpha S_{\mathrm{rel}}$ i
 these models connect gravitational self-energy of superpositions to objective collapse of the wavefunction.
 This framework does not introduce a collapse mechanism, but it shares the intuition that coherence interacts nontrivially with gravity.
 
-\emph{Relativistic quantum information (Fuentes and others):}
+\emph{Relativistic quantum information (Fuentes and others):}~\cite{FuentesReview2010}
 studies of non-inertial observers, entanglement in curved spacetimes, and quantum fields in an expanding universe provide concrete setups where geometry modifies quantum coherence.
 These are natural testbeds for the entropic informational stress tensor.
 
@@ -817,9 +673,13 @@ Several experimental fronts could, in principle, constrain entropic corrections:
     \item \textbf{Optomechanical systems:} interferometric setups where macroscopic mass distributions are placed in quantum superpositions.
     \item \textbf{Gravitational-wave memory:} small deviations in the memory effect for events involving strongly coherent sources.
     \item \textbf{Cosmological surveys:} constraints on $w(a)$ and the growth index that could bound $\rho_{\mathrm{coh}}$~\cite{Verlinde2017}.
-    \item \textbf{Nuclear fusion rates:} testing for anomalous enhancement of tunneling probabilities in highly coherent plasmas (see Appendix~\ref{appendix:tunneling}).
     \item \textbf{Analog gravity:} BEC sonic horizons where the effective coupling is enhanced by $\sim 60$ orders of magnitude (Appendix~\ref{appendix:analog}).
 \end{itemize}
+
+\paragraph{Reproducibility (repro pack).}
+The manuscript and all figures generated by the included scripts are archived at \href{https://doi.org/10.5281/zenodo.17868263}{10.5281/zenodo.17868263}~\cite{AhmannZenodoCoherism2024}.
+Figure~\ref{fig:bec-simulation} is reproduced by running \texttt{python3 bec\_sonic\_horizon\_simulation.py} in the \texttt{physics/} directory (Python 3, NumPy, Matplotlib; $<1$ minute on a laptop).
+The FRW sketch figure is reproduced by \texttt{python3 coherism\_frw\_simulation.py} (adds SciPy).
 
 \subsection{Gravitational vs.\ Analog Predictions}
 
@@ -856,7 +716,7 @@ Before discussing open problems, we must address how this framework relates to e
 
 \emph{Hawking radiation and black hole thermodynamics:} The generalized entropy term in $\Cfunc$ is designed to be consistent with the generalized second law (GSL). In the limit where $\rho$ is the Hartle-Hawking or Unruh vacuum near a black hole horizon, $\sr \to 0$ and the framework reduces to standard semiclassical gravity plus area-law entropy. A more detailed analysis of whether the GSL is preserved under the full coupled dynamics is left for future work.
 
-\emph{Cosmological constraints:} As noted in Sec.~\ref{sec:cosmo}, current Planck and BAO data constrain dark energy equation of state variations to $|w_a| \lesssim 0.3$. If $\rho_{\mathrm{coh}}$ were significant at cosmological scales, this would require $\kappa_{\mathrm{cos}} \lesssim 10^{-3}$ in natural units. The cosmological coherence deficit $\Delta \mathcal{I}$ is poorly constrained theoretically.
+\emph{Cosmological constraints:} Current Planck and BAO data constrain dark energy equation of state variations to $|w_a| \lesssim 0.3$. If $\rho_{\mathrm{coh}}$ were significant at cosmological scales, this would require $\kappa_{\mathrm{cos}} \lesssim 10^{-3}$ in natural units. A rigorous cosmological application would require extending the coherence functional to FRW backgrounds (see Appendix~\ref{appendix:frw} for a preliminary treatment).
 
 \subsection{Sign of the Informational Stress}
 A critical open question is the sign of the energy density contribution from $\Theta_{\mu\nu}$.
@@ -1049,62 +909,9 @@ where $\xi_{\mu\nu}$ is a stochastic tensor satisfying $\langle \xi_{\mu\nu} \xi
 In our framework, $\xi_{\mu\nu}$ arises from the time-dependent mismatch between the actual state $\rho(t)$ and the geometry-adapted reference $\sigma[g(t)]$.
 This suggests that ``quantum noise'' in gravity is actually a deterministic signal of informational misalignment.
 
-% ----------------------------------------------------------------------
-\section{Speculative Remarks on Tunneling}
-\label{appendix:tunneling}
-% ----------------------------------------------------------------------
 
-\textbf{WARNING: This section is highly speculative and should not be taken as a prediction of the framework.} We include it only to illustrate one possible (and likely incorrect) extrapolation of the ideas presented. Standard quantum tunneling calculations are extremely well-tested and robust; any modification would be a tiny correction suppressed by $(L_P/L)^2$ or smaller.
+% [REMOVED: Speculative Tunneling appendix - explicitly not a prediction of the framework]
 
-\emph{Motivation:} One might naively wonder whether the informational stress tensor could modify effective potential barriers in tunneling processes. We sketch this possibility below, emphasizing that:
-\begin{enumerate}
-    \item No rigorous derivation connects $\Tmn$ to tunneling rates.
-    \item The effect, if it exists, would be suppressed by at least $(L_P/L_{\mathrm{nuc}})^2 \sim 10^{-38}$ for nuclear scales.
-    \item Standard WKB calculations have been verified to high precision in nuclear physics.
-    \item Any claim of ``enhanced fusion'' from this framework would require extraordinary evidence.
-\end{enumerate}
-
-With these caveats, one could \emph{hypothesize} that the effective action in a tunneling process is modified:
-\begin{equation}
-    S_{\mathrm{eff}} = S_E + \Delta \Cfunc,
-\end{equation}
-where $\Delta \Cfunc$ is the change in the coherence functional along the tunneling path. If $\Delta \Cfunc < 0$ for coherent states, tunneling could be slightly enhanced.
-
-A naive estimate gives a fractional correction to the tunneling rate:
-\begin{equation}
-    \frac{\Delta \Gamma}{\Gamma_0} \sim \kappa \frac{E_{\mathrm{coh}}}{E_{\mathrm{barrier}}} \sim 10^{-40},
-\end{equation}
-which is completely unobservable with current or foreseeable technology.
-
-\emph{Conclusion:} We do not predict observable effects on tunneling. This section is included only for completeness and to caution against over-extrapolation of the framework.
-
-\begin{figure}[h]
-    \centering
-    \begin{tikzpicture}[>=Stealth, scale=0.9]
-        \draw[->] (0,0) -- (5,0) node[right] {$r$};
-        \draw[->] (0,0) -- (0,3) node[above] {$V(r)$};
-        
-        % Standard barrier
-        \draw[thick, black] (0,2.5) .. controls (1,2.5) and (2,0.5) .. (4,0.2);
-        \node[black, right] at (0.2, 2.7) {Standard Barrier};
-        
-        % Coherist barrier
-        \draw[thick, dashed, blue] (0,2.0) .. controls (1,2.0) and (2,0.5) .. (4,0.2);
-        \node[blue, right] at (0.2, 1.8) {With $\Theta_{\mu\nu}$};
-        
-        % Tunneling arrow
-        \draw[->, red, thick] (4,0.5) -- (1,0.5);
-        \node[red, below] at (2.5,0.5) {Tunneling};
-        
-        \node[align=center] at (2.5, -1) {Coherence reduces effective barrier height};
-    \end{tikzpicture}
-    \caption{\emph{Highly speculative} schematic of hypothetical coherence-assisted tunneling. As discussed in the text, any such effect would be suppressed by $\sim 10^{-40}$ and is included only for illustration. Standard tunneling calculations are robust.}
-    \label{fig:tunneling}
-\end{figure}
-
-
-
-% ----------------------------------------------------------------------
 
 % ----------------------------------------------------------------------
 \section{Numerical Scheme}
@@ -1142,12 +949,19 @@ The modifications required are:
 \label{appendix:toy}
 % ----------------------------------------------------------------------
 
-We performed preliminary simulations of the 1+1D model for a scalar field in a cavity with oscillating walls.
-\begin{itemize}
-    \item \textbf{Scenario}: Walls oscillate at frequency $\Omega$.
-    \item \textbf{Result}: Without entropic feedback, particle production grows exponentially (dynamical Casimir effect). With feedback ($\alpha > 0$), the ``informational tension'' acts as a damping force, suppressing the growth of entanglement entropy and saturating the particle number earlier.
-    \item \textbf{Interpretation}: The geometry resists being driven into a state of high informational mismatch with the vacuum reference.
-\end{itemize}
+To avoid over-claiming numerics, we include a minimal \emph{toy} demonstration (not a full 1+1D dynamical Casimir simulation) of the qualitative effect described as ``coherist friction'': a coherence-dependent damping term that suppresses secular growth and produces saturation.
+The script \texttt{physics/generate\_data.py} integrates a single-mode oscillator with a nonlinear damping term of the schematic form
+\begin{equation}
+    \ddot{\phi} + \phi + \kappa\,\phi^2\,\dot{\phi} = 0,
+\end{equation}
+and outputs \texttt{simulation\_data.dat} and the plot in Fig.~\ref{fig:toy-friction}. This toy is intended only as a sanity check that the feedback term can produce stable saturation in a controlled setting.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{toy_coherist_friction.png}
+    \caption{\textbf{Toy ``coherist friction'' demonstration.} Baseline ($\kappa=0$) versus coherence-damped evolution ($\kappa>0$) for the single-mode toy model in \texttt{physics/generate\_data.py}. The plotted quantity is the oscillator energy $E=\tfrac12(\dot{\phi}^2+\phi^2)$ as a function of time.}
+    \label{fig:toy-friction}
+\end{figure}
 
 % ----------------------------------------------------------------------
 \section{Experimental Parameters}
@@ -1206,7 +1020,7 @@ Comparing to the rest mass energy density of a $1\,\mathrm{kg}$ test mass in the
 \begin{equation}
     \eta_{\mathrm{coh}} \sim \frac{\Theta_{00}}{\rho_m} \sim 10^{-39}.
 \end{equation}
-This estimate assumes $\alpha \sim O(1)$; the true value depends on the undetermined normalization of the coherence functional. The earlier estimate of $\eta_{\mathrm{coh}} \sim 10^{-15}$ in Sec.~\ref{sec:wep} assumed a different (larger) value of the effective coupling $\kappa$, illustrating the current uncertainty in predictions.
+This estimate assumes $\alpha \sim O(1)$; the true value depends on the undetermined normalization of the coherence functional. The earlier estimate of $\eta_{\mathrm{coh}} \sim 10^{-15}$ (see Introduction) assumed a different (larger) value of the effective coupling $\kappa$, illustrating the current uncertainty in predictions.
 
 % ----------------------------------------------------------------------
 \section{Schwarzschild Geometry: Near-Horizon $\Tmn$}
@@ -1646,6 +1460,14 @@ The time-time component of the informational stress tensor near the horizon:
 
 \subsection{Observable Predictions}
 
+\paragraph{Referee-proof experimental statement (one place).}
+Define the primary observable as the maximum fractional density modulation within one coherence length of the horizon,
+\begin{equation}
+    A \equiv \max_{|r-r_H|\le L_{\mathrm{coh}}}\left|\frac{\delta\rho}{\rho_0}\right|.
+\end{equation}
+Coherism predicts $A \propto N_{\mathrm{phonon}}$ for \emph{coherent} injected phonons (at fixed geometry and injected energy profile), while for the \emph{thermal} control with matched injected energy the leading-order prediction is $A \approx 0$ because $\rho=\sigma[g]$ implies $S(\sigma||\sigma)=0$ and hence $\Theta_{\mu\nu}=0$.
+\emph{Falsification:} for the parameter regime in Fig.~\ref{fig:bec-simulation}, a null result $A < 10^{-7}$ for coherent injection at $N_{\mathrm{phonon}}\sim 10^3$ (after accounting for standard hydrodynamic non-linearities and imaging systematics) falsifies the acoustic implementation and removes the claimed analog-gravity support for the gravitational extrapolation.
+
 \paragraph{Density Modulation:} The coherism correction modifies the condensate density near the horizon:
 \begin{equation}
     \frac{\delta \rho}{\rho_0} = \frac{\Theta_{tt}^{(\mathrm{analog})}}{\rho_0 c_s^2}.
@@ -1695,7 +1517,7 @@ Figure~\ref{fig:bec-simulation} shows results from a numerical simulation of the
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.9\columnwidth]{bec_sonic_horizon_results.png}
-    \caption{\textbf{BEC sonic horizon simulation.} Left: Density modulation $|\delta\rho/\rho_0|$ as a function of radial distance from horizon for coherent phonon injection. The dashed blue line marks the predicted magnitude $10^{-6}$; the dotted red line marks the falsification threshold $10^{-7}$. Right: Comparison of maximum density modulation for coherent vs.\ thermal phonon injection. Coherent states produce $\delta\rho/\rho_0 \sim 10^{-6}$; thermal states produce zero signal. Parameters: $^{87}$Rb BEC, $c_s = 1\,\mathrm{mm/s}$, $\rho_0 = 10^{14}\,\mathrm{cm}^{-3}$, $\xi = 0.3\,\mu\mathrm{m}$, $r_H = 50\,\mu\mathrm{m}$, $N_{\mathrm{phonon}} = 10^3$.}
+    \caption{\textbf{BEC sonic horizon simulation.} Left: Predicted density modulation $|\delta\rho/\rho_0|$ versus distance from the horizon for coherent phonon injection, shown together with the baseline (no-Coherism) null prediction. The dashed blue line marks the target magnitude $10^{-6}$; the dotted red line marks the falsification threshold $10^{-7}$. Right: Scaling of the maximum modulation $A=\max_{|r-r_H|\le L_{\mathrm{coh}}}|\delta\rho/\rho_0|$ with injected phonon number $N_{\mathrm{phonon}}$, with a simple grid-resolution check (multiple radial discretizations produce the same curve within plotting accuracy). Parameters: $^{87}$Rb BEC, $c_s = 1\,\mathrm{mm/s}$, $\rho_0 = 10^{14}\,\mathrm{cm}^{-3}$, $\xi = 0.3\,\mu\mathrm{m}$, $r_H = 50\,\mu\mathrm{m}$, $L_{\mathrm{coh}} = 10\,\mu\mathrm{m}$.}
     \label{fig:bec-simulation}
 \end{figure}
 
@@ -2037,9 +1859,30 @@ This demonstrates that small ambiguities in defining $\sigma[g]$ produce only se
 % ACKNOWLEDGMENTS
 % ======================================================================
 
-% \begin{acknowledgments}
+% \\begin{acknowledgments}
 % I gratefully acknowledge conceptual assistance from GPT-5 (OpenAI Autonomous Theoretical Assistant) for symbolic manipulation, literature synthesis, and internal consistency checks. All scientific judgment, physical interpretation, and responsibility for claims made in this work are my own.
-% \end{acknowledgments}
+% \\end{acknowledgments}
+
+% ======================================================================
+% STATEMENTS AND DECLARATIONS (Required by Springer)
+% ======================================================================
+
+\section*{Statements and Declarations}
+
+\subsection*{Funding}
+The author did not receive support from any organization for the submitted work.
+
+\subsection*{Competing Interests}
+The author has no relevant financial or non-financial interests to disclose.
+
+\subsection*{Author Contributions}
+D.A. is the sole author and was responsible for all aspects of this work including conception, methodology, formal analysis, writing, and visualization.
+
+\subsection*{Data Availability}
+All data supporting the findings of this study are available within the paper and its supplementary information. The simulation code and numerical data are available at: \url{https://github.com/davidahmann/coherism/tree/main/physics}.
+
+\subsection*{Use of AI Tools}
+Large language models (Claude/Anthropic and GPT-4/OpenAI) were used for AI-assisted copy editing, literature synthesis, and symbolic manipulation during manuscript preparation. All scientific judgment, physical interpretation, derivations, and responsibility for claims made in this work are the author's own. The author has reviewed and approved all content and confirms it reflects the original work.
 
 \bibliographystyle{apsrev4-2}
 \bibliography{coherism_refs}

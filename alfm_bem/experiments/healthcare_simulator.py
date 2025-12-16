@@ -16,6 +16,7 @@ Rules (Hidden from Agent):
 
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
 import sys
 from pathlib import Path
 from dataclasses import dataclass
@@ -270,8 +271,9 @@ def run_simulation(n_claims: int = 1500):
     plt.grid(True, alpha=0.3)
     
     plt.tight_layout()
-    plt.savefig("healthcare_comparison.pdf")
-    print("Saved healthcare_comparison.pdf")
+    out_path = Path(__file__).parent / "learning_curve.pdf"
+    plt.savefig(out_path)
+    print(f"Saved {out_path}")
 
 if __name__ == "__main__":
     run_simulation()

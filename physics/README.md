@@ -1,8 +1,8 @@
 # Coherism: Coherence-Dependent Backreaction in Semiclassical and Analog Gravity
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17868263.svg)](https://doi.org/10.5281/zenodo.17868263)
+[![GitHub](https://img.shields.io/badge/Code-GitHub-blue)](https://github.com/davidahmann/coherism/tree/main/physics)
 
-This directory contains the manuscript and supporting code for the Coherism paper, prepared for submission to *Classical and Quantum Gravity*.
+This directory contains the manuscript and supporting code for the Coherism paper.
 
 ## Abstract
 
@@ -77,11 +77,12 @@ python3 generate_data.py
 - Python 3.8+
 - NumPy
 - Matplotlib
+- SciPy (FRW simulation)
 
 Install dependencies:
 
 ```bash
-pip install numpy matplotlib
+pip install numpy matplotlib scipy
 ```
 
 ## Compiling the Manuscript
@@ -115,4 +116,6 @@ This work is licensed under [CC-BY 4.0](../LICENSE).
 ## Contact
 
 David Ahmann  
+dahmann@lumyn.cc  
+ORCID: [0009-0006-4066-8760](https://orcid.org/0009-0006-4066-8760)  
 Independent Researcher, Toronto, Canada
