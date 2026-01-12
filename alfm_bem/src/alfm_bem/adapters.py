@@ -23,12 +23,7 @@ import torch.optim as optim
 from typing import List, Optional, Tuple, Dict, Any
 from dataclasses import dataclass
 
-# Import from sibling modules
-import sys
-from pathlib import Path
-sys.path.append(str(Path(__file__).parent))
-
-from bem import Experience, BidirectionalExperienceMemory
+from .bem import Experience, BidirectionalExperienceMemory
 
 
 @dataclass

@@ -63,34 +63,32 @@ python3 experiments/healthcare_simulator.py
 -   Standard packages: `amsmath`, `algorithm`, `algpseudocode`, `tikz`, `booktabs`, `hyperref`
 
 ### Python
--   Python 3.8+
--   NumPy
--   Matplotlib
--   Seaborn
--   Pandas
--   scikit-learn
--   PyTorch (for adapters)
+-   Python 3.11+ (see `alfm_bem/.tool-versions`)
+-   Core deps listed in `alfm_bem/requirements.txt`
+-   Fully pinned environment snapshot in `alfm_bem/requirements.lock`
 
-Install dependencies:
+Install (recommended):
 ```bash
-pip install numpy matplotlib seaborn pandas scikit-learn torch
+cd alfm_bem
+python3 -m venv .venv
+. .venv/bin/activate
+pip install -r requirements.lock
+pip install -e . --no-build-isolation
 ```
 
 ## Compiling the Manuscript
 
 ```bash
-pdflatex alfm_bem
-bibtex alfm_bem
-pdflatex alfm_bem
-pdflatex alfm_bem
+make figures
+make paper
 ```
 
 ## Key Results
 
-1.  **Failure Retrieval** — BEM achieves F1 ≈ 0.59 on synthetic failure modes with success retrieval rate ≈ 0.70.
-2.  **OOD Detection** — Coverage signal achieves AUC ≈ 1.0 for clustered OOD patterns.
-3.  **Healthcare Case Study** — ALFM-BEM reduces claim rejection rates by **88%** (from 12.5% to 1.5%) by learning latent rules from binary feedback.
-4.  **Query Action** — Active clarification improves success rates by 8.0% in high-uncertainty scenarios.
+1.  **Failure Retrieval** — BEM achieves Failure F1 ≈ 0.59 with Success F1 ≈ 0.72 (mean over 5 seeds).
+2.  **OOD Detection** — Coverage signal achieves AUC ≈ 1.0 for clustered OOD patterns (canonical setup).
+3.  **Healthcare Case Study** — In simulation (seed=42, N=2000), rejection-on-submitted drops from ≈11.6% (baseline) to ≈2.5% overall (≈1.2% in the final window) with ≈11–16% abstain rate.
+4.  **Query Action** — Active clarification improves accuracy by ≈6.2% in a high-uncertainty toy simulation.
 
 Notes:
 - The paper’s equations present the base form; the reference implementation additionally weights by recency and confirmation count and caps aggregation to nearest neighbors for stability.

@@ -26,6 +26,8 @@ import json
 import hashlib
 from datetime import datetime, timedelta
 
+from .constants import DEFAULT_FAILURE_THRESHOLD, DEFAULT_SUCCESS_THRESHOLD
+
 
 class CoverageMode(Enum):
     """Coverage signal computation method."""
@@ -53,11 +55,11 @@ class Experience:
     
     @property
     def is_failure(self) -> bool:
-        return self.outcome < -0.3
+        return self.outcome < DEFAULT_FAILURE_THRESHOLD
     
     @property
     def is_success(self) -> bool:
-        return self.outcome > 0.3
+        return self.outcome > DEFAULT_SUCCESS_THRESHOLD
     
     @property
     def severity(self) -> int:
@@ -123,6 +125,7 @@ class BidirectionalExperienceMemory:
         self._knn_index = None
         self._last_update_time = datetime.min
         self._needs_reindex = False
+        self._kde_coverage_scale: float = 1.0
 
         # For legacy coverage mode
         self._mean_embedding: Optional[np.ndarray] = None
@@ -175,6 +178,7 @@ class BidirectionalExperienceMemory:
                 self._embedding_matrix = None
                 self._kde_model = None
                 self._knn_index = None
+                self._kde_coverage_scale = 1.0
                 return
 
         exp = Experience(
@@ -193,6 +197,7 @@ class BidirectionalExperienceMemory:
         self._embedding_matrix = None
         self._kde_model = None
         self._knn_index = None
+        self._kde_coverage_scale = 1.0
 
     def _ensure_index(self):
         """Rebuid search index if needed."""
@@ -212,6 +217,33 @@ class BidirectionalExperienceMemory:
             from sklearn.neighbors import KernelDensity
             self._kde_model = KernelDensity(kernel='gaussian', bandwidth=self.kde_bandwidth)
             self._kde_model.fit(self._embedding_matrix)
+            self._calibrate_kde_coverage_scale()
+
+    def _calibrate_kde_coverage_scale(self):
+        """
+        Calibrate a per-memory linear scale that maps typical in-distribution KDE
+        densities to a coverage near 1.0 without relying on a hard-coded constant.
+        """
+        if self._embedding_matrix is None or len(self.experiences) < 10:
+            self._kde_coverage_scale = 1.0
+            return
+
+        # Deterministic subsample to keep calibration stable across runs.
+        n = self._embedding_matrix.shape[0]
+        sample_size = min(256, n)
+        indices = np.linspace(0, n - 1, sample_size, dtype=int)
+        sampled = self._embedding_matrix[indices]
+
+        densities = []
+        for x in sampled:
+            sims = self._embedding_matrix @ x
+            distances = 1.0 - sims
+            kernel_vals = np.exp(-distances**2 / (2 * self.kde_bandwidth**2))
+            densities.append(float(np.mean(kernel_vals)))
+
+        # Map the 90th percentile of ID densities to 1.0.
+        denom = max(float(np.percentile(densities, 90)), 1e-12)
+        self._kde_coverage_scale = 1.0 / denom
 
     def _compute_similarities(self, z: np.ndarray) -> np.ndarray:
         self._ensure_index()
@@ -369,13 +401,11 @@ class BidirectionalExperienceMemory:
         # Gaussian kernel: K(d) = exp(-d^2 / (2 * bw^2))
         kernel_vals = np.exp(-distances**2 / (2 * self.kde_bandwidth**2))
         
-        # Normalize by number of experiences for consistent scale
+        # Normalize by number of experiences for consistent scale.
         density = np.mean(kernel_vals)
-        
-        # Scale to [0, 1] range (density of 1.0 = all experiences at distance 0)
-        # In practice, max density is much lower, so we rescale
-        coverage = np.clip(density * 30, 0.0, 1.0)  # Scaling factor tuned empirically
-        
+
+        # Calibrated rescaling to [0, 1] based on typical ID density.
+        coverage = np.clip(density * self._kde_coverage_scale, 0.0, 1.0)
         return float(coverage)
     
     def _coverage_knn_avg(self, sims: np.ndarray) -> float:

@@ -14,17 +14,12 @@ Author: David Ahmann
 """
 
 import numpy as np
-import sys
-from pathlib import Path
 from typing import List, Tuple, Dict
 from dataclasses import dataclass
 import json
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
-from bem import BidirectionalExperienceMemory, CoverageMode
-from projection import ContrastiveProjection
+from alfm_bem.bem import BidirectionalExperienceMemory, CoverageMode
+from alfm_bem.projection import ContrastiveProjection
 
 # Try to import sentence-transformers
 try:

@@ -18,11 +18,12 @@ import numpy as np
 from typing import Dict, Any, Optional, List, Callable
 import uuid
 from dataclasses import dataclass
+from datetime import datetime
 
-from bem import BidirectionalExperienceMemory, BEMManager, Experience
-from projection import ContrastiveProjection
-from consensus import ConsensusEngine, ConsensusDecision, Action
-from adapters import BoundedAdapter, AdapterConfig, AdapterManager
+from .bem import BidirectionalExperienceMemory, BEMManager, Experience
+from .projection import ContrastiveProjection
+from .consensus import ConsensusEngine, ConsensusDecision, Action
+from .adapters import BoundedAdapter, AdapterConfig, AdapterManager
 
 
 @dataclass
@@ -158,7 +159,7 @@ class ALFMBEM:
                 "context": context,
                 "tenant_id": tenant_id,
                 "domain_id": domain_id,
-                "timestamp": decision.confidence  # placeholder, really should use datetime
+                "timestamp": datetime.now(),
             }
         
         self._inference_count += 1
@@ -172,7 +173,7 @@ class ALFMBEM:
     def record_outcome(
         self,
         backbone_embedding: np.ndarray,
-        context: str,
+        context: Any,
         outcome: float,
         tenant_id: str,
         domain_id: str = "default",
@@ -188,7 +189,7 @@ class ALFMBEM:
         
         Args:
             backbone_embedding: Original backbone embedding
-            context: String context (for deduplication)
+            context: Context object (used for deduplication/hashing)
             outcome: Outcome score in [-1, 1]
             tenant_id: Tenant identifier
             domain_id: Domain identifier

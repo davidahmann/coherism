@@ -17,15 +17,11 @@ Metric: "Adaptation Delay" - how fast does it recover performance after drift?
 
 import numpy as np
 import matplotlib.pyplot as plt
-import sys
-from pathlib import Path
 from typing import List, Tuple
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
-from bem import BidirectionalExperienceMemory, CoverageMode
-from adapters import BoundedAdapter, AdapterConfig
-from projection import ContrastiveProjection
+from alfm_bem.bem import BidirectionalExperienceMemory, CoverageMode
+from alfm_bem.adapters import BoundedAdapter, AdapterConfig
+from alfm_bem.projection import ContrastiveProjection
 
 def generate_data_stream(
     n_steps: int, 
@@ -147,7 +143,7 @@ def run_experiment():
             # Let's hope the contrastive loss in `adapters.py` does the right thing.
             # Train adapter on the few new samples B IMMEDIATELLY (Online Learning)
             # This ensures we don't miss the signal due to sampling A
-            from bem import Experience
+            from alfm_bem.bem import Experience
             from datetime import datetime
             
             # Construct a temporary experience object for training

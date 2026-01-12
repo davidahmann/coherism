@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "alfm-bem"
+version = "0.1.0"
+description = "ALFM-BEM: Bidirectional Experience Memory for Continuous Learning in Foundation Model Deployments"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "David Ahmann" }]
+dependencies = [
+  "numpy",
+  "matplotlib",
+  "seaborn",
+  "pandas",
+  "scikit-learn",
+  "torch",
+]
+
+[project.optional-dependencies]
+real_embeddings = [
+  "sentence-transformers",
+  "transformers",
+]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]

@@ -48,3 +48,9 @@ automation/
 
 # JMLR Submission
 alfm_jmlr/
+
+# ALFM-BEM build output
+alfm_bem/build/
+alfm_bem/figures/paper_metrics.json
+alfm_bem/.cache/
+alfm_bem/experiments/healthcare_metrics.json

@@ -14,20 +14,29 @@ Rules (Hidden from Agent):
 3. Modifier Required: CPT 25111 requires modifier RT/LT.
 """
 
+from __future__ import annotations
+
+import os
+import json
 import numpy as np
-import matplotlib.pyplot as plt
-from pathlib import Path
-import sys
-from pathlib import Path
 from dataclasses import dataclass
 from typing import List, Tuple, Optional, Dict
 import random
 from abc import ABC, abstractmethod
+from pathlib import Path
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+_CACHE_ROOT = Path(__file__).resolve().parents[1] / ".cache"
+os.environ.setdefault("MPLCONFIGDIR", str(_CACHE_ROOT / "matplotlib"))
+os.environ.setdefault("XDG_CACHE_HOME", str(_CACHE_ROOT))
+Path(os.environ["MPLCONFIGDIR"]).mkdir(parents=True, exist_ok=True)
+(_CACHE_ROOT / "fontconfig").mkdir(parents=True, exist_ok=True)
 
-from bem import BidirectionalExperienceMemory, CoverageMode
+import matplotlib
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+
+from alfm_bem.bem import BidirectionalExperienceMemory, CoverageMode
 
 # ... (Domain Entities & Generator - Same as before)
 @dataclass
@@ -55,7 +64,12 @@ class ClaimGenerator:
         elif cpt == "90658": dx = "Z23"
         else: dx = random.choice(self.diagnosis_codes)
         age = random.randint(1, 80)
-        mod = random.choice(self.modifiers) if random.random() > 0.5 else ""
+        if cpt == "25111":
+            # Make missing modifiers a realistic-but-not-dominant failure mode so
+            # baseline rejection rates are in a plausible regime (~10–15%).
+            mod = random.choices(["RT", "LT", ""], weights=[0.4, 0.4, 0.2], k=1)[0]
+        else:
+            mod = random.choice(self.modifiers) if random.random() > 0.5 else ""
         return Claim(str(claim_id), f"PROV_{random.randint(1,5)}", cpt, dx, age, mod)
 
 class PayerEngine:
@@ -71,18 +85,19 @@ class PayerEngine:
 class SymbolicProjector:
     def __init__(self, dim: int = 64):
         self.dim = dim
-        np.random.seed(42)
-        self.cpt_proj = {c: np.random.randn(dim) for c in ["99213", "90658", "25111", "99203", "71045"]}
-        self.dx_proj = {d: np.random.randn(dim) for d in ["J01.90", "J20.9", "R05", "M67.4", "Z23"]}
-        self.mod_proj = {m: np.random.randn(dim) for m in ["", "RT", "LT", "25", "59"]}
-        self.age_seeds = {a: np.random.randn(dim) for a in range(10)} # Age buckets
+        self._rng = np.random.default_rng(42)
+        self.cpt_proj = {c: self._rng.standard_normal(dim) for c in ["99213", "90658", "25111", "99203", "71045"]}
+        self.dx_proj = {d: self._rng.standard_normal(dim) for d in ["J01.90", "J20.9", "R05", "M67.4", "Z23"]}
+        self.mod_proj = {m: self._rng.standard_normal(dim) for m in ["", "RT", "LT", "25", "59"]}
+        self.age_seeds = {a: self._rng.standard_normal(dim) for a in range(10)} # Age buckets
         
     def project(self, claim: Claim) -> np.ndarray:
         v_cpt = self.cpt_proj.get(claim.cpt_code, np.zeros(self.dim))
         v_dx = self.dx_proj.get(claim.diagnosis_code, np.zeros(self.dim))
         v_mod = self.mod_proj.get(claim.modifier, np.zeros(self.dim))
         bucket = claim.patient_age // 10
-        if bucket not in self.age_seeds: self.age_seeds[bucket] = np.random.randn(self.dim)
+        if bucket not in self.age_seeds:
+            self.age_seeds[bucket] = self._rng.standard_normal(self.dim)
         v_age = self.age_seeds[bucket]
         vec = v_cpt + v_dx + v_mod + v_age
         return vec / (np.linalg.norm(vec) + 1e-10)
@@ -101,6 +116,18 @@ class BaseAgent(ABC):
     @abstractmethod
     def learn(self, claim: Claim, outcome: float):
         pass
+
+class TrustAllAgent(BaseAgent):
+    """Baseline: always submit, never abstain."""
+
+    def __init__(self):
+        super().__init__("TrustAll")
+
+    def process(self, claim: Claim) -> Tuple[str, float]:
+        return "SUBMIT", 0.0
+
+    def learn(self, claim: Claim, outcome: float):
+        return
 
 class BEMAgent(BaseAgent):
     def __init__(self):
@@ -176,20 +203,25 @@ class NEPAgent(BaseAgent):
         vec = self.projector.project(claim)
         self.bem.add_experience(vec, outcome, str(claim))
 
-
-def run_simulation(n_claims: int = 1500):
-    print(f"Starting Multi-Agent Simulation (N={n_claims})...")
+def run_simulation(
+    n_claims: int = 2000,
+    *,
+    seed: int = 42,
+    window: int = 100,
+    save_json: bool = True,
+) -> Dict[str, Dict[str, float]]:
+    print(f"Starting Multi-Agent Simulation (N={n_claims}, seed={seed})...")
+    random.seed(seed)
+    np.random.seed(seed)
     
     gen = ClaimGenerator()
     payer = PayerEngine()
     
-    agents = [BEMAgent(), RAGAgent(), NEPAgent()]
+    agents = [TrustAllAgent(), BEMAgent(), RAGAgent(), NEPAgent()]
     
     # Store results per agent
-    results = {a.name: {'rej': [], 'abs': []} for a in agents}
-    history = {a.name: {'outcomes': [], 'actions': []} for a in agents}
-    
-    window = 100
+    results = {a.name: {"rej": [], "abs": []} for a in agents}
+    history = {a.name: {"abstain": [], "submitted": [], "rejected": []} for a in agents}
     
     # Use SAME random seed for claim generation per step could be tricky if we want them to see SAME claims.
     # We will generate a list of claims upfront.
@@ -206,25 +238,13 @@ def run_simulation(n_claims: int = 1500):
             
             # Record Action
             if action == "ABSTAIN":
-                history[agent.name]['actions'].append(1.0)
-                # If abstained, we assume humans catch it (Safe)
-                # Effective outcome = 1.0 (Safe)? Or do we count it as "Handled"?
-                # Rejection Rate = (Failures) / (Total).
-                # If Abstained and it WAS a failure -> Success (Safe).
-                # If Abstained and it WAS valid -> False Positive (Cost).
-                #
-                # Here we plot "Rejection Rate of Sent Claims" vs "Abstain Rate".
-                if gt_outcome < 0:
-                    history[agent.name]['outcomes'].append(1.0) # Caught!
-                else:
-                    history[agent.name]['outcomes'].append(1.0) # Valid claim held back (Safe but costly)
+                history[agent.name]["abstain"].append(1.0)
+                history[agent.name]["submitted"].append(0.0)
+                history[agent.name]["rejected"].append(0.0)
             else:
-                history[agent.name]['actions'].append(0.0)
-                # Submitted
-                if gt_outcome > 0:
-                    history[agent.name]['outcomes'].append(1.0) # Paid
-                else:
-                    history[agent.name]['outcomes'].append(0.0) # Rejected (Failure)
+                history[agent.name]["abstain"].append(0.0)
+                history[agent.name]["submitted"].append(1.0)
+                history[agent.name]["rejected"].append(1.0 if gt_outcome < 0 else 0.0)
             
             # Learn
             agent.learn(claim, gt_outcome)
@@ -232,19 +252,19 @@ def run_simulation(n_claims: int = 1500):
         # Logging
         if i % 50 == 0 and i > 0:
             for agent in agents:
-                acts = history[agent.name]['actions'][-window:]
-                outs = history[agent.name]['outcomes'][-window:]
+                abst = history[agent.name]["abstain"][-window:]
+                submitted = history[agent.name]["submitted"][-window:]
+                rejected = history[agent.name]["rejected"][-window:]
                 
-                abstain_rate = sum(acts) / len(acts)
-                # Failure Rate = 1 - Success Rate
-                # Success Rate = sum(outs) / len(outs)
-                failure_rate = 1.0 - (sum(outs) / len(outs))
+                abstain_rate = float(sum(abst) / len(abst))
+                submitted_count = max(1.0, float(sum(submitted)))
+                rejection_rate = float(sum(rejected) / submitted_count)
                 
-                results[agent.name]['rej'].append(failure_rate)
-                results[agent.name]['abs'].append(abstain_rate)
+                results[agent.name]["rej"].append(rejection_rate)
+                results[agent.name]["abs"].append(abstain_rate)
             
             # Print BEM stats as proxy
-            print(f"Step {i}: BEM Fail={results['BEM']['rej'][-1]:.2f} Abs={results['BEM']['abs'][-1]:.2f}")
+            print(f"Step {i}: BEM Rej={results['BEM']['rej'][-1]:.2f} Abs={results['BEM']['abs'][-1]:.2f}")
 
     # Plot
     plt.figure(figsize=(12, 5))
@@ -254,9 +274,9 @@ def run_simulation(n_claims: int = 1500):
     plt.subplot(1, 2, 1)
     for name in results:
         plt.plot(steps, results[name]['rej'], label=name, linewidth=2)
-    plt.title("Failure Rate (Risk)")
+    plt.title("Rejection Rate (Submitted Claims)")
     plt.xlabel("Claims")
-    plt.ylabel("Failure Rate")
+    plt.ylabel("Rejection Rate")
     plt.legend()
     plt.grid(True, alpha=0.3)
     
@@ -274,6 +294,41 @@ def run_simulation(n_claims: int = 1500):
     out_path = Path(__file__).parent / "learning_curve.pdf"
     plt.savefig(out_path)
     print(f"Saved {out_path}")
+
+    summary: Dict[str, Dict[str, float]] = {}
+    for agent in agents:
+        name = agent.name
+        abstain = np.asarray(history[name]["abstain"], dtype=float)
+        submitted = np.asarray(history[name]["submitted"], dtype=float)
+        rejected = np.asarray(history[name]["rejected"], dtype=float)
+        if rejected.size == 0:
+            continue
+        submitted_total = max(1.0, float(np.sum(submitted)))
+        submitted_final = max(1.0, float(np.sum(submitted[-window:])))
+        summary[name] = {
+            "rejection_rate_submitted_overall": float(np.sum(rejected) / submitted_total),
+            "rejection_rate_submitted_final_window": float(np.sum(rejected[-window:]) / submitted_final),
+            "abstain_rate_overall": float(np.mean(abstain)),
+            "abstain_rate_final_window": float(np.mean(abstain[-window:])),
+            "effective_rejection_rate_overall": float(np.sum(rejected) / float(len(rejected))),
+            "effective_rejection_rate_final_window": float(np.sum(rejected[-window:]) / float(len(rejected[-window:]))),
+        }
+
+    if "TrustAll" in summary and "BEM" in summary:
+        baseline = summary["TrustAll"]["rejection_rate_submitted_final_window"]
+        bem_final = summary["BEM"]["rejection_rate_submitted_final_window"]
+        summary["__comparison__"] = {
+            "baseline_rejection_rate_submitted_final_window": baseline,
+            "bem_rejection_rate_submitted_final_window": bem_final,
+            "relative_reduction": float((baseline - bem_final) / (baseline + 1e-12)),
+        }
+
+    if save_json:
+        metrics_path = Path(__file__).parent / "healthcare_metrics.json"
+        metrics_path.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
+        print(f"Saved {metrics_path}")
+
+    return summary
 
 if __name__ == "__main__":
     run_simulation()

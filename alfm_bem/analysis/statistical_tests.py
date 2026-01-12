@@ -15,11 +15,22 @@ Test: Welch's t-test (BEM vs RAG, BEM vs NEP).
 
 import numpy as np
 from scipy import stats
-import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "experiments"))
-from ablation_study import run_ablation_study
+import importlib.util
+
+
+def _load_run_ablation_study():
+    ablation_path = Path(__file__).resolve().parents[1] / "experiments" / "ablation_study.py"
+    spec = importlib.util.spec_from_file_location("alfm_bem_experiments_ablation_study", ablation_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"Failed to load module from {ablation_path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.run_ablation_study
+
+
+run_ablation_study = _load_run_ablation_study()
 
 def run_tests():
     print("Starting Statistical Significance Tests (N=10)...")

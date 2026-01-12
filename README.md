@@ -85,9 +85,9 @@ This directory contains the source for the advanced ALFM-BEM architecture, exten
     *   **Bounded Adapters:** Continual learning with provable stability guarantees
 *   **Key Results:**
     *   Failure retrieval F1 ≈ 0.59, success retrieval rate ≈ 0.70 (bidirectional capability RAG lacks)
-    *   OOD detection AUC ≈ 1.0 for clustered patterns
-    *   Healthcare case study: 88% reduction in claim rejections (12.5% → 1.5%)
-    *   Query action improves success rates by 8.0% in high-uncertainty scenarios
+    *   OOD detection AUC ≈ 1.0 for clustered patterns (canonical setup)
+    *   Healthcare case study (simulation): ≈11.6% → ≈2.5% rejection-on-submitted overall (≈1.2% final window) (seed=42, N=2000), with ≈11–16% abstain rate
+    *   Query action improves accuracy by ≈6.2% in a high-uncertainty toy simulation
 *   **Key Differentiator vs RAG:** BEM stores experiences with outcomes, not documents—enabling learning from deployment without human curation
 *   **Files:**
     *   `alfm_bem.tex`: JMLR-format manuscript

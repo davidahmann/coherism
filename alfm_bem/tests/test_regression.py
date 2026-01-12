@@ -10,15 +10,10 @@ Verifies critical system functionality:
 
 import unittest
 import numpy as np
-import sys
-from pathlib import Path
 from datetime import datetime
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
-from bem import BidirectionalExperienceMemory, Experience
-from alfm_bem import create_alfm_bem, ALFMConfig
+from alfm_bem.bem import BidirectionalExperienceMemory, Experience
+from alfm_bem.system import create_alfm_bem, ALFMConfig
 
 class TestALFMBEM(unittest.TestCase):
     

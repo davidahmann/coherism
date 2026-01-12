@@ -14,16 +14,10 @@ Author: David Ahmann
 import numpy as np
 import matplotlib.pyplot as plt
 from typing import List, Tuple, Dict
-import sys
-from pathlib import Path
-
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
-from bem import BidirectionalExperienceMemory, Experience, CoverageMode
-from projection import ContrastiveProjection
-from adapters import BoundedAdapter, AdapterConfig
-from consensus import ConsensusEngine, Action
+from alfm_bem.bem import BidirectionalExperienceMemory, Experience, CoverageMode
+from alfm_bem.projection import ContrastiveProjection
+from alfm_bem.adapters import BoundedAdapter, AdapterConfig
+from alfm_bem.consensus import ConsensusEngine, Action
 
 np.random.seed(42)
 
@@ -293,6 +287,8 @@ def experiment_adapter_stability(
     
     bounded_drift = []
     unbounded_drift = []
+    bounded_param_norm = []
+    unbounded_param_norm = []
     
     for step in range(n_steps):
         experiences = bem.sample_for_training(batch_size)
@@ -300,15 +296,19 @@ def experiment_adapter_stability(
         # Train bounded
         adapter_bounded.train_step(experiences, None)
         bounded_drift.append(adapter_bounded.total_drift)
+        bounded_param_norm.append(adapter_bounded._compute_param_norm())
         
         # Train unbounded
         adapter_unbounded.train_step(experiences, None)
         unbounded_drift.append(adapter_unbounded.total_drift)
+        unbounded_param_norm.append(adapter_unbounded._compute_param_norm())
     
     return {
         "steps": list(range(n_steps)),
         "bounded_drift": bounded_drift,
         "unbounded_drift": unbounded_drift,
+        "bounded_param_norm": bounded_param_norm,
+        "unbounded_param_norm": unbounded_param_norm,
         "bounded_final_norm": adapter_bounded._compute_param_norm(),
         "unbounded_final_norm": adapter_unbounded._compute_param_norm()
     }

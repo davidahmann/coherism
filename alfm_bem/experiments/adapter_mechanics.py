@@ -12,14 +12,9 @@ This confirms the class functions as a "Safety/Correction" layer.
 """
 
 import numpy as np
-import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
-from adapters import BoundedAdapter, AdapterConfig
-from bem import Experience
 from datetime import datetime
+from alfm_bem.adapters import BoundedAdapter, AdapterConfig
+from alfm_bem.bem import Experience
 
 def run_experiment():
     print("Starting Adapter Mechanics Validation...")

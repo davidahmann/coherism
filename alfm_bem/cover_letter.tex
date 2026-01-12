@@ -21,12 +21,16 @@ Foundation models are typically deployed as frozen artifacts, creating a fundame
     \item \textbf{Bidirectional Experience Memory (BEM)}: A unified memory architecture where experiences exist on a continuous outcome spectrum, providing risk signals, success patterns, and out-of-distribution detection as emergent properties.
     \item \textbf{Consensus Engine with Query Action}: An extension to selective prediction that transforms passive abstention into active learning, validated to improve accuracy by \textbf{6.2\%} in ambiguous zones.
     \item \textbf{Bounded Adapters}: Continuous improvement with provable stability guarantees (Proposition 4.4).
-    \item \textbf{Empirical Validation}: Experiments on both synthetic data and real-world 20Newsgroups text embeddings demonstrate that BEM significantly improves failure retrieval (Precision \textbf{0.95} vs 0.73 for raw embeddings) and uniquely provides success pattern guidance that RAG baselines cannot offer.
+    \item \textbf{Empirical Validation}: Experiments on synthetic data and real-world 20Newsgroups text embeddings validate bidirectional retrieval (failure F1 $\approx$ 0.59; success F1 $\approx$ 0.72) and show that learned projection is required for effective outcome-relevant retrieval on high-dimensional backbone embeddings.
 \end{itemize}
 
 \noindent\textbf{Previous Publications}
 
 This manuscript has not been published previously at any workshop or conference. This is an original submission.
+
+\noindent\textbf{Simultaneous Submissions}
+
+This manuscript is not under review at any other journal or conference.
 
 \noindent\textbf{Co-Author Consent}
 
@@ -40,15 +44,17 @@ I declare no conflicts of interest with any JMLR action editors or reviewers. I 
 
 This research was conducted independently without external funding. No grants, stipends, donations, or third-party support were received for any aspect of this work, including data collection, computing resources, or development.
 
+\noindent\textbf{Competing Interests}
+
+I have no financial relationships or other competing interests (within or outside the submitted work) during the last 36 months that could be perceived to influence this submission.
+
 \noindent\textbf{Suggested Action Editors}
 
-Based on expertise in memory-augmented neural networks, continual learning, and foundation model deployment:
+Based on expertise in memory-augmented retrieval, continual/online learning, and foundation model deployment:
 \begin{enumerate}
-    \item \textbf{Finale Doshi-Velez} -- Expertise in interpretable ML and safe deployment
-    \item \textbf{Been Kim} -- Expertise in interpretability and model understanding
-    \item \textbf{Percy Liang} -- Expertise in foundation models and robustness
-    \item \textbf{Jacob Steinhardt} -- Expertise in ML safety and distribution shift
-    \item \textbf{Zachary Lipton} -- Expertise in deployment and calibration
+    \item \textbf{Kai-Wei Chang} (UCLA) -- Large language models; trustworthy NLP
+    \item \textbf{Mehryar Mohri} (NYU) -- Online learning; structured prediction; ranking
+    \item \textbf{Sanjiv Kumar} (Google Research) -- Representation learning; nearest-neighbor search
 \end{enumerate}
 
 \noindent\textbf{Suggested Reviewers}
@@ -63,7 +69,7 @@ Based on expertise in memory-augmented neural networks, continual learning, and 
 
 \noindent\textbf{Keywords}
 
-Continual learning, experience memory, out-of-distribution detection, foundation models, selective prediction, bounded adapters, retrieval-augmented systems
+Continual learning, experience memory, out-of-distribution detection, foundation models, selective prediction
 
 \noindent\textbf{Paper Length Justification}
 

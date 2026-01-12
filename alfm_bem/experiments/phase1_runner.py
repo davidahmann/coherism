@@ -16,18 +16,13 @@ Author: David Ahmann
 
 import numpy as np
 import argparse
-import sys
-from pathlib import Path
 from typing import List, Dict
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 
-# Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
 from ablation_study import run_ablation_study
-from bem import BidirectionalExperienceMemory, CoverageMode
+from alfm_bem.bem import BidirectionalExperienceMemory, CoverageMode
 
 # =============================================================================
 # 1. Multi-Run Statistical Confidence
@@ -39,9 +34,9 @@ def run_multi_seed_ablation(seeds: List[int] = [42, 123, 456, 789, 1011]):
     print("=" * 60)
     
     metrics = {
-        "RAG": {"fail_f1": [], "ood_clust": [], "ood_dist": []},
-        "NEP": {"fail_f1": [], "ood_clust": [], "ood_dist": []},
-        "BEM": {"fail_f1": [], "ood_clust": [], "ood_dist": []}
+        "RAG": {"fail_p": [], "fail_r": [], "fail_f1": [], "succ_p": [], "succ_r": [], "succ_f1": [], "ood_clust": [], "ood_dist": []},
+        "NEP": {"fail_p": [], "fail_r": [], "fail_f1": [], "succ_p": [], "succ_r": [], "succ_f1": [], "ood_clust": [], "ood_dist": []},
+        "BEM": {"fail_p": [], "fail_r": [], "fail_f1": [], "succ_p": [], "succ_r": [], "succ_f1": [], "ood_clust": [], "ood_dist": []},
     }
     
     for seed in seeds:
@@ -49,23 +44,40 @@ def run_multi_seed_ablation(seeds: List[int] = [42, 123, 456, 789, 1011]):
         res = run_ablation_study(seed=seed, verbose=False)
         
         for sys_name in ["RAG", "NEP", "BEM"]:
+            metrics[sys_name]["fail_p"].append(res[sys_name]["failure_retrieval"]["precision"])
+            metrics[sys_name]["fail_r"].append(res[sys_name]["failure_retrieval"]["recall"])
             metrics[sys_name]["fail_f1"].append(res[sys_name]["failure_retrieval"]["f1"])
+            metrics[sys_name]["succ_p"].append(res[sys_name]["success_retrieval"]["precision"])
+            metrics[sys_name]["succ_r"].append(res[sys_name]["success_retrieval"]["recall"])
+            metrics[sys_name]["succ_f1"].append(res[sys_name]["success_retrieval"]["f1"])
             metrics[sys_name]["ood_clust"].append(res[sys_name]["ood_clustered"]["auc"])
             metrics[sys_name]["ood_dist"].append(res[sys_name]["ood_distributed"]["auc"])
             
     print("\nResults (Mean ± Std):")
-    print(f"{'System':<10} {'Fail F1':<20} {'OOD (Clust)':<20} {'OOD (Dist)':<20}")
-    print("-" * 70)
+    print(f"{'System':<10} {'Fail P/R/F1':<28} {'Succ P/R/F1':<28} {'OOD (Clust)':<14} {'OOD (Dist)':<14}")
+    print("-" * 95)
     
     for sys_name in ["RAG", "NEP", "BEM"]:
+        fp_mean = np.mean(metrics[sys_name]["fail_p"])
+        fp_std = np.std(metrics[sys_name]["fail_p"])
+        fr_mean = np.mean(metrics[sys_name]["fail_r"])
+        fr_std = np.std(metrics[sys_name]["fail_r"])
         f1_mean = np.mean(metrics[sys_name]["fail_f1"])
         f1_std = np.std(metrics[sys_name]["fail_f1"])
+        sp_mean = np.mean(metrics[sys_name]["succ_p"])
+        sp_std = np.std(metrics[sys_name]["succ_p"])
+        sr_mean = np.mean(metrics[sys_name]["succ_r"])
+        sr_std = np.std(metrics[sys_name]["succ_r"])
+        sf1_mean = np.mean(metrics[sys_name]["succ_f1"])
+        sf1_std = np.std(metrics[sys_name]["succ_f1"])
         ood_c_mean = np.mean(metrics[sys_name]["ood_clust"])
         ood_c_std = np.std(metrics[sys_name]["ood_clust"])
         ood_d_mean = np.mean(metrics[sys_name]["ood_dist"])
         ood_d_std = np.std(metrics[sys_name]["ood_dist"])
         
-        print(f"{sys_name:<10} {f1_mean:.2f} ± {f1_std:.2f}      {ood_c_mean:.2f} ± {ood_c_std:.2f}      {ood_d_mean:.2f} ± {ood_d_std:.2f}")
+        fail_str = f"{fp_mean:.2f}±{fp_std:.2f}/{fr_mean:.2f}±{fr_std:.2f}/{f1_mean:.2f}±{f1_std:.2f}"
+        succ_str = f"{sp_mean:.2f}±{sp_std:.2f}/{sr_mean:.2f}±{sr_std:.2f}/{sf1_mean:.2f}±{sf1_std:.2f}"
+        print(f"{sys_name:<10} {fail_str:<28} {succ_str:<28} {ood_c_mean:.2f}±{ood_c_std:.2f}     {ood_d_mean:.2f}±{ood_d_std:.2f}")
 
 # =============================================================================
 # 2. Scale Experiments

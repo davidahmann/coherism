@@ -22,14 +22,10 @@ Author: David Ahmann
 """
 
 import numpy as np
-import sys
-from pathlib import Path
 from typing import List, Tuple, Dict, Optional
 from dataclasses import dataclass
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
-from bem import BidirectionalExperienceMemory, CoverageMode
+from alfm_bem.bem import BidirectionalExperienceMemory, CoverageMode
 
 np.random.seed(42)
 
@@ -279,21 +275,43 @@ def evaluate_failure_retrieval(
 
 def evaluate_success_retrieval(
     system,
-    test_successes: List[np.ndarray]
+    test_successes: List[np.ndarray],
+    test_failures: List[np.ndarray],
+    threshold: float = 0.3,
 ) -> Dict[str, float]:
     """
-    Evaluate success retrieval: for success queries, do we get success signal?
+    Evaluate success retrieval: for success queries, do we get a success signal
+    without spuriously flagging failures as "successful precedents"?
     """
     if not hasattr(system, 'success_signal'):
-        return {"success_rate": 0.0}
-    
-    success_count = 0
+        return {"precision": 0.0, "recall": 0.0, "f1": 0.0, "success_rate": 0.0}
+
+    tp = fp = fn = tn = 0
+
     for z in test_successes:
-        success, _ = system.success_signal(z)
-        if success > 0.3:
-            success_count += 1
-    
-    return {"success_rate": success_count / len(test_successes)}
+        score, _ = system.success_signal(z)
+        if score > threshold:
+            tp += 1
+        else:
+            fn += 1
+
+    for z in test_failures:
+        score, _ = system.success_signal(z)
+        if score > threshold:
+            fp += 1
+        else:
+            tn += 1
+
+    precision = tp / (tp + fp + 1e-10)
+    recall = tp / (tp + fn + 1e-10)
+    f1 = 2 * precision * recall / (precision + recall + 1e-10)
+
+    return {
+        "precision": precision,
+        "recall": recall,
+        "f1": f1,
+        "success_rate": tp / (tp + fn + 1e-10),
+    }
 
 
 def evaluate_ood_detection(
@@ -412,7 +430,7 @@ def run_ablation_study(seed: int = 42, verbose: bool = True):
         print(f"\n  Evaluating {name}...")
         
         failure_ret = evaluate_failure_retrieval(system, test_failures, test_successes)
-        success_ret = evaluate_success_retrieval(system, test_successes)
+        success_ret = evaluate_success_retrieval(system, test_successes, test_failures)
         ood_clust = evaluate_ood_detection(system, id_samples, ood_clustered)
         ood_dist = evaluate_ood_detection(system, id_samples, ood_distributed)
         

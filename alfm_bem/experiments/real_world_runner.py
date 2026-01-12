@@ -9,12 +9,9 @@ Simulates an intent classification scenario with OOD failures.
 
 import numpy as np
 import sys
-from pathlib import Path
 from typing import List, Dict
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
-from bem import BidirectionalExperienceMemory, CoverageMode
+from alfm_bem.bem import BidirectionalExperienceMemory, CoverageMode
 try:
     from sentence_transformers import SentenceTransformer
 except ImportError:

@@ -50,11 +50,11 @@
 \maketitle
 
 \begin{abstract}
-Foundation models are deployed frozen, creating a fundamental gap: they cannot learn from deployment experiences. We introduce ALFM-BEM (Adaptive Latent Feedback Model with Bidirectional Experience Memory), a unified wrapper architecture that enables continuous learning without modifying backbone weights. The central abstraction is \emph{Bidirectional Experience Memory} (BEM), a single memory structure where experiences live on a continuous outcome spectrum from failure to success. BEM naturally provides: (1) risk signals from failure similarity, (2) success patterns for retrieval-augmented reasoning, and (3) out-of-distribution detection as an emergent property of coverage. We extend the Consensus Engine with a fourth action---\textsc{Query}---that transforms passive abstention into active learning by requesting specific information when operating outside the experience distribution. Bounded adapters trained via experience replay enable continual improvement with provable stability guarantees. Experiments on synthetic deployment scenarios demonstrate effective failure retrieval (F1 $\approx$ 0.59), strong OOD detection capability (AUC $>$ 0.99 for clustered patterns), and bounded parameter drift under continuous training. Crucially, BEM uniquely provides success pattern retrieval (rate $\approx$ 0.70) that RAG and failure-only baselines cannot offer. ALFM-BEM is backbone-agnostic and provides deployment infrastructure for frozen models while the fundamental architecture limitations they exhibit remain unsolved.
+Foundation models are deployed frozen, creating a fundamental gap: they cannot learn from deployment experiences. We introduce ALFM-BEM (Adaptive Latent Feedback Model with Bidirectional Experience Memory), a unified wrapper architecture that enables continuous learning without modifying backbone weights. The central abstraction is \emph{Bidirectional Experience Memory} (BEM), a single memory structure where experiences live on a continuous outcome spectrum from failure to success. BEM naturally provides: (1) risk signals from failure similarity, (2) success patterns for retrieval-augmented reasoning, and (3) out-of-distribution detection as an emergent property of coverage. We extend the Consensus Engine with a fourth action---\textsc{Query}---that transforms passive abstention into active learning by requesting specific information when operating outside the experience distribution. Bounded adapters trained via experience replay enable continual improvement with provable stability guarantees. Experiments on synthetic deployment scenarios demonstrate effective failure retrieval (F1 $\approx$ 0.59), strong OOD detection capability (AUC $\approx$ 1.0 for clustered patterns), and bounded adapter parameter norms under continuous training. Crucially, BEM uniquely provides success pattern retrieval (F1 $\approx$ 0.72) that RAG and failure-only baselines cannot offer. ALFM-BEM is backbone-agnostic and provides deployment infrastructure for frozen models while the fundamental architecture limitations they exhibit remain unsolved.
 \end{abstract}
 
 \begin{keywords}
-Continual learning, experience memory, out-of-distribution detection, foundation models, selective prediction, bounded adapters, retrieval-augmented systems
+Continual learning, experience memory, out-of-distribution detection, foundation models, selective prediction
 \end{keywords}
 
 \section{Introduction}
@@ -193,11 +193,11 @@ where $\mathcal{N}^+(z, \theta) = \{e \in \mathcal{N}(z,\theta) : o_e > 0.3\}$.
 
 \textbf{Note.} Experience retrieval is not a correctness oracle. It provides outcome-conditioned control evidence for the Consensus Engine; correctness still depends on the backbone and downstream verification.
 
-\textbf{Definition 3.4 (Coverage Signal).} The coverage signal measures how well $z$ is represented in the experience distribution---an emergent property, not a separate detector. We use kernel density estimation (KDE) over cosine similarities:
+\textbf{Definition 3.4 (Coverage Signal).} The coverage signal measures how well $z$ is represented in the experience distribution---an emergent property, not a separate detector. We use a KDE-style density over cosine similarities with a data-dependent calibration constant:
 \begin{equation}
     s_{\text{cov}}(z) = \text{clip}\left(\kappa \cdot \frac{1}{|\mathcal{E}|} \sum_{e \in \mathcal{E}} \exp\left(-\frac{(1 - \text{sim}(z, z_e))^2}{2h^2}\right), 0, 1\right)
 \end{equation}
-where $h$ is the KDE bandwidth (we use $h = 0.3$, selected via cross-validation optimization) and $\kappa$ is a scaling constant. This KDE formulation captures local density in experience space. For clustered patterns, KDE coverage achieves near-perfect OOD detection (AUC $\approx$ 1.0) because novel clusters have no nearby experiences. Low coverage indicates out-of-distribution operation.
+where $h$ is the KDE bandwidth (we use $h = 0.3$, selected via cross-validation) and $\kappa$ is chosen per deployment/memory so that the 90th percentile of in-distribution self-density maps to 1.0 (a robust normalization). This formulation captures local density in experience space. For clustered patterns, KDE coverage achieves near-perfect OOD detection (AUC $\approx$ 1.0) because novel clusters have no nearby experiences. Low coverage indicates out-of-distribution operation.
 
 \subsection{Consensus Engine with Query Action}
 \label{sec:consensus}
@@ -347,15 +347,15 @@ We provide theoretical grounding for BEM's key properties.
 
 \subsection{Coverage Convergence}
 
-\textbf{Proposition 4.3 (Convergence of Coverage).} As $|\mathcal{E}| \to \infty$ with experiences drawn i.i.d. from the deployment distribution $P$, $s_{\text{cov}}(z) \to 1$ for $z \sim P$ (in-distribution) and $s_{\text{cov}}(z) \to 0$ for $z \sim Q \neq P$ (out-of-distribution).
+\textbf{Proposition 4.3 (Coverage tracks density).} As $|\mathcal{E}| \to \infty$ with experiences drawn i.i.d. from the deployment distribution $P$, the un-clipped KDE term converges to a quantity proportional to the local density $p(z)$ for $z \sim P$. For $z$ in regions of low $p(z)$ (including novel clustered modes), the coverage signal decreases correspondingly.
 
 \textit{Proof sketch.} The KDE coverage signal estimates local density:
 \begin{equation}
     s_{\text{cov}}(z) \propto \frac{1}{|\mathcal{E}|} \sum_{e \in \mathcal{E}} \exp\left(-\frac{(1 - \text{sim}(z, z_e))^2}{2h^2}\right)
 \end{equation}
-For $z \sim P$: as $|\mathcal{E}| \to \infty$, the empirical density converges to the true density $p(z)$ by the law of large numbers. Since $z$ is drawn from $P$, we have $p(z) > 0$, and the KDE estimate converges to a positive value proportional to local density.
+For $z \sim P$: as $|\mathcal{E}| \to \infty$, the empirical KDE converges to the expectation under $P$ by the law of large numbers, yielding a value proportional to local density $p(z)$.
 
-For $z \sim Q \neq P$: no experiences are drawn from $Q$, so cosine similarities $\text{sim}(z, z_e)$ remain bounded away from 1. The Gaussian kernel values $\exp(-(1-\text{sim})^2/2h^2)$ decay rapidly as similarity decreases, yielding coverage $\to 0$. \qed
+For regions where $p(z)$ is low (including $z$ from a shifted clustered distribution), cosine similarities $\text{sim}(z, z_e)$ are typically small, so the Gaussian kernel values decay rapidly as similarity decreases, yielding low coverage. \qed
 
 \subsection{Adapter Stability}
 
@@ -381,8 +381,8 @@ We evaluate ALFM-BEM on synthetic deployment scenarios designed to test the core
 
 \textbf{Data Generation.} We generate synthetic experiences in 64-dimensional projected space:
 \begin{itemize}
-    \item 500 failures tightly clustered around 10 failure modes ($\sigma = 0.05$)
-    \item 500 successes uniformly distributed (diverse successful approaches)
+    \item 500 failures clustered around 10 failure modes ($\sigma = 0.05$), with an overlap fraction of 0.3 near success modes (hard negatives)
+    \item 500 successes clustered around 5 success modes ($\sigma = 0.05$), with an overlap fraction of 0.3 near failure modes
     \item 200 OOD samples clustered around a novel centroid
 \end{itemize}
 
@@ -392,12 +392,12 @@ We evaluate ALFM-BEM on synthetic deployment scenarios designed to test the core
 \begin{itemize}
     \item \textbf{Retrieval F1}: Precision-recall for failure/success retrieval
     \item \textbf{OOD AUC}: Area under ROC for coverage-based OOD detection
-    \item \textbf{Drift Bound}: Cumulative parameter drift under training
+    \item \textbf{Adapter Norm}: Parameter norm drift under training
 \end{itemize}
 
 \subsection{Results}
 
-\textbf{BEM Retrieval (Table~\ref{tab:retrieval}).} BEM achieves moderate failure retrieval (F1 $\approx$ 0.59) comparable to baselines, but uniquely provides success pattern retrieval (rate $\approx$ 0.70) that neither RAG nor NEP can offer. This bidirectional capability is BEM's key differentiator.
+\textbf{BEM Retrieval (Table~\ref{tab:retrieval}).} BEM achieves moderate failure retrieval (F1 $\approx$ 0.59) comparable to baselines, but uniquely provides success pattern retrieval (F1 $\approx$ 0.72) that neither RAG nor NEP can offer. This bidirectional capability is BEM's key differentiator.
 
 \begin{table}[t]
 \centering
@@ -407,31 +407,30 @@ We evaluate ALFM-BEM on synthetic deployment scenarios designed to test the core
 \toprule
 \textbf{Metric} & \textbf{Failure} & \textbf{Success} \\
 \midrule
-Precision & 0.57 $\pm$ 0.02 & 0.70 $\pm$ 0.01 \\
-Recall & 0.61 $\pm$ 0.04 & 0.70 $\pm$ 0.01 \\
-F1 & 0.59 $\pm$ 0.03 & 0.70 $\pm$ 0.00 \\
+Precision & 0.57 $\pm$ 0.03 & 0.73 $\pm$ 0.02 \\
+Recall & 0.61 $\pm$ 0.04 & 0.71 $\pm$ 0.00 \\
+F1 & 0.59 $\pm$ 0.03 & 0.72 $\pm$ 0.01 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{OOD Detection (Figure~\ref{fig:ood}).} For detecting novel clustered patterns (the core use case: identifying novel failure modes not seen in training), coverage signal achieves AUC $\approx$ 1.0. Mean coverage for in-distribution clustered failures is 1.0; for OOD samples, 0.28. This validates that coverage emerges naturally from BEM without a separate detector.
+\textbf{OOD Detection (Figure~\ref{fig:ood}).} For detecting novel clustered patterns (identifying novel failure modes not seen in training), the coverage signal achieves AUC $\approx$ 1.0. In the canonical setup, mean coverage for in-distribution clustered failures is 0.47; for OOD samples, 0.10. This validates that a useful OOD signal emerges from BEM without a separate detector.
 
-\textbf{Adapter Stability (Figure~\ref{fig:drift}).} Bounded adapters show controlled parameter norms (final = 2.0) vs. unbounded (final $>$ 600)---a $>$300$\times$ reduction. The norm projection constraint provably keeps parameters within the stable region.
+\textbf{Adapter Stability (Figure~\ref{fig:drift}).} With norm projection ($c_\theta=2.0$), adapter parameters remain bounded (final $\|\theta\|_F \approx 2.0$). Removing the constraint increases the final norm to $\|\theta\|_F \approx 8.3$ under the same update schedule. The norm projection constraint provably keeps parameters within the stable region.
 
-\textbf{Consensus Engine Behavior (Table~\ref{tab:consensus}).} The Consensus Engine produces appropriate action distributions across risk/coverage conditions. High-risk inputs trigger Escalate (73\%) or Abstain (22\%). Low-coverage (OOD) inputs trigger Query (81\%). Normal operation yields Trust (89\%).
+\textbf{Consensus Engine Behavior (Table~\ref{tab:consensus}).} The Consensus Engine implements threshold-based arbitration: low coverage triggers Query, high risk triggers Abstain/Escalate, and high success evidence yields Trust.
 
 \begin{table}[t]
 \centering
-\caption{Consensus Engine action distribution by input condition.}
+\caption{Consensus Engine decision rules (semantic agent).}
 \label{tab:consensus}
-\begin{tabular}{lcccc}
+\begin{tabular}{lcc}
 \toprule
-\textbf{Condition} & \textbf{Trust} & \textbf{Abstain} & \textbf{Escalate} & \textbf{Query} \\
+\textbf{Condition} & \textbf{Signal} & \textbf{Action} \\
 \midrule
-Normal (low risk, high cov) & 89\% & 6\% & 2\% & 3\% \\
-High risk & 5\% & 22\% & 73\% & 0\% \\
-Low coverage (OOD) & 8\% & 7\% & 4\% & 81\% \\
-Mixed (med risk, med cov) & 34\% & 28\% & 12\% & 26\% \\
+High risk & $r > 0.6$ & Abstain / Escalate \\
+Low coverage (OOD) & $c < 0.3$ & Query \\
+Strong success evidence & $s > 0.7$ & Trust \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -448,7 +447,7 @@ Mixed (med risk, med cov) & 34\% & 28\% & 12\% & 26\% \\
 \begin{minipage}{0.48\textwidth}
 \centering
 \includegraphics[width=\textwidth]{figures/drift.pdf}
-\caption{Adapter parameter drift. Bounded training (blue) vs. unbounded (red).}
+\caption{Adapter parameter norm. Bounded training (blue) vs. unbounded (red).}
 \label{fig:drift}
 \end{minipage}
 \end{figure}
@@ -526,26 +525,23 @@ We compare BEM against simpler retrieval baselines to isolate the contribution o
 
 \begin{table}[t]
 \centering
-\caption{Ablation: BEM components vs. simpler baselines. \textbf{Safety Score} = Success Rate $\times$ (1 - False Negative Rate), capturing the balance between avoiding known failures and retrieving helpful examples.}
+\caption{Ablation: BEM vs.\ simpler baselines (mean $\pm$ std over 5 seeds).}
 \label{tab:ablation}
 \begin{tabular}{lcccc}
 \toprule
-\textbf{System} & \textbf{Fail F1} & \textbf{Success Rate} & \textbf{OOD (clust)} & \textbf{OOD (dist)} \\
+\textbf{System} & \textbf{Fail F1} & \textbf{Success F1} & \textbf{OOD AUC (clust)} & \textbf{OOD AUC (dist)} \\
 \midrule
-Plain RAG & 0.73 \small{$\pm$ 0.03} & 0.00 \small{$\pm$ 0.00} & 1.00 \small{$\pm$ 0.00} & 0.99 \small{$\pm$ 0.00} \\
-NEP & 0.58 \small{$\pm$ 0.03} & 0.00 \small{$\pm$ 0.00} & 1.00 \small{$\pm$ 0.00} & 0.99 \small{$\pm$ 0.00} \\
-BEM (ours) & 0.59 \small{$\pm$ 0.03} & \textbf{0.70} \small{$\pm$ 0.00} & 0.99 \small{$\pm$ 0.00} & \textbf{0.82} \\
+Plain RAG & 0.74 \small{$\pm$ 0.02} & 0.00 \small{$\pm$ 0.00} & 0.99 \small{$\pm$ 0.01} & 0.99 \small{$\pm$ 0.01} \\
+NEP & 0.57 \small{$\pm$ 0.02} & 0.00 \small{$\pm$ 0.00} & 0.99 \small{$\pm$ 0.01} & 0.99 \small{$\pm$ 0.00} \\
+BEM (ours) & 0.59 \small{$\pm$ 0.03} & \textbf{0.72} \small{$\pm$ 0.01} & 0.88 \small{$\pm$ 0.12} & 0.95 \small{$\pm$ 0.01} \\
 \bottomrule
 \end{tabular}
-\\
-\vspace{0.2cm}
-\small{*Safety Score calculated as mean of normalized Fail Recall and Success Recall.}
 \end{table}
 
 \textbf{Key BEM advantages over baselines:}
 \begin{enumerate}
     \item \textbf{Bidirectional memory}: Unlike NEP, BEM stores successes, enabling ``how did we handle this successfully before?'' queries essential for safe action recommendation.
-    \item \textbf{KDE coverage}: BEM's KDE coverage provides calibrated density estimation, achieving AUC $\approx$ 1.0 on clustered OOD, comparable to max-similarity baselines but with the advantage of a probabilistic interpretation.
+    \item \textbf{KDE coverage}: In the canonical clustered-OOD setting (Figure~\ref{fig:ood}), KDE coverage achieves AUC $\approx$ 1.0. In the overlapping ablation setup, OOD AUC exhibits higher variance (Table~\ref{tab:ablation}), consistent with density overlap and calibration sensitivity.
     \item \textbf{Continuous outcomes}: NEP requires binary fail/success labels. BEM accepts continuous $o \in [-1, +1]$, capturing partial failures and degrees of success.
 \end{enumerate}
 
@@ -587,13 +583,11 @@ We processed a stream of 2,000 claims. Figure~\ref{fig:healthcare_learning} show
 \begin{figure}[t]
     \centering
     \includegraphics[width=0.8\textwidth]{experiments/learning_curve.pdf}
-    \caption{Learning curve for healthcare claims. The rejection rate (red) drops from 12.5\% to 1.5\% as BEM learns the latent payer rules. The human review rate (blue) stabilizes at $\approx 29\%$, correctly identifying the portion of the stream violating the hidden rules.}
+    \caption{Learning curve for healthcare claims. The rejection rate on submitted claims drops from 11.6\% (baseline) to 1.2\% (final window) as BEM learns the latent payer rules from binary feedback. The abstain (human review) rate stabilizes at $\approx 16\%$.}
     \label{fig:healthcare_learning}
 \end{figure}
 
-\textbf{Rejection Reduction.} The rejection rate dropped from an initial 12.5\% (random submission) to 1.5\% in the final epoch---an \textbf{88\% reduction}. The system effectively learned the latent rules from binary outcomes alone.
-
-\textbf{Failure Mode Analysis.} Initially, the system encountered frequent rejections for all three hidden rules. By the end of the simulation, rejections for "Age Limit" and "Modifier Requirement" were eliminated completely, and "Medical Necessity" rejections were reduced by $83\%$. The system learned to abstain from submitting invalid claims, protecting the deployment from costly denials.
+\textbf{Rejection Reduction.} In the canonical run (seed 42), rejection-on-submitted dropped from 11.6\% to 1.2\%---a $\approx$90\% reduction. The system learned latent rules from outcomes alone and shifted borderline cases into abstain (human review), trading throughput for lower denial risk.
 
 \section{Discussion}
 \label{sec:discussion}
@@ -734,15 +728,9 @@ Failures are generated around modes with noise:
     z_{\text{fail}} = \frac{\mu_k + \epsilon}{\|\mu_k + \epsilon\|}, \quad \epsilon \sim \mathcal{N}(0, 0.1^2 I)
 \end{equation}
 
-Successes are generated uniformly:
-\begin{equation}
-    z_{\text{success}} = \frac{v}{\|v\|}, \quad v \sim \mathcal{N}(0, I_{64})
-\end{equation}
+We generate successes from clustered success modes, with an overlap fraction sampled near failure modes to create semantically similar but outcome-divergent neighbors.
 
-OOD samples are generated from a shifted distribution:
-\begin{equation}
-    z_{\text{ood}} = \frac{v + \delta}{\|v + \delta\|}, \quad \delta \sim \mathcal{N}(0, 2^2 I)
-\end{equation}
+OOD samples are generated as a shifted tight cluster (a novel centroid) to test detection of novel clustered modes.
 
 \section{Failure Taxonomy}
 \label{app:taxonomy}

@@ -1,7 +1,20 @@
+from __future__ import annotations
+
+import os
+from pathlib import Path
 
 import numpy as np
-import matplotlib.pyplot as plt
 import seaborn as sns
+import matplotlib
+
+_CACHE_ROOT = Path(__file__).resolve().parents[1] / ".cache"
+os.environ.setdefault("MPLCONFIGDIR", str(_CACHE_ROOT / "matplotlib"))
+os.environ.setdefault("XDG_CACHE_HOME", str(_CACHE_ROOT))
+Path(os.environ["MPLCONFIGDIR"]).mkdir(parents=True, exist_ok=True)
+(_CACHE_ROOT / "fontconfig").mkdir(parents=True, exist_ok=True)
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 
 # Set seed
 np.random.seed(42)

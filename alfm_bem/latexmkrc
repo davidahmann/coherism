@@ -1,0 +1,6 @@
+$pdf_mode = 1;
+$interaction = "nonstopmode";
+$recorder = 1;
+
+# Keep build artifacts out of the paper root.
+$out_dir = "build";

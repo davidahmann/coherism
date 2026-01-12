@@ -17,12 +17,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.neighbors import KernelDensity
 from sklearn.model_selection import GridSearchCV
-import sys
-from pathlib import Path
 
-# Reuse data generation
-sys.path.insert(0, str(Path(__file__).parent.parent / "experiments"))
-from ablation_study import generate_modes, normalize
+from alfm_bem.synthetic import generate_modes, normalize
 
 def run_selection():
     print("Starting KDE Bandwidth Selection...")

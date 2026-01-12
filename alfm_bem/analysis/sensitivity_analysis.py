@@ -12,15 +12,8 @@ Goal: Find optimal hyperparameters for "Overlapping" scenario.
 
 import numpy as np
 import matplotlib.pyplot as plt
-import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-# Insert experiments to reuse data gen
-sys.path.insert(0, str(Path(__file__).parent.parent / "experiments"))
-
-from bem import BidirectionalExperienceMemory
-from ablation_study import generate_modes, generate_overlapping_experiences
+from alfm_bem.bem import BidirectionalExperienceMemory
+from alfm_bem.synthetic import generate_modes, generate_overlapping_experiences
 
 def run_analysis():
     print("Starting Sensitivity Analysis (Grid Search)...")

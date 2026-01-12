@@ -17,7 +17,7 @@ In a Bose-Einstein Condensate (BEC) simulating a black hole (sonic horizon), Coh
 
 ### Prediction vs. Null Hypothesis
 
-* **Coherism Prediction:** A stationary density modulation of order $\delta\rho/\rho_0 \sim 10^{-6}$ appears *only* for the coherent pulse and vanishes (or is suppressed by orders of magnitude) for the thermal control.
+* **Coherism Prediction:** A stationary density modulation of order $\delta\rho/\rho_0 \sim 10^{-6}$ appears *only* for the coherent pulse and is strongly suppressed for the thermal control (in the manuscript's reference model and simulation, coherent injection yields $\delta\rho/\rho_0 \approx 1.4 \times 10^{-6}$, while the thermal control is consistent with zero).
 * **Standard Physics (Null):** The density profile remains smooth to $10^{-7}$ precision, or shows no statistically significant difference between coherent and thermal pulses of equal energy (accounting for standard non-linearities).
 
 ### Novelty
@@ -28,7 +28,7 @@ Existing experiments focus on the passive backreaction of spontaneous Hawking ra
 ## 2. Weak Equivalence Principle (WEP) Violation
 
 **Status:** Secondary Test (Requires High Precision)  
-**Predicted Magnitude:** $\eta \approx 10^{-15}$ (at current MICROSCOPE bound)
+**Predicted Magnitude:** $\eta_{\mathrm{coh}} \sim 10^{-15}$ (order-of-magnitude target; note MICROSCOPE bounds apply to classical composition tests, not coherent-vs-incoherent same-material tests)
 
 Coherism predicts that a "coherent" object falls with a slightly different acceleration than a "classical" (incoherent) object of the exact same mass and energy, due to the coupling of the coherence functional to the background geometry.
 
@@ -41,7 +41,7 @@ Coherism predicts that a "coherent" object falls with a slightly different accel
 
 ### Prediction
 
-* **Coherism:** $\eta = \frac{a_{BEC} - a_{thermal}}{a_{avg}} \approx 10^{-15}$.
+* **Coherism:** $\eta_{\mathrm{coh}} = \frac{a_{BEC} - a_{thermal}}{a_{avg}} \sim 10^{-15}$ for highly coherent versus incoherent states of the same material (order-of-magnitude estimate in the manuscript).
 * **Falsification:** A null result at $10^{-16}$ precision would constrain the gravitational coupling $\kappa$ to be negligible for this effect.
 
 ---
@@ -83,7 +83,7 @@ The universe's expansion history could deviate from ΛCDM if "coherence energy" 
 ## 5. The Distinguishing Test: Coherent vs. Thermal
 
 **Status:** *Experimentum Crucis*
-**Predicted Magnitude:** $\eta_{\mathrm{coh}} \sim 10^{-15}$
+**Predicted Magnitude:** $\eta_{\mathrm{coh}} \sim 10^{-15}$ (same estimate as the WEP test above)
 
 This is the **unique signature** that distinguishes Coherism from competing frameworks (Penrose-Diósi, stochastic gravity).
 
@@ -110,7 +110,7 @@ Both have identical mass, energy, and density. Only Coherism predicts a differen
 
 **Focus:** The **Analog Gravity (BEC)** experiment is the critical path for validation.
 
-* **Why:** The effective coupling in the analog system is $\sim 60$ orders of magnitude stronger than in gravitational systems.
+* **Why:** The effective coupling in the analog system is $\sim 60$--$62$ orders of magnitude stronger than in gravitational systems (as quantified in the manuscript via $\kappa_{\mathrm{eff}}$).
 * **Feasibility:** Requires standard cold-atom laboratory hardware (2D BEC, draining vortex, imaging).
 * **Verdict:** A null result in the BEC density modulation test ($< 10^{-7}$) would falsify the analog gravity predictions and cast significant doubt on the gravitational implementation. A positive result ($\sim 10^{-6}$) specific to coherent injection would provide the first direct evidence of informational backreaction.
 

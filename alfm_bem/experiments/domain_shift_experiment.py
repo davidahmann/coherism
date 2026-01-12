@@ -26,17 +26,13 @@ Author: David Ahmann
 
 import numpy as np
 import matplotlib.pyplot as plt
-import sys
-from pathlib import Path
 from typing import List, Tuple, Dict, Optional
 from dataclasses import dataclass
 from datetime import datetime
 import json
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
-from bem import BidirectionalExperienceMemory, CoverageMode, Experience
-from adapters import BoundedAdapter, AdapterConfig
+from alfm_bem.bem import BidirectionalExperienceMemory, CoverageMode, Experience
+from alfm_bem.adapters import BoundedAdapter, AdapterConfig
 
 np.random.seed(42)
 
