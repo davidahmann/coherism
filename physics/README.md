@@ -1,113 +1,94 @@
-# Coherism: Coherence-Dependent Backreaction in Semiclassical and Analog Gravity
+# Coherism: Controlled Limits and an Analog-Gravity Test
 
 [![GitHub](https://img.shields.io/badge/Code-GitHub-blue)](https://github.com/davidahmann/coherism/tree/main/physics)
 
-This directory contains the manuscript and supporting code for the Coherism paper.
+This directory contains the manuscript and supporting materials for the current Coherism paper.
 
 ## Abstract
 
-We derive a testable prediction for analog gravity experiments in Bose-Einstein condensates: coherent phonon injection near a sonic horizon produces density modulations δρ/ρ₀ ~ 10⁻⁶, while thermal phonon injection of identical energy produces no such effect. This coherent-versus-thermal signature—measurable with current BEC technology—constitutes a qualitative test absent in competing frameworks (Penrose-Diósi, stochastic gravity). The prediction emerges from an *informational stress tensor* Θ_μν derived by varying a coherence functional built from relative entropy, generalized entropy, and a geometric action.
+The manuscript studies an effective-field-theory extension of semiclassical gravity in which a coarse-grained coherence functional generates an informational stress tensor. The paper focuses on controlled limits and one concrete analog-gravity falsification path: in the acoustic implementation studied here, coherent phonon injection near a BEC sonic horizon yields a predicted density modulation `delta-rho/rho_0 ~ 10^-6`, while a matched thermal control gives no leading-order informational contribution. The density-response relation is benchmarked to the standard hydrodynamic compressibility limit of Gross-Pitaevskii/Bogoliubov theory, while the informational source term remains phenomenological. A null result below `10^-7` would falsify the acoustic implementation analyzed in the manuscript, not the broader EFT by itself.
 
 ## Repository Contents
 
 ### Manuscript
-- `coherism.tex` — Main LaTeX source (revtex4-2, PRD format)
-- `coherism.pdf` — Compiled manuscript
-- `coherism_refs.bib` — Bibliography
+- `coherism.tex` - Main LaTeX source
+- `coherism.pdf` - Compiled manuscript
+- `coherism_refs.bib` - Bibliography
+- `cover_letter.tex` - Submission cover letter for *Foundations of Physics*
 
-### Numerical Simulations
+### Main Reproducibility Material
 
-#### 1. BEC Sonic Horizon Simulation (Primary Test)
+#### BEC Sonic Horizon Scaling Script
 
-Implements the key experimental prediction from Appendix N (Analog Gravity Predictions).
+Implements the illustrative scaling model used in the analog-gravity appendix.
 
-- `bec_sonic_horizon_simulation.py` — Main simulation code
-- `bec_sonic_horizon_results.png` — Visualization (Figure 6 in paper)
-- `bec_sonic_horizon_data.dat` — Output data
+- `bec_sonic_horizon_simulation.py` - Main simulation code
+- `bec_sonic_horizon_results.png` - Visualization used in the manuscript
+- `bec_sonic_horizon_data.dat` - Output data
+- `bec_sonic_horizon_robustness.dat` - One-at-a-time robustness scan data
 
-**Key result:** Coherent phonon injection produces δρ/ρ₀ ≈ 1.4 × 10⁻⁶; thermal phonons produce zero signal.
+This script is an illustrative implementation of the acoustic ansatz used in the paper. It is not a full Gross-Pitaevskii/Bogoliubov simulation, but it does benchmark the density-response step to the standard compressibility relation and includes a one-at-a-time robustness scan around a GP-compatible baseline.
 
-**To reproduce:**
+Representative output: coherent phonon injection produces `A = max_{|r-r_H|<=L_coh} |delta-rho/rho_0| ~= 1.4 x 10^-6`; the matched thermal control has no leading-order informational signal.
+
+To reproduce:
 
 ```bash
 python3 bec_sonic_horizon_simulation.py
 ```
 
-#### 2. FRW Cosmology Simulation
+### Archived Exploratory Scripts
 
-Implements the coupled FRW-coherence evolution from Appendix O.
+The repository also contains older exploratory scripts such as `coherism_frw_simulation.py` and `generate_data.py`. These are not part of the current submitted manuscript and should be read as archived exploratory materials rather than as validated results supporting the present paper.
 
-- `coherism_frw_simulation.py` — Main simulation code
-- `coherism_frw_data.dat` — Output data (log_a, a, N_sq, rho_coh_frac, w_coh)
-- `coherism_frw_results.png` — Visualization of results
+### Build Artifacts
 
-**To reproduce:**
-
-```bash
-python3 coherism_frw_simulation.py
-```
-
-#### 3. Toy Model (0D QFT)
-
-Demonstrates "coherist friction" — energy dissipation from informational feedback.
-
-- `generate_data.py` — Harmonic oscillator with coherence-dependent damping
-- `simulation_data.dat` — Output comparing baseline vs. coherist evolution
-
-**To reproduce:**
-
-```bash
-python3 generate_data.py
-```
-
-### Build Artifacts (can be regenerated)
-
-- `coherism.aux`, `coherism.bbl`, `coherism.blg`, `coherism.log`, `coherism.out` — LaTeX build files
-- `coherismNotes.bib` — Auto-generated notes bibliography
+- `coherism.aux`, `coherism.bbl`, `coherism.blg`, `coherism.log`, `coherism.out` - LaTeX build files
+- `coherismNotes.bib` - Auto-generated notes bibliography
 
 ## Dependencies
 
 ### LaTeX
 
-- `revtex4-2` (APS document class)
+- `revtex4-2`
 - Standard packages: `amsmath`, `physics`, `tikz`, `pgfplots`, `hyperref`
 
-### Python (for simulations)
+### Python
 
 - Python 3.8+
 - NumPy
 - Matplotlib
-- SciPy (FRW simulation)
 
 Install dependencies:
 
 ```bash
-pip install numpy matplotlib scipy
+pip install numpy matplotlib
 ```
 
 ## Compiling the Manuscript
 
 ```bash
-pdflatex coherism.tex
+pdflatex -interaction=nonstopmode -output-directory=. coherism.tex
 bibtex coherism
-pdflatex coherism.tex
-pdflatex coherism.tex
+pdflatex -interaction=nonstopmode -output-directory=. coherism.tex
+pdflatex -interaction=nonstopmode -output-directory=. coherism.tex
 ```
 
 Or use `latexmk`:
+
 ```bash
 latexmk -pdf coherism.tex
 ```
 
 ## Key Results
 
-1. **Primary experimental prediction**: BEC density modulation δρ/ρ₀ ~ 10⁻⁶ for coherent phonons, zero for thermal (measurable with current technology)
-2. **Falsification criterion**: Null result at δρ/ρ₀ < 10⁻⁷ would falsify the acoustic implementation
-3. **Informational stress tensor** Θ_μν derived for Schwarzschild, FRW, Rindler, and acoustic geometries
-4. **Two independent derivations** of the coupling constant κ (holographic and entropic)
-5. **Lindblad generator** derived from first principles via Unruh-DeWitt detector dynamics
-6. **Unique distinguishing test**: Coherent vs. thermal states produce different effects (η ~ 10⁻¹⁵), absent in Penrose-Diósi and stochastic gravity
-7. **Reference state uniqueness**: σ[g] uniquely determined by Hadamard, KMS, maximum entropy, and local Lorentz invariance axioms
+1. The paper defines a coarse-grained coherence functional whose metric variation produces an informational stress tensor.
+2. Controlled leading-order expressions are obtained in a 1+1D conformal toy model and in weak-field/Rindler limits.
+3. The primary falsification path is an analog-gravity protocol in a BEC sonic horizon.
+4. In the acoustic implementation studied here, coherent phonon injection yields `delta-rho/rho_0 ~ 10^-6` and a matched thermal control gives no leading-order informational contribution.
+5. One-at-a-time `±25%` scans around the GP-compatible baseline keep the coherent signal above `10^-7`.
+6. A null result below `10^-7` would falsify the specific acoustic implementation analyzed in the manuscript, not the full EFT by itself.
+7. The detector-model appendix motivates, but does not uniquely derive, the geometry-dependent GKLS structure used phenomenologically in the main text.
 
 ## License
 

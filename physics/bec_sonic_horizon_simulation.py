@@ -1,39 +1,50 @@
 #!/usr/bin/env python3
 """
-BEC Sonic Horizon Simulation
-=============================
-Simulates the coherism prediction for density modulation near a sonic horizon
-in a Bose-Einstein condensate.
+Illustrative acoustic-model scaling study for the Coherism manuscript.
 
-Key prediction: Coherent phonon injection produces δρ/ρ₀ ~ 10⁻⁶,
-while thermal phonons produce no modulation.
+This script mirrors the scaling ansatz used in the analog-gravity appendix of
+`coherism.tex`. It is not a full Gross-Pitaevskii/Bogoliubov simulation.
 
-This implements equations from the coherism.tex manuscript:
-- Eq. (N.7): κ_eff effective coupling
-- Eq. (N.8): Θ_tt informational stress tensor  
-- Eq. (N.9): δρ/ρ₀ density modulation
+Representative prediction: coherent phonon injection produces
+delta-rho/rho_0 ~ 1e-6 near the sonic horizon, while a matched thermal control
+has no leading-order informational contribution in the adopted ansatz.
 
-See Appendix N (Analog Gravity Predictions) for derivations.
+The baseline parameters are chosen to be compatible with the Gross-Pitaevskii
+healing-length relation xi = hbar / (sqrt(2) m c_s).
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 # Physical constants for 87Rb BEC
 HBAR = 1.055e-34  # J·s
 KB = 1.381e-23    # J/K
 M_RB = 1.44e-25   # kg (87Rb mass)
+BASE_DIR = Path(__file__).resolve().parent
 
 # BEC parameters (typical experimental values)
-C_S = 1e-3        # Sound speed: 1 mm/s
-RHO_0 = 1e20      # Background density: 10^14 cm^-3 = 10^20 m^-3
+N_0 = 1e20        # Number density: 10^14 cm^-3 = 10^20 m^-3
 XI = 0.3e-6       # Healing length: 0.3 μm
+C_S = HBAR / (np.sqrt(2) * M_RB * XI)  # GP-compatible sound speed: ~1.73 mm/s
 L_COH = 10e-6     # Coherence length: 10 μm
 ALPHA = 1.0       # O(1) coupling constant
+RHO_MASS_0 = N_0 * M_RB
+R_H = 50e-6       # Horizon radius: 50 μm
+BASELINE_PHONONS = 1000
 
 # Derived quantities
-KAPPA_EFF = ALPHA * HBAR * C_S / (RHO_0 * M_RB * XI**2 * L_COH**2)
-# Paper predicts κ_eff ~ 10^-8
+KAPPA_EFF = ALPHA * HBAR * C_S / (RHO_MASS_0 * XI**2 * L_COH**2)
+
+
+def gp_compatible_xi(c_s):
+    """Healing length implied by the GP relation for a given sound speed."""
+    return HBAR / (np.sqrt(2) * M_RB * c_s)
+
+
+def compute_kappa_eff(c_s, rho_mass_0, xi, l_coh):
+    """Phenomenological acoustic coupling used in the manuscript."""
+    return ALPHA * HBAR * c_s / (rho_mass_0 * xi**2 * l_coh**2)
 
 
 def hawking_temperature(A, r_H):
@@ -77,6 +88,12 @@ def theta_tt_coherent(alpha_sq_total, n_bar):
     return KAPPA_EFF * HBAR * C_S / XI**4 * alpha_sq_total * factor
 
 
+def theta_tt_coherent_model(alpha_sq_total, n_bar, kappa_eff, c_s, xi):
+    """Parameterized coherent informational stress for scan calculations."""
+    factor = 1 + 1 / (2 * n_bar + 1) if n_bar > 0 else 2
+    return kappa_eff * HBAR * c_s / xi**4 * alpha_sq_total * factor
+
+
 def theta_tt_thermal(n_bar_total):
     """
     Informational stress tensor Θ_tt for thermal phonons.
@@ -91,7 +108,70 @@ def density_modulation(theta_tt):
     Density modulation from informational stress.
     δρ/ρ₀ = Θ_tt / (ρ₀ c_s²)
     """
-    return theta_tt / (RHO_0 * M_RB * C_S**2)
+    return theta_tt / (RHO_MASS_0 * C_S**2)
+
+
+def density_modulation_model(theta_tt, rho_mass_0, c_s):
+    """Parameterized density response used in robustness scans."""
+    return theta_tt / (rho_mass_0 * c_s**2)
+
+
+def simulate_coherent_profile_with_params(r_values, r_H, c_s, n_0, xi, l_coh, n_phonons):
+    """Coherent profile for an arbitrary parameter set within the same ansatz."""
+    rho_mass_0 = n_0 * M_RB
+    kappa_eff = compute_kappa_eff(c_s, rho_mass_0, xi, l_coh)
+    T_H = hawking_temperature(c_s * r_H, r_H)
+    omega_typical = c_s / xi
+    n_bar = thermal_occupation(omega_typical, T_H)
+
+    distance = np.maximum(np.abs(r_values - r_H), xi)
+    profile = np.exp(-distance / l_coh)
+    alpha_sq = n_phonons * profile
+    theta = theta_tt_coherent_model(alpha_sq, n_bar, kappa_eff, c_s, xi)
+    return density_modulation_model(theta, rho_mass_0, c_s)
+
+
+def max_modulation_within_lcoh(r_vals_m, delta_rho_over_rho, r_h_m, l_coh_m):
+    """Peak signal inside one coherence length of the horizon."""
+    mask = np.abs(r_vals_m - r_h_m) <= l_coh_m
+    return float(np.max(np.abs(delta_rho_over_rho[mask])))
+
+
+def coherent_amplitude(c_s, n_0, xi, l_coh, n_phonons, r_h=R_H, num_points=500):
+    """Primary observable A for a chosen parameter set."""
+    r_vals = np.linspace(0.2 * r_h, 3.0 * r_h, num_points)
+    delta = simulate_coherent_profile_with_params(
+        r_vals, r_h, c_s, n_0, xi, l_coh, n_phonons
+    )
+    return max_modulation_within_lcoh(r_vals, delta, r_h, l_coh)
+
+
+def robustness_scan_data():
+    """One-at-a-time parameter scans around the baseline model."""
+    factors = np.linspace(0.75, 1.25, 11)
+    curves = {
+        r'$n_0$': [
+            coherent_amplitude(C_S, N_0 * f, XI, L_COH, BASELINE_PHONONS)
+            for f in factors
+        ],
+        r'$\xi$': [
+            coherent_amplitude(C_S, N_0, XI * f, L_COH, BASELINE_PHONONS)
+            for f in factors
+        ],
+        r'$L_{\mathrm{coh}}$': [
+            coherent_amplitude(C_S, N_0, XI, L_COH * f, BASELINE_PHONONS)
+            for f in factors
+        ],
+        r'$N_{\mathrm{phonon}}$': [
+            coherent_amplitude(C_S, N_0, XI, L_COH, BASELINE_PHONONS * f)
+            for f in factors
+        ],
+        r'$c_s$ (GP)': [
+            coherent_amplitude(C_S * f, N_0, gp_compatible_xi(C_S * f), L_COH, BASELINE_PHONONS)
+            for f in factors
+        ],
+    }
+    return factors, curves
 
 
 def simulate_horizon_profile(r_values, r_H, A, N_coherent, is_coherent=True):
@@ -108,41 +188,20 @@ def simulate_horizon_profile(r_values, r_H, A, N_coherent, is_coherent=True):
     Returns:
         delta_rho_over_rho: Density modulation at each position
     """
-    T_H = hawking_temperature(A, r_H)
-    omega_typical = C_S / XI  # Typical phonon frequency
-    n_bar = thermal_occupation(omega_typical, T_H)
-
-    delta_rho = np.zeros_like(r_values)
-
-    for i, r in enumerate(r_values):
-        # Modulation is strongest near horizon, falls off as 1/|r - r_H|
-        distance = np.abs(r - r_H)
-        if distance < XI:
-            distance = XI  # Regularize at healing length
-
-        # Spatial profile: peaks at horizon, decays over coherence length
-        profile = np.exp(-distance / L_COH)
-
-        if is_coherent:
-            # Coherent state: |α|² = N
-            alpha_sq = N_coherent * profile
-            theta = theta_tt_coherent(alpha_sq, n_bar)
-        else:
-            # Thermal state: S(σ||σ) = 0, no informational stress
-            theta = theta_tt_thermal(n_bar * profile)
-
-        delta_rho[i] = density_modulation(theta)
-
-    return delta_rho
+    if is_coherent:
+        return simulate_coherent_profile_with_params(
+            r_values, r_H, C_S, N_0, XI, L_COH, N_coherent
+        )
+    return np.zeros_like(r_values)
 
 
 def run_simulation():
     """Run the full BEC sonic horizon simulation."""
 
     # Experimental parameters
-    r_H = 50e-6      # Horizon radius: 50 μm
+    r_H = R_H
     A = C_S * r_H    # Vortex strength set so |v| = c_s at r_H
-    N_phonons = 1000 # Number of injected phonons
+    N_phonons = BASELINE_PHONONS
 
     # Spatial grid: from 0.5*r_H to 2*r_H
     r_min = 0.2 * r_H
@@ -157,8 +216,9 @@ def run_simulation():
     print("BEC Sonic Horizon Simulation")
     print("=" * 50)
     print(f"Parameters:")
-    print(f"  Sound speed c_s = {C_S*1e3:.1f} mm/s")
-    print(f"  Density ρ₀ = {RHO_0:.1e} m⁻³")
+    print(f"  Sound speed c_s = {C_S*1e3:.2f} mm/s")
+    print(f"  Number density n₀ = {N_0:.1e} m⁻³")
+    print(f"  Mass density ρ₀ = {RHO_MASS_0:.2e} kg/m³")
     print(f"  Healing length ξ = {XI*1e6:.2f} μm")
     print(f"  Coherence length L_coh = {L_COH*1e6:.1f} μm")
     print(f"  Horizon radius r_H = {r_H*1e6:.1f} μm")
@@ -166,6 +226,9 @@ def run_simulation():
     print(f"  Thermal occupation n̄ = {n_bar:.2f}")
     print(f"  Effective coupling κ_eff = {KAPPA_EFF:.2e}")
     print(f"  Injected phonons N = {N_phonons}")
+    print()
+    print("Model status: illustrative scaling implementation, not a GP/BdG solver.")
+    print("Baseline is GP-compatible: xi = hbar / (sqrt(2) m c_s).")
     print()
 
     # Simulate coherent phonon injection
@@ -202,8 +265,10 @@ def run_simulation():
     }
 
 
-def plot_results(results, save_path='bec_sonic_horizon_results.png'):
+def plot_results(results, save_path=None):
     """Generate publication-quality figure."""
+    if save_path is None:
+        save_path = BASE_DIR / 'bec_sonic_horizon_results.png'
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
 
@@ -230,37 +295,32 @@ def plot_results(results, save_path='bec_sonic_horizon_results.png'):
     ax1.legend(loc='upper right', fontsize=9)
     ax1.grid(True, alpha=0.3)
 
-    # Right panel: Scaling with injected phonon number + simple grid check
-    def max_modulation_within_Lcoh(r_vals_m, delta_rho_over_rho, r_h_m, l_coh_m):
-        mask = np.abs(r_vals_m - r_h_m) <= l_coh_m
-        return float(np.max(np.abs(delta_rho_over_rho[mask])))
+    # Right panel: one-at-a-time robustness scan
+    factors, curves = robustness_scan_data()
+    styles = [
+        ('tab:blue', r'$n_0$'),
+        ('tab:orange', r'$\xi$'),
+        ('tab:green', r'$L_{\mathrm{coh}}$'),
+        ('tab:red', r'$N_{\mathrm{phonon}}$'),
+        ('tab:purple', r'$c_s$ (GP)'),
+    ]
+    for color, label in styles:
+        ax2.plot(factors, curves[label], linewidth=2, color=color, label=label)
 
-    r_h_m = results['r_H']
-    a = C_S * r_h_m
-    n_values = np.unique(np.round(np.logspace(2, 4, 9)).astype(int))
-    grid_sizes = [200, 500, 2000]
-
-    for n_grid in grid_sizes:
-        r_vals = np.linspace(0.2 * r_h_m, 3.0 * r_h_m, n_grid)
-        a_vals = []
-        for n_ph in n_values:
-            d_coh = simulate_horizon_profile(r_vals, r_h_m, a, n_ph, is_coherent=True)
-            a_vals.append(max_modulation_within_Lcoh(r_vals, d_coh, r_h_m, L_COH))
-        ax2.plot(n_values, a_vals, marker='o', linewidth=2, label=f'{n_grid} grid pts')
-
-    ax2.set_xscale('log')
     ax2.set_yscale('log')
-    ax2.set_xlabel(r'Injected phonons $N_{\mathrm{phonon}}$', fontsize=12)
+    ax2.set_xlabel('Scale Factor Relative to Baseline', fontsize=12)
     ax2.set_ylabel(r'$A = \max_{|r-r_H|\leq L_{\mathrm{coh}}} |\delta\rho/\rho_0|$', fontsize=11)
-    ax2.set_title('Scaling + Grid Convergence Check', fontsize=12)
-    ax2.set_ylim(1e-10, 1e-4)
+    ax2.set_title('Robustness Around Baseline', fontsize=12)
+    ax2.set_xlim(0.75, 1.25)
+    ax2.set_ylim(1e-7, 2e-5)
 
     ax2.axhline(y=1e-6, color='blue', linestyle='--', alpha=0.5)
     ax2.axhline(y=1e-7, color='red', linestyle=':', alpha=0.7)
-    ax2.text(1.4e4, 1.05e-6, r'$10^{-6}$ target', fontsize=9, color='blue', ha='right')
-    ax2.text(1.4e4, 1.15e-7, r'$10^{-7}$ falsify', fontsize=9, color='red', ha='right')
+    ax2.axvline(x=1.0, color='k', linestyle='-', alpha=0.2)
+    ax2.text(1.24, 1.05e-6, r'$10^{-6}$ target', fontsize=9, color='blue', ha='right')
+    ax2.text(1.24, 1.15e-7, r'$10^{-7}$ falsify', fontsize=9, color='red', ha='right')
 
-    ax2.legend(fontsize=9, loc='upper left')
+    ax2.legend(fontsize=8, loc='upper left')
     ax2.grid(True, alpha=0.3, which='both')
 
     plt.tight_layout()
@@ -270,8 +330,12 @@ def plot_results(results, save_path='bec_sonic_horizon_results.png'):
     print(f"Figure saved to {save_path}")
 
 
-def save_data(results, data_path='bec_sonic_horizon_data.dat'):
-    """Save simulation data to file."""
+def save_data(results, data_path=None, robustness_path=None):
+    """Save profile and robustness data to files."""
+    if data_path is None:
+        data_path = BASE_DIR / 'bec_sonic_horizon_data.dat'
+    if robustness_path is None:
+        robustness_path = BASE_DIR / 'bec_sonic_horizon_robustness.dat'
     np.savetxt(
         data_path,
         np.column_stack([
@@ -283,6 +347,16 @@ def save_data(results, data_path='bec_sonic_horizon_data.dat'):
         fmt='%.6e'
     )
     print(f"Data saved to {data_path}")
+
+    factors, curves = robustness_scan_data()
+    curve_order = [r'$n_0$', r'$\xi$', r'$L_{\mathrm{coh}}$', r'$N_{\mathrm{phonon}}$', r'$c_s$ (GP)']
+    np.savetxt(
+        robustness_path,
+        np.column_stack([factors] + [np.asarray(curves[key]) for key in curve_order]),
+        header='scale_factor n0_scan xi_scan Lcoh_scan Nphonon_scan cs_gp_scan',
+        fmt='%.6e'
+    )
+    print(f"Robustness data saved to {robustness_path}")
 
 
 def main():
