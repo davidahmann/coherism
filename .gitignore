@@ -32,6 +32,12 @@ Thumbs.db
 *.swp
 *.swo
 
+# Local Codex / GPD workflow scaffolding
+.agents/
+.codex/
+.gpd/
+REFEREE-REPORT.pdf
+
 # Security - NEVER commit these
 credentials.json
 token.json

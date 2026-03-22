@@ -3,7 +3,9 @@
 Illustrative acoustic-model scaling study for the Coherism manuscript.
 
 This script mirrors the scaling ansatz used in the analog-gravity appendix of
-`coherism.tex`. It is not a full Gross-Pitaevskii/Bogoliubov simulation.
+`coherism.tex`. It is not a full Gross-Pitaevskii/Bogoliubov simulation, but
+it now includes a direct static GP/BdG-style linear-response benchmark for the
+density-response step.
 
 Representative prediction: coherent phonon injection produces
 delta-rho/rho_0 ~ 1e-6 near the sonic horizon, while a matched thermal control
@@ -28,13 +30,13 @@ N_0 = 1e20        # Number density: 10^14 cm^-3 = 10^20 m^-3
 XI = 0.3e-6       # Healing length: 0.3 μm
 C_S = HBAR / (np.sqrt(2) * M_RB * XI)  # GP-compatible sound speed: ~1.73 mm/s
 L_COH = 10e-6     # Coherence length: 10 μm
-ALPHA = 1.0       # O(1) coupling constant
+CHI_AN = 3.0      # O(1) acoustic calibration constant for the ansatz
 RHO_MASS_0 = N_0 * M_RB
 R_H = 50e-6       # Horizon radius: 50 μm
 BASELINE_PHONONS = 1000
 
 # Derived quantities
-KAPPA_EFF = ALPHA * HBAR * C_S / (RHO_MASS_0 * XI**2 * L_COH**2)
+KAPPA_EFF = CHI_AN * (1.0 / (N_0 * L_COH**3)) * (XI / L_COH) ** 3
 
 
 def gp_compatible_xi(c_s):
@@ -42,9 +44,9 @@ def gp_compatible_xi(c_s):
     return HBAR / (np.sqrt(2) * M_RB * c_s)
 
 
-def compute_kappa_eff(c_s, rho_mass_0, xi, l_coh):
-    """Phenomenological acoustic coupling used in the manuscript."""
-    return ALPHA * HBAR * c_s / (rho_mass_0 * xi**2 * l_coh**2)
+def compute_kappa_eff(n_0, xi, l_coh):
+    """Dimensionless phenomenological acoustic coupling used in the manuscript."""
+    return CHI_AN * (1.0 / (n_0 * l_coh**3)) * (xi / l_coh) ** 3
 
 
 def hawking_temperature(A, r_H):
@@ -82,16 +84,16 @@ def relative_entropy_coherent(alpha_sq, n_bar):
 def theta_tt_coherent(alpha_sq_total, n_bar):
     """
     Informational stress tensor Θ_tt for coherent phonons.
-    Θ_tt = κ_eff * ℏ * c_s / ξ⁴ * Σ|α_k|² * (1 + 1/(2n̄+1))
+    Θ_tt = ρ₀ c_s² κ_eff Σ|α_k|² (1 + 1/(2n̄+1))
     """
     factor = 1 + 1 / (2 * n_bar + 1) if n_bar > 0 else 2
-    return KAPPA_EFF * HBAR * C_S / XI**4 * alpha_sq_total * factor
+    return RHO_MASS_0 * C_S**2 * KAPPA_EFF * alpha_sq_total * factor
 
 
-def theta_tt_coherent_model(alpha_sq_total, n_bar, kappa_eff, c_s, xi):
+def theta_tt_coherent_model(alpha_sq_total, n_bar, kappa_eff, rho_mass_0, c_s):
     """Parameterized coherent informational stress for scan calculations."""
     factor = 1 + 1 / (2 * n_bar + 1) if n_bar > 0 else 2
-    return kappa_eff * HBAR * c_s / xi**4 * alpha_sq_total * factor
+    return rho_mass_0 * c_s**2 * kappa_eff * alpha_sq_total * factor
 
 
 def theta_tt_thermal(n_bar_total):
@@ -116,19 +118,58 @@ def density_modulation_model(theta_tt, rho_mass_0, c_s):
     return theta_tt / (rho_mass_0 * c_s**2)
 
 
-def simulate_coherent_profile_with_params(r_values, r_H, c_s, n_0, xi, l_coh, n_phonons):
-    """Coherent profile for an arbitrary parameter set within the same ansatz."""
+def bdg_static_density_response(source_profile, dx, xi, pad_factor=8):
+    """
+    Static GP/BdG linear-response benchmark for a specified source profile.
+
+    In Fourier space the benchmark response is
+        delta_rho_k / rho_0 = source_k / (1 + 0.5 * (k * xi)^2),
+    which is the standard linearized GP response including the leading
+    quantum-pressure correction.
+    """
+    n_points = len(source_profile)
+    n_pad = pad_factor * n_points
+    padded = np.zeros(n_pad)
+    start = (n_pad - n_points) // 2
+    padded[start:start + n_points] = source_profile
+
+    k_values = 2.0 * np.pi * np.fft.fftfreq(n_pad, d=dx)
+    filter_kernel = 1.0 / (1.0 + 0.5 * (k_values * xi) ** 2)
+    response = np.fft.ifft(np.fft.fft(padded) * filter_kernel).real
+    return response[start:start + n_points]
+
+
+def informational_source_profile(r_values, r_h, c_s, n_0, xi, l_coh, n_phonons):
+    """
+    Dimensionless source profile S(r) = Theta_tt / (rho_0 c_s^2).
+
+    The hydrodynamic compressibility model identifies this directly with
+    delta-rho/rho_0. The static GP/BdG benchmark filters the same source by the
+    standard linear-response kernel.
+    """
     rho_mass_0 = n_0 * M_RB
-    kappa_eff = compute_kappa_eff(c_s, rho_mass_0, xi, l_coh)
-    T_H = hawking_temperature(c_s * r_H, r_H)
+    kappa_eff = compute_kappa_eff(n_0, xi, l_coh)
+    T_H = hawking_temperature(c_s * r_h, r_h)
     omega_typical = c_s / xi
     n_bar = thermal_occupation(omega_typical, T_H)
 
-    distance = np.maximum(np.abs(r_values - r_H), xi)
+    distance = np.maximum(np.abs(r_values - r_h), xi)
     profile = np.exp(-distance / l_coh)
     alpha_sq = n_phonons * profile
-    theta = theta_tt_coherent_model(alpha_sq, n_bar, kappa_eff, c_s, xi)
+    theta = theta_tt_coherent_model(alpha_sq, n_bar, kappa_eff, rho_mass_0, c_s)
     return density_modulation_model(theta, rho_mass_0, c_s)
+
+
+def simulate_coherent_profile_with_params(r_values, r_H, c_s, n_0, xi, l_coh, n_phonons):
+    """Hydrodynamic coherent profile for an arbitrary parameter set."""
+    return informational_source_profile(r_values, r_H, c_s, n_0, xi, l_coh, n_phonons)
+
+
+def simulate_coherent_profile_bdg_with_params(r_values, r_H, c_s, n_0, xi, l_coh, n_phonons):
+    """Static GP/BdG benchmark profile for the same source profile."""
+    source_profile = informational_source_profile(r_values, r_H, c_s, n_0, xi, l_coh, n_phonons)
+    dx = r_values[1] - r_values[0]
+    return bdg_static_density_response(source_profile, dx, xi)
 
 
 def max_modulation_within_lcoh(r_vals_m, delta_rho_over_rho, r_h_m, l_coh_m):
@@ -141,6 +182,15 @@ def coherent_amplitude(c_s, n_0, xi, l_coh, n_phonons, r_h=R_H, num_points=500):
     """Primary observable A for a chosen parameter set."""
     r_vals = np.linspace(0.2 * r_h, 3.0 * r_h, num_points)
     delta = simulate_coherent_profile_with_params(
+        r_vals, r_h, c_s, n_0, xi, l_coh, n_phonons
+    )
+    return max_modulation_within_lcoh(r_vals, delta, r_h, l_coh)
+
+
+def coherent_amplitude_bdg(c_s, n_0, xi, l_coh, n_phonons, r_h=R_H, num_points=500):
+    """Primary observable A from the static GP/BdG benchmark response."""
+    r_vals = np.linspace(0.2 * r_h, 3.0 * r_h, num_points)
+    delta = simulate_coherent_profile_bdg_with_params(
         r_vals, r_h, c_s, n_0, xi, l_coh, n_phonons
     )
     return max_modulation_within_lcoh(r_vals, delta, r_h, l_coh)
@@ -171,7 +221,49 @@ def robustness_scan_data():
             for f in factors
         ],
     }
-    return factors, curves
+    bdg_relative_shifts = {
+        r'$n_0$': [
+            abs(
+                coherent_amplitude_bdg(C_S, N_0 * f, XI, L_COH, BASELINE_PHONONS)
+                - coherent_amplitude(C_S, N_0 * f, XI, L_COH, BASELINE_PHONONS)
+            )
+            / coherent_amplitude(C_S, N_0 * f, XI, L_COH, BASELINE_PHONONS)
+            for f in factors
+        ],
+        r'$\xi$': [
+            abs(
+                coherent_amplitude_bdg(C_S, N_0, XI * f, L_COH, BASELINE_PHONONS)
+                - coherent_amplitude(C_S, N_0, XI * f, L_COH, BASELINE_PHONONS)
+            )
+            / coherent_amplitude(C_S, N_0, XI * f, L_COH, BASELINE_PHONONS)
+            for f in factors
+        ],
+        r'$L_{\mathrm{coh}}$': [
+            abs(
+                coherent_amplitude_bdg(C_S, N_0, XI, L_COH * f, BASELINE_PHONONS)
+                - coherent_amplitude(C_S, N_0, XI, L_COH * f, BASELINE_PHONONS)
+            )
+            / coherent_amplitude(C_S, N_0, XI, L_COH * f, BASELINE_PHONONS)
+            for f in factors
+        ],
+        r'$N_{\mathrm{phonon}}$': [
+            abs(
+                coherent_amplitude_bdg(C_S, N_0, XI, L_COH, BASELINE_PHONONS * f)
+                - coherent_amplitude(C_S, N_0, XI, L_COH, BASELINE_PHONONS * f)
+            )
+            / coherent_amplitude(C_S, N_0, XI, L_COH, BASELINE_PHONONS * f)
+            for f in factors
+        ],
+        r'$c_s$ (GP)': [
+            abs(
+                coherent_amplitude_bdg(C_S * f, N_0, gp_compatible_xi(C_S * f), L_COH, BASELINE_PHONONS)
+                - coherent_amplitude(C_S * f, N_0, gp_compatible_xi(C_S * f), L_COH, BASELINE_PHONONS)
+            )
+            / coherent_amplitude(C_S * f, N_0, gp_compatible_xi(C_S * f), L_COH, BASELINE_PHONONS)
+            for f in factors
+        ],
+    }
+    return factors, curves, bdg_relative_shifts
 
 
 def simulate_horizon_profile(r_values, r_H, A, N_coherent, is_coherent=True):
@@ -224,16 +316,19 @@ def run_simulation():
     print(f"  Horizon radius r_H = {r_H*1e6:.1f} μm")
     print(f"  Hawking temperature T_H = {T_H*1e9:.2f} nK")
     print(f"  Thermal occupation n̄ = {n_bar:.2f}")
-    print(f"  Effective coupling κ_eff = {KAPPA_EFF:.2e}")
+    print(f"  Dimensionless coupling κ_eff = {KAPPA_EFF:.2e}")
     print(f"  Injected phonons N = {N_phonons}")
     print()
     print("Model status: illustrative scaling implementation, not a GP/BdG solver.")
     print("Baseline is GP-compatible: xi = hbar / (sqrt(2) m c_s).")
     print()
 
-    # Simulate coherent phonon injection
+    # Simulate coherent phonon injection in the local hydrodynamic model
     delta_rho_coherent = simulate_horizon_profile(
         r_values, r_H, A, N_phonons, is_coherent=True
+    )
+    delta_rho_coherent_bdg = simulate_coherent_profile_bdg_with_params(
+        r_values, r_H, C_S, N_0, XI, L_COH, N_phonons
     )
 
     # Simulate thermal phonon injection
@@ -243,11 +338,18 @@ def run_simulation():
 
     # Print key results
     max_coherent = np.max(np.abs(delta_rho_coherent))
+    max_coherent_bdg = np.max(np.abs(delta_rho_coherent_bdg))
     max_thermal = np.max(np.abs(delta_rho_thermal))
+    benchmark_peak_shift = abs(max_coherent_bdg - max_coherent) / max_coherent
+    _, _, bdg_relative_shifts = robustness_scan_data()
+    max_scan_shift = max(max(values) for values in bdg_relative_shifts.values())
 
     print("Results:")
-    print(f"  Coherent injection: max |δρ/ρ₀| = {max_coherent:.2e}")
-    print(f"  Thermal injection:  max |δρ/ρ₀| = {max_thermal:.2e}")
+    print(f"  Coherent injection (hydro): max |δρ/ρ₀| = {max_coherent:.2e}")
+    print(f"  Coherent injection (GP/BdG benchmark): max |δρ/ρ₀| = {max_coherent_bdg:.2e}")
+    print(f"  Thermal injection:                 max |δρ/ρ₀| = {max_thermal:.2e}")
+    print(f"  GP/BdG peak shift relative to hydro = {benchmark_peak_shift:.2%}")
+    print(f"  Max GP/BdG shift over ±25% scans   = {max_scan_shift:.2%}")
     print(f"  Ratio (coherent/thermal): {'∞ (thermal = 0)' if max_thermal == 0 else f'{max_coherent/max_thermal:.1f}'}")
     print()
     print(f"  Paper prediction: δρ/ρ₀ ~ 10⁻⁶ ✓" if 1e-7 < max_coherent < 1e-5 else
@@ -257,11 +359,14 @@ def run_simulation():
         'r': r_values,
         'r_H': r_H,
         'delta_rho_coherent': delta_rho_coherent,
+        'delta_rho_coherent_bdg': delta_rho_coherent_bdg,
         'delta_rho_thermal': delta_rho_thermal,
         'T_H': T_H,
         'n_bar': n_bar,
         'kappa_eff': KAPPA_EFF,
-        'N_phonons': N_phonons
+        'N_phonons': N_phonons,
+        'benchmark_peak_shift': benchmark_peak_shift,
+        'max_scan_shift': max_scan_shift,
     }
 
 
@@ -277,7 +382,9 @@ def plot_results(results, save_path=None):
 
     # Left panel: Density modulation profile
     ax1.plot(r, np.abs(results['delta_rho_coherent']), 'b-', linewidth=2,
-             label='Coherent phonons (Coherism)')
+             label='Coherent phonons (hydro ansatz)')
+    ax1.plot(r, np.abs(results['delta_rho_coherent_bdg']), color='tab:orange', linestyle='-.', linewidth=2,
+             label='Static GP/BdG benchmark')
     ax1.plot(r, np.abs(results['delta_rho_thermal']), color='gray', linestyle='--', linewidth=2,
              label='Thermal / baseline (null)')
     ax1.axhline(y=1e-6, color='b', linestyle='--', alpha=0.5,
@@ -296,7 +403,7 @@ def plot_results(results, save_path=None):
     ax1.grid(True, alpha=0.3)
 
     # Right panel: one-at-a-time robustness scan
-    factors, curves = robustness_scan_data()
+    factors, curves, bdg_relative_shifts = robustness_scan_data()
     styles = [
         ('tab:blue', r'$n_0$'),
         ('tab:orange', r'$\xi$'),
@@ -322,6 +429,17 @@ def plot_results(results, save_path=None):
 
     ax2.legend(fontsize=8, loc='upper left')
     ax2.grid(True, alpha=0.3, which='both')
+    ax2.text(
+        0.76,
+        1.55e-7,
+        (
+            f"Static GP/BdG shift:\n"
+            f"baseline = {results['benchmark_peak_shift']*100:.2f}%\n"
+            f"all scans < {results['max_scan_shift']*100:.2f}%"
+        ),
+        fontsize=8,
+        bbox={'boxstyle': 'round', 'facecolor': 'white', 'alpha': 0.85, 'edgecolor': '0.7'}
+    )
 
     plt.tight_layout()
     plt.savefig(save_path, dpi=150, bbox_inches='tight')
@@ -341,19 +459,29 @@ def save_data(results, data_path=None, robustness_path=None):
         np.column_stack([
             results['r'],
             results['delta_rho_coherent'],
+            results['delta_rho_coherent_bdg'],
             results['delta_rho_thermal']
         ]),
-        header='r(m) delta_rho_coherent delta_rho_thermal',
+        header='r(m) delta_rho_coherent_hydro delta_rho_coherent_bdg delta_rho_thermal',
         fmt='%.6e'
     )
     print(f"Data saved to {data_path}")
 
-    factors, curves = robustness_scan_data()
+    factors, curves, bdg_relative_shifts = robustness_scan_data()
     curve_order = [r'$n_0$', r'$\xi$', r'$L_{\mathrm{coh}}$', r'$N_{\mathrm{phonon}}$', r'$c_s$ (GP)']
     np.savetxt(
         robustness_path,
-        np.column_stack([factors] + [np.asarray(curves[key]) for key in curve_order]),
-        header='scale_factor n0_scan xi_scan Lcoh_scan Nphonon_scan cs_gp_scan',
+        np.column_stack(
+            [factors]
+            + [np.asarray(curves[key]) for key in curve_order]
+            + [np.asarray(bdg_relative_shifts[key]) for key in curve_order]
+        ),
+        header=(
+            'scale_factor '
+            'n0_scan xi_scan Lcoh_scan Nphonon_scan cs_gp_scan '
+            'n0_bdg_relshift xi_bdg_relshift Lcoh_bdg_relshift '
+            'Nphonon_bdg_relshift cs_gp_bdg_relshift'
+        ),
         fmt='%.6e'
     )
     print(f"Robustness data saved to {robustness_path}")

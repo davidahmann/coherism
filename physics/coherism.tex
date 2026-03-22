@@ -70,7 +70,7 @@ Coherence-Dependent Backreaction in Semiclassical and Analog Gravity: Controlled
 % ----------------------------------------------------------------------
 
 \begin{abstract}
-We study an effective-field-theory extension of semiclassical gravity in which a coarse-grained coherence functional $\Cfunc[g,\rho;\mu]$, built from relative entropy, generalized entropy, and local geometric counterterms, generates an informational stress tensor $\Tmn$. The construction is presented as a controlled near-equilibrium framework rather than a UV-complete theory. In a 1+1D conformal toy model and in weak-field/Rindler limits, we obtain leading-order expressions that reduce to standard semiclassical behaviour when $\rho \approx \sigma[g]$. We then formulate an acoustic implementation for a Bose-Einstein-condensate sonic horizon. Within this implementation, coherent phonon injection yields a predicted density modulation $\delta\rho/\rho_0 \sim 10^{-6}$ near the horizon, whereas a thermal control state matched in injected energy gives no leading-order informational contribution. The density-response relation used for this observable is benchmarked to the standard hydrodynamic compressibility limit of Gross-Pitaevskii/Bogoliubov theory, while the informational source term itself remains phenomenological. A simple numerical model implementing the same scaling ansatz gives $A=\max_{|r-r_H|\le L_{\mathrm{coh}}}|\delta\rho/\rho_0| \approx 1.4\times 10^{-6}$ for representative parameters, and one-at-a-time $\pm25\%$ scans about a Gross-Pitaevskii-compatible baseline keep the coherent signal above $10^{-7}$. A null result below $10^{-7}$ in this protocol would falsify the acoustic implementation studied here, not the broader EFT proposal by itself. A positive analog result would test the proposed state-geometry feedback structure, not by itself establish direct gravitational backreaction in astrophysical spacetime.
+We study an effective-field-theory extension of semiclassical gravity in which a coarse-grained coherence functional $\Cfunc[g,\rho;\mu]$, built from relative entropy, generalized entropy, and scale-matched local geometric counterterms, generates an informational stress tensor $\Tmn$. The construction is presented as a controlled near-equilibrium framework rather than a UV-complete theory. In a 1+1D conformal toy model and in weak-field/Rindler limits, we obtain leading-order expressions that reduce to standard semiclassical behaviour when $\rho \approx \sigma[g]$. We then formulate an acoustic implementation for a Bose-Einstein-condensate sonic horizon. Within the acoustic ansatz adopted here, coherent phonon injection gives a model-dependent density modulation estimate $\delta\rho/\rho_0 \sim 10^{-6}$ near the horizon, whereas a thermal control state matched in injected energy gives no leading-order informational contribution. The density-response relation used for this observable is benchmarked both to the standard hydrodynamic compressibility limit and to a direct static Gross-Pitaevskii/Bogoliubov linear-response kernel, while the informational source term itself remains phenomenological. For representative parameters, the hydrodynamic estimate gives $A=\max_{|r-r_H|\le L_{\mathrm{coh}}}|\delta\rho/\rho_0| \approx 1.57\times 10^{-6}$ and the static GP/BdG benchmark gives $A \approx 1.56\times 10^{-6}$, a $0.6\%$ shift. One-at-a-time $\pm25\%$ scans about a Gross-Pitaevskii-compatible baseline keep the coherent signal above $10^{-7}$ and keep the GP/BdG correction below $0.9\%$. A null result below $10^{-7}$ in this protocol would falsify the acoustic implementation studied here, not the broader EFT proposal by itself. A positive analog result would test the proposed state-geometry feedback structure in an emergent acoustic spacetime, not by itself establish direct gravitational backreaction in astrophysical spacetime.
 \end{abstract}
 
 \maketitle
@@ -86,19 +86,19 @@ We study an effective-field-theory extension of semiclassical gravity in which a
 \label{sec:intro}
 % ======================================================================
 
-Can analog-gravity experiments test whether geometry responds only to mean stress-energy or also to coarse-grained state mismatch? We study that question within an effective semiclassical framework and use a Bose-Einstein-condensate (BEC) sonic horizon as the first concrete test bed.
+Can analog-gravity experiments test whether geometry responds only to mean stress-energy or also to coarse-grained state mismatch? We study that question within an effective semiclassical framework and use a Bose-Einstein-condensate (BEC) sonic horizon as a concrete conditional test bed.
 
-Our main phenomenological result is an acoustic implementation in which coherent phonon injection near the sonic horizon yields a density modulation $\delta\rho/\rho_0 \sim 10^{-6}$, while a thermal control state matched in injected energy gives no leading-order informational contribution. In the present paper this is the primary falsifiable prediction: a null result below $10^{-7}$ would falsify the specific acoustic implementation studied here.
+Our main phenomenological result is an acoustic implementation in which the adopted scaling ansatz gives a density modulation estimate $\delta\rho/\rho_0 \sim 10^{-6}$ for coherent phonon injection near the sonic horizon, while a thermal control state matched in injected energy gives no leading-order informational contribution. In the present paper this is the primary falsifiable target: a null result below $10^{-7}$ would falsify the specific acoustic implementation studied here.
 
 \subsection{The Physical Question}
 
 Semiclassical gravity uses the renormalized expectation value $\langle T_{\mu\nu}\rangle$ as a source in Einstein's equations~\cite{HuVerdaguer2008}. That framework is tightly constrained and extremely successful, but it leaves open a narrower EFT question: can coarse-grained state mismatch relative to a geometry-adapted reference state generate additional backreaction terms in controlled near-equilibrium regimes?
 
-Several lines of work motivate that question. Thermodynamic derivations of Einstein's equations~\cite{Jacobson1995} and entanglement-based formulations in quantum field theory and holography implicate entropy and information geometry in the structure of spacetime. Penrose~\cite{Penrose1996} and Di\'{o}si~\cite{Diosi1989} proposed that gravity may couple to quantum superposition in ways not exhausted by mean stress-energy alone. Relativistic quantum-information studies likewise show that acceleration and curved backgrounds modify coherence properties of quantum states.
+Several lines of work motivate that question. Thermodynamic derivations of Einstein's equations~\cite{Jacobson1995} and entanglement-based formulations built on relative entropy, modular Hamiltonians, and generalized entropy~\cite{Casini2008,Casini2011,FaulknerLewkowyczMaldacena2013} implicate information-theoretic structure in the semiclassical description of spacetime. Penrose~\cite{Penrose1996} and Di\'{o}si~\cite{Diosi1989} proposed that gravity may couple to quantum superposition in ways not exhausted by mean stress-energy alone. Relativistic quantum-information studies likewise show that acceleration and curved backgrounds modify coherence properties of quantum states.
 
 \subsection{Our Approach and Main Results}
 
-We construct a \emph{coherence functional} $\Cfunc[g,\rho;\mu]$ that measures the informational mismatch between a quantum state $\rho$ and a geometry-adapted reference state $\sigma[g]$. Variation with respect to the metric defines an \emph{informational stress tensor} $\Tmn$ that augments the semiclassical Einstein equations:
+We construct a \emph{coherence functional} $\Cfunc[g,\rho;\mu]$ that measures the informational mismatch between a quantum state $\rho$ and a geometry-adapted reference state $\sigma[g]$. At the EFT level, variation with respect to the metric defines an \emph{informational stress tensor} $\Tmn$ that corrects the semiclassical Einstein equations:
 \begin{equation}
     G_{\mu\nu} + \Lambda g_{\mu\nu}
     = 8\pi G\big(\langle T_{\mu\nu} \rangle_{\rho}
@@ -111,8 +111,8 @@ The framework, which we call \emph{Coherism}, yields the following concrete resu
 \begin{enumerate}
     \item \textbf{Controlled limits:} In a 1+1D conformal toy model and in weak-field/Rindler limits, we obtain leading-order expressions for $\Tmn$ and recover the standard semiclassical limit when $\rho \approx \sigma[g]$.
     \item \textbf{Geometry-dependent open-system structure:} The main text uses a phenomenological coarse-grained Lindblad ansatz, and Appendix~\ref{appendix:lindblad-derivation} shows how geometry-dependent GKLS evolution arises in a standard Unruh-DeWitt detector model.
-    \item \textbf{Primary falsification path:} In the acoustic implementation, coherent phonon injection near a sonic horizon yields $\delta\rho/\rho_0 \sim 10^{-6}$, while a matched thermal control gives no leading-order informational contribution.
-    \item \textbf{Null test:} A result below $10^{-7}$ for the primary density-modulation observable would falsify the acoustic implementation studied here.
+    \item \textbf{Primary falsification path:} In the acoustic implementation, the present scaling ansatz gives $\delta\rho/\rho_0 \sim 10^{-6}$ for coherent phonon injection near a sonic horizon, while a matched thermal control gives no leading-order informational contribution.
+    \item \textbf{Model-dependent null test:} A result below $10^{-7}$ for the primary density-modulation observable would falsify the acoustic implementation studied here.
 \end{enumerate}
 
 \subsection{Framework Overview}
@@ -259,7 +259,7 @@ so that the contracted Bianchi identity remains satisfied.
 \subsection{Open quantum systems and Lindblad generators}
 % ----------------------------------------------------------------------
 
-The evolution of $\rho$ in the presence of an environment, or under coarse-graining, is often described by a Lindblad (GKLS) master equation
+The evolution of $\rho$ in the presence of an environment, or under coarse-graining, is often described by a Lindblad (GKLS) master equation~\cite{Lindblad1976}
 \begin{equation}
     \dot{\rho}
     =
@@ -293,17 +293,17 @@ Our guiding principle is that $\Cfunc$ should (i) be diffeomorphism invariant, (
 
 We consider a family of causal diamonds $\Ddom(x;\mu)$ that cover the spacetime at a coarse-graining scale $\mu$.
 On each diamond, we evaluate the relative-entropy density $\sr(x;\mu)$ and generalized entropy density $\stot(x;\mu)$ defined in Eqs.~\eqref{eq:sr-def} and \eqref{eq:stot-def}.
-We also include a local geometric density $\Rdens(x;\mu)$ that captures the Einstein--Hilbert term and possible higher-curvature counterterms:
+Because $\sr$ and $\stot$ are coarse-grained four-volume densities, the geometric term entering the same integrand must also scale as $L^{-4}$. We therefore include a local geometric density $\Rdens(x;\mu)$ in which the Einstein--Hilbert term is accompanied by an explicit inverse-length scale:
 \begin{equation}
     \Rdens(x;\mu)
     =
-    R(x)
+    M_g^2(\mu)\,R(x)
     + \lambda_1(\mu) R^2
     + \lambda_2(\mu) R_{\alpha\beta}R^{\alpha\beta}
     + \cdots,
     \label{eq:Rdens}
 \end{equation}
-where $R$ is the Ricci scalar and the $\lambda_i(\mu)$ encode renormalization at scale $\mu$.
+where $R$ is the Ricci scalar, $M_g^2(\mu)$ is a running coefficient with dimensions of inverse length squared, and the $\lambda_i(\mu)$ are dimensionless higher-curvature Wilson coefficients. This makes $\Rdens$, $\sr$, and $\stot$ all scale as $L^{-4}$ inside the four-dimensional integrand.
 
 The coherence functional is then defined as
 \begin{multline}
@@ -317,12 +317,12 @@ The coherence functional is then defined as
     \big],
     \label{eq:C-def}
 \end{multline}
-where $\alpha,\beta,\gamma$ are dimensionless coefficients.
+where $\alpha,\beta,\gamma$ are dimensionless coefficients. With Eq.~\eqref{eq:Rdens}, every term in the integrand has the same density dimension, so the functional is well-posed as an EFT variational object.
 The signs are chosen so that:
 \begin{itemize}
     \item the term proportional to $\alpha$ rewards alignment between $\rho$ and $\sigma[g]$ (low relative entropy),
     \item the term proportional to $\beta$ implements an entropy constraint or cost, and
-    \item the term proportional to $\gamma$ produces the usual gravitational action in the appropriate limit.
+    \item the term proportional to $\gamma$ reproduces the Einstein--Hilbert contribution once the running scale $M_g^2(\mu)$ is restored.
 \end{itemize}
 
 The choice of $\sigma[g]$ is not unique, and we now specify our construction explicitly.
@@ -374,9 +374,9 @@ The variation of $\Cfunc$ with respect to the metric defines the informational s
 \end{equation}
 Expanding the functional $\Cfunc = \alpha S_{\mathrm{rel}} - \beta S_{\mathrm{gen}} + \dots$ yields a leading term proportional to the modular-Hamiltonian variation:
 \begin{equation}
-    \Tmn \approx \frac{\alpha}{V_D} \langle \frac{\delta K_\sigma}{\delta g^{\mu\nu}} \rangle_\rho.
+    \Tmn \approx \kappa(\mu)\,\frac{1}{V_D} \left\langle \frac{\delta K_\sigma}{\delta g^{\mu\nu}} \right\rangle_\rho.
 \end{equation}
-In concrete phenomenological estimates we absorb the prefactor into an implementation-dependent scale $\kappa(\mu)$; in the present paper we do not claim a unique universal first-principles value for $\kappa$ in generic 3+1D settings.
+Here $\kappa(\mu)$ is an implementation-dependent EFT coefficient that absorbs convention-dependent $O(1)$ normalizations from the coarse-graining prescription. In the present paper we do not claim a unique universal first-principles value for $\kappa$ in generic 3+1D settings.
 Crucially, if the functional $\Cfunc$ is constructed to be invariant under spacetime diffeomorphisms (a requirement for any covariant theory), Noether's second theorem guarantees that the total stress tensor is covariantly conserved:
 
 \begin{equation}
@@ -541,12 +541,12 @@ Variation with respect to $g_{\mu\nu}$ produces an informational stress tensor o
 \begin{equation}
     \Tmn
     =
+    \kappa_{1+1}\!\left[
     (\beta-\alpha)\,\Delta\!\langle T_{\mu\nu}\rangle
-    - \alpha\,T^{\mathrm{anom}}_{\mu\nu},
+    - \alpha\,T^{\mathrm{anom}}_{\mu\nu}\right],
     \label{eq:theta-1+1}
 \end{equation}
-where $\Delta\!\langle T_{\mu\nu}\rangle$ is the difference between the stress--energy in $\rho$ and $\sigma[g]$, and $T^{\mathrm{anom}}_{\mu\nu}$ is the anomaly-induced stress.
-The coefficients $\alpha,\beta$ can be tuned so that the usual semiclassical contribution and anomaly term are recovered in the limit where $\rho$ tracks $\sigma[g]$.
+where $\Delta\!\langle T_{\mu\nu}\rangle$ is the difference between the stress--energy in $\rho$ and $\sigma[g]$, $T^{\mathrm{anom}}_{\mu\nu}$ is the anomaly-induced stress, and $\kappa_{1+1}$ packages the normalization convention of the reduced 1+1D model. The coefficients $\alpha,\beta$ can then be tuned so that the usual semiclassical contribution and anomaly term are recovered in the limit where $\rho$ tracks $\sigma[g]$.
 
 % ----------------------------------------------------------------------
 \subsection{Einstein--Langevin limit}
@@ -558,7 +558,7 @@ In the entropic toy model, fluctuations in $\Delta\!\langle T_{\mu\nu}\rangle$ a
 \emph{Precise status of this correspondence:} We do not claim exact equivalence between our framework and stochastic gravity. Rather, we show that: (i) the \emph{mean} of $\Tmn$ matches the semiclassical stress in the limit $\rho \to \sigma[g]$; and (ii) the \emph{variance} of $\Tmn$ has the same tensorial structure as the noise kernel $N_{\mu\nu\alpha\beta}$. A rigorous proof of equivalence would require showing that the two-point function $\langle \Tmn(x) \Tmn(y) \rangle$ equals $N_{\mu\nu\alpha\beta}(x,y)$ exactly, which we have not done.
 
 Subject to these caveats, the 1+1D toy model is \emph{consistent with} the standard semiclassical and stochastic limits in appropriate regimes.
-This supports the interpretation of $\Tmn$ as an informational completion of the semiclassical stress, rather than a replacement of it.
+This supports the interpretation of $\Tmn$ as an informational correction to the semiclassical stress, rather than a replacement of it.
 
 % ----------------------------------------------------------------------
 \subsection{Relation to Einstein-Langevin Noise}
@@ -575,14 +575,14 @@ This suggests that the ``stochastic'' noise is actually the signature of the und
 \subsection{Coherence conservation inequality}
 % ----------------------------------------------------------------------
 
-One can further show that under mild assumptions about the Lindblad generator $\mathcal{L}_g[\rho]$, the coherence functional obeys a monotonicity inequality along solutions,
+Under an additional dissipativity assumption on the coarse-grained Lindblad generator $\mathcal{L}_g[\rho]$, the coherence functional is expected to obey a monotonicity inequality along solutions,
 \begin{equation}
     \frac{d}{dt}\Cfunc[g(t),\rho(t);\mu]
     \le 0,
     \label{eq:C-monotone}
 \end{equation}
 with equality only when $\rho$ is locally indistinguishable from $\sigma[g]$ and the generalized entropy is extremal.
-This lends support to the interpretation of $\Cfunc$ as a Lyapunov functional for the geometry--state feedback dynamics.
+In the present manuscript we treat Eq.~\eqref{eq:C-monotone} as a plausible coarse-grained consistency condition rather than a fully derived theorem for the complete field-theoretic dynamics. Under that assumption, $\Cfunc$ behaves as a Lyapunov-like functional for the geometry--state feedback dynamics.
 
 
 % ======================================================================
@@ -593,9 +593,7 @@ This lends support to the interpretation of $\Cfunc$ as a Lyapunov functional fo
 Here we briefly summarize how this framework relates to several existing lines of research.
 
 \paragraph{Priority and relation (one-paragraph summary).}
-Unlike Jacobson/Verlinde-style thermodynamic arguments~\cite{Jacobson1995,Verlinde2011}, we do not posit a thermodynamic postulate and then infer Einstein's equation; rather, we vary an explicit information-theoretic functional built from relative/generalized entropy to define an additional variational stress term $\Theta_{\mu\nu}$.
-Unlike stochastic gravity~\cite{HuVerdaguer2008}, which extends semiclassical gravity by adding stress--energy fluctuations as a noise source, we introduce a state-dependent \emph{mean} correction $\Theta_{\mu\nu}$ (with Einstein--Langevin behavior recovered only in appropriate near-equilibrium limits).
-Unlike Penrose--Di\'{o}si collapse models~\cite{Penrose1996,Diosi1989}, we do not introduce a collapse mechanism; the dynamics is open-system/backreaction-driven and the distinguishing experimental signature is coherent-versus-thermal response at fixed energy.
+The present manuscript should be read as a phenomenological extension within the existing gravity-from-information literature, not as a clean break from it. The borrowed machinery is the relative-entropy / modular-Hamiltonian / generalized-entropy framework familiar from the causal-diamond and holographic literature~\cite{Casini2008,Casini2011,FaulknerLewkowyczMaldacena2013}. The new ansatz introduced here is to package those quantities, together with a scale-matched local geometric density, into an EFT coherence functional whose variation defines an additional mean stress term $\Theta_{\mu\nu}$. Relative to stochastic gravity~\cite{HuVerdaguer2008}, the paper studies a state-dependent \emph{mean} correction rather than a noise kernel alone. Relative to Penrose--Di\'{o}si collapse models~\cite{Penrose1996,Diosi1989}, it does not introduce an objective collapse law. The narrow experimental novelty is the coherent-versus-thermal control protocol in the analog section, not the existence of sonic horizons or GKLS dynamics by themselves.
 
 \emph{Stochastic gravity:}
 the Einstein--Langevin equation already extends semiclassical gravity by incorporating stress--energy fluctuations.
@@ -626,10 +624,10 @@ Appendix~\ref{appendix:analog} defines
 \begin{equation}
     A \equiv \max_{|r-r_H|\le L_{\mathrm{coh}}}\left|\frac{\delta \rho}{\rho_0}\right|,
 \end{equation}
-the maximum fractional density modulation within one coherence length of the sonic horizon. Within the acoustic implementation developed here, coherent phonon injection gives $A \sim 10^{-6}$, while a thermal control state matched in injected energy gives no leading-order informational contribution. A null result below $10^{-7}$ for the parameter regime of Fig.~\ref{fig:bec-simulation} would falsify the acoustic implementation studied in this paper.
+the maximum fractional density modulation within one coherence length of the sonic horizon. Within the acoustic implementation developed here, the present scaling ansatz gives $A \sim 10^{-6}$, while a thermal control state matched in injected energy gives no leading-order informational contribution. A null result below $10^{-7}$ for the parameter regime of Fig.~\ref{fig:bec-simulation} would falsify the acoustic implementation studied in this paper.
 
 \paragraph{Null-test assumptions.}
-That threshold is conditional on the assumptions summarized in Appendix~\ref{appendix:analog}: the injected packet remains in the hydrodynamic regime $k\xi \ll 1$, the background condensate response is linear in the weak informational source, the coherent and thermal injections are matched in energy and background geometry, and ordinary hydrodynamic systematics are calibrated below $10^{-7}$. Under those conditions, a null result would falsify only the acoustic implementation studied here.
+That threshold is conditional on the assumptions summarized in Appendix~\ref{appendix:analog}: the injected packet remains in the hydrodynamic regime $k\xi \ll 1$, the background condensate response is linear in the weak informational source, the coherent and thermal injections are matched in energy and background geometry, and ordinary hydrodynamic systematics are calibrated below $10^{-7}$. The density-response step is benchmarked both to the long-wavelength compressibility limit and to a static GP/BdG kernel, but the informational source itself remains an implementation assumption. Under those conditions, a null result would falsify only the acoustic implementation studied here.
 
 \paragraph{Interpretational scope.}
 A positive result in the analog system would test the state-geometry feedback structure of the EFT in an emergent acoustic spacetime. It would not, by itself, establish direct gravitational backreaction in astrophysical spacetime.
@@ -646,13 +644,13 @@ Figure~\ref{fig:bec-simulation} is reproduced by running \texttt{python3 bec\_so
 The present manuscript should be read as an EFT proposal with one controlled phenomenological target rather than as a general 3+1D theory of quantum gravity.
 
 \paragraph{What is established here.}
-The paper defines a covariant coarse-grained functional, exhibits controlled limits in which the informational stress can be written explicitly, and formulates one concrete analog-gravity protocol with a falsification threshold. The weak-field/Rindler and 1+1D constructions show that the framework can be matched to familiar semiclassical structures in near-equilibrium settings.
+The paper defines a scale-matched coarse-grained functional, exhibits controlled limits in which the informational stress can be written explicitly, and formulates one concrete analog-gravity protocol with a falsification threshold. The weak-field/Rindler and 1+1D constructions show that the framework can be matched to familiar semiclassical structures in near-equilibrium settings.
 
 \paragraph{What is not established here.}
-Several important ingredients remain open. We do not provide a full renormalized existence proof for $\Tmn$ in arbitrary 3+1D curved spacetimes. The overall coupling entering phenomenology is treated as implementation dependent rather than universally derived. The numerical model in Appendix~\ref{appendix:analog} is a scaling implementation of the acoustic ansatz, not a full Gross-Pitaevskii/Bogoliubov simulation. For the same reason, a positive analog result would support the feedback structure of the EFT, but it would not by itself prove direct gravitational backreaction in nature.
+Several important ingredients remain open. We do not provide a full renormalized existence proof for $\Tmn$ in arbitrary 3+1D curved spacetimes. The overall coupling entering phenomenology is treated as implementation dependent rather than universally derived. The numerical model in Appendix~\ref{appendix:analog} now includes a direct static GP/BdG benchmark of the density-response step, but it still does not derive the informational source term microscopically or solve the full time-dependent condensate dynamics. For the same reason, a positive analog result would support the feedback structure of the EFT, but it would not by itself prove direct gravitational backreaction in nature.
 
 \paragraph{Relation to neighboring approaches.}
-Relative to stochastic gravity~\cite{HuVerdaguer2008}, the present proposal introduces a state-dependent mean correction rather than a noise kernel alone. Relative to Penrose--Di\'{o}si collapse models~\cite{Penrose1996,Diosi1989}, it does not invoke objective collapse. Relative to thermodynamic-gravity programs~\cite{Jacobson1995,Verlinde2011}, it starts from an explicit variational functional rather than from a thermodynamic postulate. These distinctions are clearest in the analog protocol, where the control parameter is the mismatch between the injected state and the chosen reference state.
+Relative to stochastic gravity~\cite{HuVerdaguer2008}, the present proposal introduces a state-dependent mean correction rather than a noise kernel alone. Relative to Penrose--Di\'{o}si collapse models~\cite{Penrose1996,Diosi1989}, it does not invoke objective collapse. Relative to thermodynamic-gravity and entanglement-equilibrium programs~\cite{Jacobson1995,Verlinde2011,Casini2008,Casini2011,FaulknerLewkowyczMaldacena2013}, it packages the same entropic ingredients into a coarse-grained EFT ansatz rather than deriving Einstein dynamics from a thermodynamic extremum principle. These distinctions are clearest in the analog protocol, where the control parameter is the mismatch between the injected state and the chosen reference state.
 
 \paragraph{Sign of the informational stress.}
 The sign of $\Theta_{\mu\nu}$ is not fixed universally by the present EFT. In the controlled Rindler example the leading energy-density contribution is positive, which is consistent with the intuition that maintaining mismatch relative to the reference state carries an energetic cost. Whether that sign persists beyond near-equilibrium settings remains open.
@@ -663,11 +661,11 @@ The sign of $\Theta_{\mu\nu}$ is not fixed universally by the present EFT. In th
 \label{sec:conclusion}
 % ======================================================================
 
-We have introduced a variational feedback framework linking quantum information and spacetime geometry through a coarse-grained coherence functional. In controlled limits, its metric variation yields an informational stress tensor that vanishes when the physical state tracks the geometry-adapted reference state and produces leading-order corrections when that mismatch is nonzero.
+We have introduced a variational EFT framework linking quantum information and semiclassical geometry through a coarse-grained coherence functional. In controlled limits, its metric variation yields an informational stress tensor that vanishes when the physical state tracks the geometry-adapted reference state and produces leading-order corrections when that mismatch is nonzero.
 
-The paper's main phenomenological result is an analog-gravity protocol in a BEC sonic horizon. Within the acoustic implementation adopted here, coherent phonon injection produces a density modulation at the level of $\delta\rho/\rho_0 \sim 10^{-6}$, whereas a matched thermal control gives no leading-order informational contribution. A null result below $10^{-7}$ would therefore falsify the implementation studied in this manuscript.
+The paper's main phenomenological result is an analog-gravity protocol in a BEC sonic horizon. Within the acoustic implementation adopted here, the present scaling ansatz produces a density modulation at the level of $\delta\rho/\rho_0 \sim 10^{-6}$, whereas a matched thermal control gives no leading-order informational contribution. A null result below $10^{-7}$ would therefore falsify the implementation studied in this manuscript.
 
-The framework remains incomplete as a general 3+1D theory. In particular, the coupling scale entering phenomenology is implementation dependent, and the acoustic calculation is an EFT test of the proposed feedback structure rather than a direct proof of gravitational backreaction in nature. That narrower claim is nevertheless substantive: it turns the proposal from a purely conceptual framework into a falsifiable semiclassical program.
+The framework remains incomplete as a general 3+1D theory. In particular, the coupling scale entering phenomenology is implementation dependent, and the acoustic calculation is an EFT test of the proposed feedback structure rather than a direct proof of gravitational backreaction in nature. The appropriate claim for the present paper is therefore narrower: it offers a controlled variational ansatz with one falsifiable analog implementation, not a complete new gravity theory.
 
 
 % ======================================================================
@@ -684,7 +682,7 @@ A full derivation in 3+1D will require a careful treatment of UV divergences and
 In this appendix we derive the informational stress tensor $\Tmn$ by varying the coherence functional $\Cfunc[g,\rho;\mu]$ with respect to the metric.
 Recall the definition:
 \begin{equation}
-    \Cfunc[g,\rho] = \int d^4x \sqrt{-g} \left( \alpha \sr - \beta \stot + \gamma \Rdens \right).
+    \Cfunc[g,\rho;\mu] = \int d^4x \sqrt{-g} \left( \alpha \sr - \beta \stot + \gamma \Rdens \right).
 \end{equation}
 The variation is defined as
 \begin{equation}
@@ -697,11 +695,11 @@ Using the identity $\delta \sqrt{-g} = -\frac{1}{2}\sqrt{-g} g_{\mu\nu} \delta g
 \end{equation}
 
 \subsection{Geometric Contribution}
-The term $\gamma \Rdens$ (with $\Rdens \approx R$) gives the standard Einstein tensor contribution (plus higher order corrections if $\lambda_i \neq 0$):
+The term $\gamma \Rdens$ with $\Rdens = M_g^2(\mu)R + O(R^2)$ gives the standard Einstein tensor contribution (plus higher order corrections if $\lambda_i \neq 0$):
 \begin{equation}
-    \Tmn^{\mathrm{geom}} = \gamma \left( G_{\mu\nu} + \dots \right).
+    \Tmn^{\mathrm{geom}} = \gamma M_g^2(\mu)\left( G_{\mu\nu} + \dots \right).
 \end{equation}
-In our convention, this part is moved to the LHS of the Einstein equation, or treated as a renormalization of $G$ and $\Lambda$.
+In our convention, the combination $\gamma M_g^2(\mu)$ renormalizes the inverse gravitational coupling on the EFT side of the field equation, while the higher-curvature terms remain subleading counterterms.
 
 \subsection{Relative Entropy Contribution}
 The relative entropy density is $\sr = V_{\Ddom}^{-1} \tr(\rho_{\Ddom} (\log \rho_{\Ddom} - \log \sigma_{\Ddom}[g]))$.
@@ -722,9 +720,9 @@ In near-equilibrium settings where the modular Hamiltonian varies smoothly with 
 \end{equation}
 Let $K_{\sigma} = - \log \sigma$ be the modular Hamiltonian of the reference state. The leading contribution to the relative entropy variation is then
 \begin{equation}
-    \Tmn^{\mathrm{rel}} = \frac{2\alpha}{V_{\Ddom}} \langle \frac{\delta K_{\sigma}}{\delta g^{\mu\nu}} \rangle_{\rho} + (\text{subleading terms}).
+    \Tmn^{\mathrm{rel}} = \frac{2}{V_{\Ddom}} \left\langle \frac{\delta K_{\sigma}}{\delta g^{\mu\nu}} \right\rangle_{\rho} + (\text{subleading terms}).
 \end{equation}
-If $\sigma[g]$ is locally thermal or vacuum-like, $K_{\sigma}$ is related to the energy density, and this term represents an informational backreaction. The subleading terms arise from volume variations and boundary effects, which are suppressed by $(L_P/L)^2$.
+so that the overall normalization continues to be carried by the EFT coefficient multiplying $\Tmn^{\mathrm{rel}}$ in Eq.~\eqref{eq:C-def}. If $\sigma[g]$ is locally thermal or vacuum-like, $K_{\sigma}$ is related to the energy density, and this term represents an informational backreaction. The subleading terms arise from volume variations and boundary effects, which are suppressed by $(L_P/L)^2$.
 
 \subsection{Generalized Entropy Contribution}
 The generalized entropy $\stot$ contains the area term $A[\partial \Ddom]/4G$. The variation of the area of the causal diamond boundary with respect to the metric is a standard geometric result.
@@ -817,11 +815,11 @@ This explicitly links the informational backreaction to the particle number dens
 
 \emph{Numerical estimate:} For a coherent state with $\bar{n} = 10^6$ photons at optical frequency ($\omega \sim 1\,\mathrm{eV}$) in a $V_D = 1\,\mathrm{m}^3$ diamond, with $\alpha \sim 1$, the energy density contribution is:
 \begin{equation}
-    \Theta_{00} \sim \frac{\alpha}{V_D} \bar{n} \omega \sim \frac{10^6 \times 1\,\mathrm{eV}}{(1\,\mathrm{m})^3} \sim 10^{-12}\,\mathrm{eV}^4 \sim 10^{-60}\,\mathrm{GeV}^4.
+    \Theta_{00} \sim \frac{\alpha}{V_D} \bar{n} \omega \sim \frac{10^6 \times 1\,\mathrm{eV}}{(1\,\mathrm{m})^3} \sim 7.7\times 10^{-15}\,\mathrm{eV}^4 \sim 7.7\times 10^{-51}\,\mathrm{GeV}^4.
 \end{equation}
-Comparing to the rest mass energy density of a $1\,\mathrm{kg}$ test mass in the same volume ($\rho_m \sim 10^{27}\,\mathrm{eV}^4$), this gives:
+Comparing to the rest mass energy density of a $1\,\mathrm{kg}$ test mass in the same volume ($\rho_m \sim 4.3\times 10^{15}\,\mathrm{eV}^4$), this gives:
 \begin{equation}
-    \eta_{\mathrm{coh}} \sim \frac{\Theta_{00}}{\rho_m} \sim 10^{-39}.
+    \eta_{\mathrm{coh}} \sim \frac{\Theta_{00}}{\rho_m} \sim 1.8\times 10^{-30}.
 \end{equation}
 This estimate is meant only as a weak-field dimensional benchmark. It illustrates that, absent the acoustic enhancement discussed below, direct laboratory-scale gravitational effects are tiny.
 
@@ -830,7 +828,7 @@ This estimate is meant only as a weak-field dimensional benchmark. It illustrate
 \label{appendix:analog}
 % ----------------------------------------------------------------------
 
-The paper's main phenomenological target is an acoustic implementation in a Bose-Einstein condensate (BEC) sonic horizon. We do not assume that analog gravity provides Einstein dynamics; rather, we use the acoustic system as a laboratory in which the same state-reference mismatch functional can be coupled to an emergent geometry and interrogated experimentally.
+The paper's main phenomenological target is an acoustic implementation in a Bose-Einstein condensate (BEC) sonic horizon. We do not assume that analog gravity provides Einstein dynamics; rather, we use the acoustic system as a laboratory in which the same state-reference mismatch functional can be coupled to an emergent geometry and interrogated experimentally. The relevant experimental background is the established analog-horizon program initiated by Unruh and developed in BEC systems~\cite{Unruh1981,Barcelo2005,Steinhauer2016}.
 
 \subsection{Acoustic Metric in a BEC}
 
@@ -844,15 +842,17 @@ A draining vortex configuration creates a sonic horizon where $|\mathbf{v}| = c_
 
 \subsection{Effective Coupling}
 
-For the acoustic implementation we package the microscopic response of the condensate into a phenomenological coefficient $\kappa_{\mathrm{eff}}$. The relevant microscopic length is the healing length
+For the acoustic implementation we package the unresolved microscopic response of the condensate into a \emph{dimensionless} phenomenological coefficient $\kappa_{\mathrm{eff}}$ multiplying the natural hydrodynamic pressure scale $\rho_0 c_s^2$. The relevant microscopic length is the healing length
 \begin{equation}
     \xi = \frac{\hbar}{\sqrt{2} m c_s} \sim 0.1\text{--}1\,\mu\mathrm{m}
 \end{equation}
-for typical $^{87}$Rb condensates. The scaling used throughout the numerical model is
+for typical $^{87}$Rb condensates. Writing the condensate number density as $n_0$ and the mass density as $\rho_0 = m n_0$, the dimensionless scaling used throughout the numerical model is
 \begin{equation}
-    \kappa_{\mathrm{eff}} \sim \alpha \frac{\hbar c_s}{\rho_0 \xi^2 L_{\mathrm{coh}}^2},
+    \kappa_{\mathrm{eff}} \sim \chi_{\mathrm{an}}
+    \frac{1}{n_0 L_{\mathrm{coh}}^3}
+    \left(\frac{\xi}{L_{\mathrm{coh}}}\right)^3,
 \end{equation}
-where $\alpha$ is dimensionless and $L_{\mathrm{coh}}$ is the injected coherence length. Writing the condensate number density as $n_0$ and the mass density as $\rho_0 = m n_0$, representative values
+where $\chi_{\mathrm{an}}$ is an $O(1)$ calibration constant that packages the unresolved source normalization and $L_{\mathrm{coh}}$ is the injected coherence length. Representative values
 \begin{align}
     n_0 &\sim 10^{14}\,\mathrm{cm}^{-3}, &
     \rho_0 &\approx 1.4 \times 10^{-5}\,\mathrm{kg/m^3}, \\
@@ -862,10 +862,10 @@ where $\alpha$ is dimensionless and $L_{\mathrm{coh}}$ is the injected coherence
 \end{align}
 give
 \begin{equation}
-    \boxed{\kappa_{\mathrm{eff}} \sim 1.4\times 10^{-9}}
+    \boxed{\kappa_{\mathrm{eff}} \sim 8\times 10^{-10}}
     \label{eq:kappa-analog}
 \end{equation}
-for $\alpha \sim 1$. This should be read as the scaling choice used in the acoustic ansatz, not as a universal analog of Newton's constant.
+for $\chi_{\mathrm{an}} \sim 3$. This should be read as the dimensionless scaling choice used in the acoustic ansatz, not as a universal analog of Newton's constant.
 
 \subsection{Informational Stress Tensor for Sonic Horizon}
 
@@ -887,11 +887,12 @@ where $\bar{n}_k = (e^{\hbar \omega_k / k_B T_H} - 1)^{-1}$.
 
 The time-time component of the informational stress tensor is modeled as
 \begin{equation}
-    \boxed{\Theta_{tt}^{(\mathrm{analog})} = \frac{\kappa_{\mathrm{eff}} \hbar c_s}{\xi^4} \sum_k |\alpha_k|^2 \left( 1 + \frac{1}{2\bar{n}_k + 1} \right)}
+    \boxed{\Theta_{tt}^{(\mathrm{analog})} = \rho_0 c_s^2 \,\kappa_{\mathrm{eff}} \sum_k |\alpha_k|^2 \left( 1 + \frac{1}{2\bar{n}_k + 1} \right)}
     \label{eq:theta-analog}
 \end{equation}
+so that the source is normalized to the standard hydrodynamic pressure scale and $\kappa_{\mathrm{eff}}$ remains dimensionless.
 
-\subsection{Hydrodynamic Benchmark for the Density Response}
+\subsection{Hydrodynamic and Static GP/BdG Benchmarks for the Density Response}
 
 The analog system itself is governed by standard condensate dynamics derived from the Gross-Pitaevskii equation and its Bogoliubov linearization \cite{Barcelo2005,Bloch2008}. In the long-wavelength hydrodynamic regime $k\xi \ll 1$, the barotropic density response obeys
 \begin{equation}
@@ -909,13 +910,34 @@ and therefore
     \frac{\delta \rho}{\rho_0} \simeq \frac{\Theta_{tt}^{(\mathrm{analog})}}{\rho_0 c_s^2}.
     \label{eq:analog-compressibility}
 \end{equation}
-Equation~\eqref{eq:analog-compressibility} is thus benchmarked to standard BEC hydrodynamics. The nonstandard ingredient in the acoustic implementation is the source term Eq.~\eqref{eq:theta-analog} and the scaling of $\kappa_{\mathrm{eff}}$, not the linear density response once that source is specified.
+Equation~\eqref{eq:analog-compressibility} is thus benchmarked to standard BEC hydrodynamics.
+
+To benchmark the same response step one level closer to standard condensate theory, consider a locally homogeneous background and let the informational sector enter the stationary Gross-Pitaevskii equation as a weak effective single-particle perturbation
+\begin{equation}
+    \delta U_{\mathrm{info}}(r) \equiv -\frac{\Theta_{tt}^{(\mathrm{analog})}(r)}{n_0}.
+    \label{eq:delta-u-info}
+\end{equation}
+Writing $n(r)=n_0+\delta n(r)$ and linearizing the time-independent GP equation around the background gives
+\begin{equation}
+    \left(g_{\mathrm{BEC}}-\frac{\hbar^2}{4mn_0}\partial_r^2\right)\delta n(r)
+    = -\delta U_{\mathrm{info}}(r),
+    \label{eq:static-gp-linearized}
+\end{equation}
+where $g_{\mathrm{BEC}}=mc_s^2/n_0$ is the standard contact-interaction coefficient expressed in terms of the sound speed. Fourier transforming Eq.~\eqref{eq:static-gp-linearized} and using $\rho=mn$ and $\xi=\hbar/(\sqrt{2}mc_s)$ yields
+\begin{equation}
+    \frac{\delta \rho_k}{\rho_0}
+    =
+    \frac{\Theta_{tt,k}^{(\mathrm{analog})}}{\rho_0 c_s^2}
+    \frac{1}{1+\tfrac{1}{2}(k\xi)^2}.
+    \label{eq:static-bdg-filter}
+\end{equation}
+Equation~\eqref{eq:static-bdg-filter} is the direct static GP/BdG benchmark used in the numerical model. In the hydrodynamic limit $k\xi \ll 1$, it reduces to Eq.~\eqref{eq:analog-compressibility}. The nonstandard ingredient in the acoustic implementation is therefore the source term Eq.~\eqref{eq:theta-analog} and the scaling of $\kappa_{\mathrm{eff}}$, not the linear condensate response once that source is specified.
 
 \subsection{What is Benchmarked and What is Assumed}
 
 For clarity, the acoustic implementation contains four logically separate ingredients:
 \begin{enumerate}
-    \item \textbf{Benchmarked to standard BEC dynamics:} the acoustic metric description and the linear compressibility response Eq.~\eqref{eq:analog-compressibility}.
+    \item \textbf{Benchmarked to standard BEC dynamics:} the acoustic metric description, the linear compressibility response Eq.~\eqref{eq:analog-compressibility}, and the static GP/BdG response kernel Eq.~\eqref{eq:static-bdg-filter}.
     \item \textbf{Implementation assumption:} the phenomenological scaling of $\kappa_{\mathrm{eff}}$ in Eq.~\eqref{eq:kappa-analog}.
     \item \textbf{Implementation assumption:} the informational source term in Eq.~\eqref{eq:theta-analog}.
     \item \textbf{Implementation assumption:} the matched thermal control is identified with the chosen reference state, so the leading informational contribution vanishes, and the background flow is held fixed at leading order.
@@ -927,9 +949,9 @@ Define the primary observable as the maximum fractional density modulation withi
 \begin{equation}
     A \equiv \max_{|r-r_H|\le L_{\mathrm{coh}}}\left|\frac{\delta\rho}{\rho_0}\right|.
 \end{equation}
-Within the leading-order acoustic ansatz, $A \propto N_{\mathrm{phonon}}$ for coherent injected phonons at fixed geometry and injected energy profile. For the matched thermal control, the leading-order informational contribution vanishes because the control is identified with the reference state. The resulting null prediction applies only to the informational contribution; standard hydrodynamic nonlinearities must still be controlled experimentally. If $c_s$ and $\xi$ are varied independently with all other quantities fixed, the leading factor of $c_s$ cancels in Eq.~\eqref{eq:analog-compressibility}; the physically relevant sound-speed dependence re-enters when the Gross-Pitaevskii healing-length relation $\xi=\hbar/(\sqrt{2}mc_s)$ is imposed.
+Within the leading-order acoustic ansatz, $A \propto N_{\mathrm{phonon}}$ for coherent injected phonons at fixed geometry and injected energy profile. For the matched thermal control, the leading-order informational contribution vanishes because the control is identified with the reference state. The resulting null prediction applies only to the informational contribution of this acoustic source model; standard hydrodynamic nonlinearities must still be controlled experimentally. If $c_s$ and $\xi$ are varied independently with all other quantities fixed, the explicit sound-speed dependence cancels between Eqs.~\eqref{eq:theta-analog} and \eqref{eq:analog-compressibility}; the physically relevant $c_s$ dependence re-enters only when the Gross-Pitaevskii healing-length relation $\xi=\hbar/(\sqrt{2}mc_s)$ is imposed.
 
-\emph{Scope of the null test:} for the parameter regime in Fig.~\ref{fig:bec-simulation}, a null result $A < 10^{-7}$ for coherent injection at $N_{\mathrm{phonon}}\sim 10^3$ would falsify the acoustic implementation defined by Eqs.~\eqref{eq:kappa-analog}, \eqref{eq:theta-analog}, and \eqref{eq:analog-compressibility}, together with the linear-response assumptions above. It would not, by itself, falsify the broader coherence-functional EFT.
+\emph{Scope of the null test:} for the parameter regime in Fig.~\ref{fig:bec-simulation}, a null result $A < 10^{-7}$ for coherent injection at $N_{\mathrm{phonon}}\sim 10^3$ would falsify the acoustic implementation defined by Eqs.~\eqref{eq:kappa-analog}, \eqref{eq:theta-analog}, and the benchmarked linear-response relations \eqref{eq:analog-compressibility} and \eqref{eq:static-bdg-filter}, together with the linear-response assumptions above. It would not, by itself, falsify the broader coherence-functional EFT.
 
 \paragraph{Density modulation.} The informational contribution to the condensate density near the horizon is modeled as
 \begin{equation}
@@ -938,10 +960,10 @@ Within the leading-order acoustic ansatz, $A \propto N_{\mathrm{phonon}}$ for co
 
 For $N_{\mathrm{coherent}} \sim 10^3$ phonons in a coherent state and the parameters above, one finds $\bar{n} \ll 1$ and therefore
 \begin{equation}
-    \boxed{\frac{\delta \rho}{\rho_0} \sim 10^{-6}}
+    \boxed{\frac{\delta \rho}{\rho_0} \sim 1.5\times 10^{-6}}
     \label{eq:analog-density-prediction}
 \end{equation}
-which is the single primary observable emphasized in the main text.
+which is the single primary observable emphasized in the main text. Applying the static GP/BdG filter Eq.~\eqref{eq:static-bdg-filter} to the same source profile changes the peak only mildly: for the representative baseline used in Fig.~\ref{fig:bec-simulation}, the hydrodynamic estimate gives $A_{\mathrm{hydro}} \approx 1.57\times 10^{-6}$ while the static GP/BdG benchmark gives $A_{\mathrm{GP/BdG}} \approx 1.56\times 10^{-6}$, a relative shift of $0.63\%$. The source term itself remains phenomenological, but the condensate response step is thus directly checked against the standard stationary GP/BdG kernel.
 
 \subsection{Robustness of the Observable}
 
@@ -953,11 +975,13 @@ We performed one-at-a-time $\pm25\%$ scans about a Gross-Pitaevskii-compatible b
     L_{\mathrm{coh}} &= 10\,\mu\mathrm{m}, \qquad
     N_{\mathrm{phonon}} = 10^3 .
 \end{align}
-At the ansatz level, varying $n_0$ gives $A \in [9.1\times10^{-7},\,2.5\times10^{-6}]$, varying $\xi$ gives $A \in [3.7\times10^{-7},\,8.1\times10^{-6}]$, varying $L_{\mathrm{coh}}$ gives $A \in [9.2\times10^{-7},\,2.5\times10^{-6}]$, and varying $N_{\mathrm{phonon}}$ from $750$ to $1250$ gives $A \in [1.1\times10^{-6},\,1.8\times10^{-6}]$. If one instead imposes the Gross-Pitaevskii healing-length relation $\xi=\hbar/(\sqrt{2}mc_s)$ and varies $c_s$ by $\pm25\%$, the resulting range is
+At the ansatz level, varying $n_0$ gives $A \in [1.3\times10^{-6},\,2.1\times10^{-6}]$, varying $\xi$ gives $A \in [6.7\times10^{-7},\,3.0\times10^{-6}]$, varying $L_{\mathrm{coh}}$ gives $A \in [4.1\times10^{-7},\,8.7\times10^{-6}]$, and varying $N_{\mathrm{phonon}}$ from $750$ to $1250$ gives $A \in [1.2\times10^{-6},\,2.0\times10^{-6}]$. If one instead imposes the Gross-Pitaevskii healing-length relation $\xi=\hbar/(\sqrt{2}mc_s)$ and varies $c_s$ by $\pm25\%$, the resulting range is
 \begin{equation}
-    A \in [2.5\times10^{-7},\,5.5\times10^{-6}] .
+    A \in [8.1\times10^{-7},\,3.7\times10^{-6}] .
 \end{equation}
 Across these moderate variations, the coherent signal remains above the $10^{-7}$ falsification threshold for the acoustic implementation studied here.
+
+Across the same scans, the static GP/BdG benchmark changes the peak amplitude by less than $0.9\%$ relative to the hydrodynamic estimate, with a $0.63\%$ shift at the baseline point. For the present parameter regime, the observable is therefore limited primarily by the implementation assumption for the source term, not by ambiguity in the linear condensate response.
 
 \subsection{Experimental Protocol}
 
@@ -971,12 +995,12 @@ Across these moderate variations, the coherent signal remains above the $10^{-7}
 
 \subsection{Numerical Simulation}
 
-Figure~\ref{fig:bec-simulation} shows an illustrative numerical implementation of the acoustic ansatz together with a one-at-a-time robustness scan about the Gross-Pitaevskii-compatible baseline above. The code is not a full Gross-Pitaevskii/Bogoliubov calculation; rather, it propagates the adopted source term through the standard linear compressibility response in order to visualize the coherent-versus-thermal separation and the parameter sensitivity of $A$. For the representative parameters above, the model gives $\delta\rho/\rho_0 \approx 1.4 \times 10^{-6}$ for coherent injection and a null leading-order informational contribution for the matched thermal control.
+Figure~\ref{fig:bec-simulation} shows an illustrative numerical implementation of the acoustic ansatz together with a one-at-a-time robustness scan about the Gross-Pitaevskii-compatible baseline above. The code is not a full time-dependent Gross-Pitaevskii/Bogoliubov solver; rather, it propagates the adopted source term through both the standard linear compressibility response and the static GP/BdG kernel Eq.~\eqref{eq:static-bdg-filter} in order to visualize the coherent-versus-thermal separation and the parameter sensitivity of $A$. For the representative parameters above, the model gives $\delta\rho/\rho_0 \approx 1.57 \times 10^{-6}$ for coherent injection in the hydrodynamic limit, $\delta\rho/\rho_0 \approx 1.56 \times 10^{-6}$ with the static GP/BdG benchmark, and a null leading-order informational contribution for the matched thermal control.
 
 \begin{figure}[ht]
     \centering
     \includegraphics[width=0.9\columnwidth]{bec_sonic_horizon_results.png}
-    \caption{\textbf{Illustrative acoustic-model output.} Left: Fractional density modulation $|\delta\rho/\rho_0|$ versus distance from the horizon for coherent phonon injection, shown together with the leading-order informational null prediction for the matched thermal control. The dashed blue line marks the target magnitude $10^{-6}$; the dotted red line marks the falsification threshold $10^{-7}$. Right: One-at-a-time $\pm25\%$ robustness scan of the peak signal $A=\max_{|r-r_H|\le L_{\mathrm{coh}}}|\delta\rho/\rho_0|$ around the Gross-Pitaevskii-compatible baseline, for $n_0$, $\xi$, $L_{\mathrm{coh}}$, $N_{\mathrm{phonon}}$, and $c_s$ with $\xi=\hbar/(\sqrt{2}mc_s)$ enforced for the $c_s$ curve. Within the plotted range, the coherent signal stays above the falsification threshold. Parameters: $^{87}$Rb BEC, $n_0 = 10^{14}\,\mathrm{cm}^{-3}$, $\rho_0 \approx 1.4\times10^{-5}\,\mathrm{kg/m^3}$, $c_s \approx 1.7\,\mathrm{mm/s}$, $\xi = 0.3\,\mu\mathrm{m}$, $r_H = 50\,\mu\mathrm{m}$, $L_{\mathrm{coh}} = 10\,\mu\mathrm{m}$, $N_{\mathrm{phonon}} = 10^3$.}
+    \caption{\textbf{Illustrative acoustic-model output.} Left: Fractional density modulation $|\delta\rho/\rho_0|$ versus distance from the horizon for coherent phonon injection in the hydrodynamic limit, the corresponding static GP/BdG benchmark, and the leading-order informational null prediction for the matched thermal control. The dashed blue line marks the target magnitude $10^{-6}$; the dotted red line marks the falsification threshold $10^{-7}$. For the plotted baseline, the static GP/BdG response reduces the peak by $0.63\%$ relative to the hydrodynamic estimate. Right: One-at-a-time $\pm25\%$ robustness scan of the peak signal $A=\max_{|r-r_H|\le L_{\mathrm{coh}}}|\delta\rho/\rho_0|$ around the Gross-Pitaevskii-compatible baseline, for $n_0$, $\xi$, $L_{\mathrm{coh}}$, $N_{\mathrm{phonon}}$, and $c_s$ with $\xi=\hbar/(\sqrt{2}mc_s)$ enforced for the $c_s$ curve. Within the plotted range, the coherent signal stays above the falsification threshold and the static GP/BdG correction stays below $0.9\%$. Parameters: $^{87}$Rb BEC, $n_0 = 10^{14}\,\mathrm{cm}^{-3}$, $\rho_0 \approx 1.4\times10^{-5}\,\mathrm{kg/m^3}$, $c_s \approx 1.7\,\mathrm{mm/s}$, $\xi = 0.3\,\mu\mathrm{m}$, $r_H = 50\,\mu\mathrm{m}$, $L_{\mathrm{coh}} = 10\,\mu\mathrm{m}$, $N_{\mathrm{phonon}} = 10^3$.}
     \label{fig:bec-simulation}
 \end{figure}
 
@@ -1071,11 +1095,11 @@ This detector calculation establishes a concrete model system in which:
 \emph{Non-Markovian extensions:} The Markovian approximation used here is valid for timescales $\tau \gg \Omega^{-1}$, where $\Omega$ is the detector gap. For rapidly varying geometries or strong-field regimes, non-Markovian corrections incorporating memory effects are expected to modify the dissipation timescales but not the qualitative coherence-dependence of $\Tmn$. A systematic treatment of such corrections will be presented elsewhere.
 
 % ----------------------------------------------------------------------
-\section{\texorpdfstring{Uniqueness of the Reference State $\sigma[g]$}{Uniqueness of the Reference State sigma[g]}}
+\section{\texorpdfstring{Local Reference-State Construction and Approximate Uniqueness of $\sigma[g]$}{Local Reference-State Construction and Approximate Uniqueness of sigma[g]}}
 \label{appendix:uniqueness}
 % ----------------------------------------------------------------------
 
-A potential concern is that the map $g \mapsto \sigma[g]$ involves arbitrary choices. Here we argue that $\sigma[g]$ is essentially unique given physically motivated axioms.
+A potential concern is that the map $g \mapsto \sigma[g]$ involves arbitrary choices. In the small-diamond regime used throughout the manuscript, one can identify a natural local Hadamard/KMS reference state. The purpose of this appendix is to show approximate local uniqueness within that regime, not to claim a global uniqueness theorem for arbitrary geometries.
 
 \subsection{Axioms for the Reference State}
 
@@ -1087,13 +1111,13 @@ We require $\sigma_{\Ddom}[g]$ on a causal diamond $\Ddom$ to satisfy:
     \item \textbf{Local Lorentz invariance:} In the local inertial frame at the diamond's center, $\sigma$ reduces to the Minkowski vacuum restricted to the diamond.
 \end{enumerate}
 
-\subsection{Uniqueness Theorem (Sketch)}
+\subsection{Approximate Local-Uniqueness Statement (Sketch)}
 
 \begin{proposition}
 For a causal diamond $\Ddom$ of proper size $L \gg L_P$ in a spacetime with curvature radius $R_{\mathrm{curv}} \gg L$, the state $\sigma_{\Ddom}[g]$ satisfying axioms (1)--(4) is unique up to corrections of order $(L/R_{\mathrm{curv}})^2$.
 \end{proposition}
 
-\emph{Proof sketch:} By axiom (4), in the local inertial frame the state must approach the Minkowski vacuum. By the Bisognano-Wichmann theorem, this vacuum restricted to a Rindler wedge (approximating the diamond) is a KMS state at the Unruh temperature $T = a/2\pi$. Axiom (2) then fixes $\sigma$ to be this thermal state. Axiom (3) is automatically satisfied since the KMS state maximizes entropy at fixed modular energy. The Hadamard condition (1) is satisfied by construction. Curvature corrections enter at order $(L/R_{\mathrm{curv}})^2$ through the failure of exact boost symmetry. \qed
+\emph{Proof sketch:} By axiom (4), in the local inertial frame the state must approach the Minkowski vacuum. By the Bisognano-Wichmann theorem, this vacuum restricted to a Rindler wedge (approximating the diamond) is a KMS state at the Unruh temperature $T = a/2\pi$. Axiom (2) then fixes the local reference state to this thermal form up to curvature corrections, while axiom (3) identifies it as the entropy-maximizing state at fixed modular energy. The Hadamard condition (1) is satisfied by construction. Curvature corrections enter at order $(L/R_{\mathrm{curv}})^2$ through the failure of exact boost symmetry. This is therefore an approximate local statement tied to the small-diamond limit used in the main text. \qed
 
 \subsection{Robustness Under Perturbations}
 

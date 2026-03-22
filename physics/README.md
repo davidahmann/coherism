@@ -6,7 +6,7 @@ This directory contains the manuscript and supporting materials for the current 
 
 ## Abstract
 
-The manuscript studies an effective-field-theory extension of semiclassical gravity in which a coarse-grained coherence functional generates an informational stress tensor. The paper focuses on controlled limits and one concrete analog-gravity falsification path: in the acoustic implementation studied here, coherent phonon injection near a BEC sonic horizon yields a predicted density modulation `delta-rho/rho_0 ~ 10^-6`, while a matched thermal control gives no leading-order informational contribution. The density-response relation is benchmarked to the standard hydrodynamic compressibility limit of Gross-Pitaevskii/Bogoliubov theory, while the informational source term remains phenomenological. A null result below `10^-7` would falsify the acoustic implementation analyzed in the manuscript, not the broader EFT by itself.
+The manuscript studies an effective-field-theory extension of semiclassical gravity in which a coarse-grained coherence functional generates an informational stress tensor. The paper focuses on controlled limits and one concrete analog-gravity falsification path: in the acoustic implementation studied here, coherent phonon injection near a BEC sonic horizon yields a predicted density modulation `delta-rho/rho_0 ~ 10^-6`, while a matched thermal control gives no leading-order informational contribution. The density-response relation is benchmarked both to the standard hydrodynamic compressibility limit and to a direct static Gross-Pitaevskii/Bogoliubov linear-response kernel, while the informational source term remains phenomenological. For the baseline parameters in the paper, the hydrodynamic estimate gives `A ~= 1.57 x 10^-6`, the static GP/BdG benchmark gives `A ~= 1.56 x 10^-6`, and the benchmark shift stays below `0.9%` across one-at-a-time `±25%` scans. A null result below `10^-7` would falsify the acoustic implementation analyzed in the manuscript, not the broader EFT by itself.
 
 ## Repository Contents
 
@@ -27,9 +27,9 @@ Implements the illustrative scaling model used in the analog-gravity appendix.
 - `bec_sonic_horizon_data.dat` - Output data
 - `bec_sonic_horizon_robustness.dat` - One-at-a-time robustness scan data
 
-This script is an illustrative implementation of the acoustic ansatz used in the paper. It is not a full Gross-Pitaevskii/Bogoliubov simulation, but it does benchmark the density-response step to the standard compressibility relation and includes a one-at-a-time robustness scan around a GP-compatible baseline.
+This script is an illustrative implementation of the acoustic ansatz used in the paper. It is not a full time-dependent Gross-Pitaevskii/Bogoliubov simulation, but it does benchmark the density-response step both to the standard compressibility relation and to a direct static GP/BdG linear-response kernel, and it includes a one-at-a-time robustness scan around a GP-compatible baseline.
 
-Representative output: coherent phonon injection produces `A = max_{|r-r_H|<=L_coh} |delta-rho/rho_0| ~= 1.4 x 10^-6`; the matched thermal control has no leading-order informational signal.
+Representative output: coherent phonon injection produces `A_hydro ~= 1.57 x 10^-6` and `A_GP/BdG ~= 1.56 x 10^-6`; the matched thermal control has no leading-order informational signal.
 
 To reproduce:
 
@@ -86,7 +86,7 @@ latexmk -pdf coherism.tex
 2. Controlled leading-order expressions are obtained in a 1+1D conformal toy model and in weak-field/Rindler limits.
 3. The primary falsification path is an analog-gravity protocol in a BEC sonic horizon.
 4. In the acoustic implementation studied here, coherent phonon injection yields `delta-rho/rho_0 ~ 10^-6` and a matched thermal control gives no leading-order informational contribution.
-5. One-at-a-time `±25%` scans around the GP-compatible baseline keep the coherent signal above `10^-7`.
+5. One-at-a-time `±25%` scans around the GP-compatible baseline keep the coherent signal above `10^-7`, while the static GP/BdG correction stays below `0.9%`.
 6. A null result below `10^-7` would falsify the specific acoustic implementation analyzed in the manuscript, not the full EFT by itself.
 7. The detector-model appendix motivates, but does not uniquely derive, the geometry-dependent GKLS structure used phenomenologically in the main text.
 

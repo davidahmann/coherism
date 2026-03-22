@@ -1,0 +1,145 @@
+{
+  "version": 1,
+  "paper_title": "Coherence-Dependent Backreaction in Semiclassical and Analog Gravity: Controlled Limits and an Analog-Gravity Test",
+  "journal": "foundations_of_physics",
+  "created_at": "2026-03-22T15:54:37Z",
+  "artifacts": [
+    {
+      "artifact_id": "tex-paper",
+      "category": "tex",
+      "path": "main.tex",
+      "sha256": "0ed063f2e3522e5f89fb02886ed2732486ee37534294314fbd0593a81969951d",
+      "produced_by": "manual-review-bootstrap",
+      "sources": [],
+      "metadata": {
+        "upstream_path": "physics/coherism.tex",
+        "role": "canonical manuscript source"
+      }
+    },
+    {
+      "artifact_id": "bib-references",
+      "category": "bib",
+      "path": "references.bib",
+      "sha256": "3a48a083909201099f6588a8ddbc741adbd379456b9c2996ac7accdb68ef218e",
+      "produced_by": "manual-review-bootstrap",
+      "sources": [],
+      "metadata": {
+        "upstream_path": "physics/coherism_refs.bib",
+        "entry_count": 29
+      }
+    },
+    {
+      "artifact_id": "audit-bibliography",
+      "category": "audit",
+      "path": "BIBLIOGRAPHY-AUDIT.json",
+      "sha256": "5602aecc4513c13d59b2efac2ff35854153a15c2c1527a315602280074aff07c",
+      "produced_by": "manual-review-bootstrap",
+      "sources": [
+        {
+          "path": "references.bib",
+          "role": "audited-bibliography"
+        }
+      ],
+      "metadata": {
+        "scope": "manuscript-cited sources",
+        "expected_clean": true
+      }
+    },
+    {
+      "artifact_id": "figure-bec-main",
+      "category": "figure",
+      "path": "../physics/bec_sonic_horizon_results.png",
+      "sha256": "279b24f7353dce2f739dd17b1b9ea57babd5bae346246910c3cc63969a460880",
+      "produced_by": "physics/bec_sonic_horizon_simulation.py",
+      "sources": [
+        {
+          "path": "../physics/bec_sonic_horizon_simulation.py",
+          "role": "source-script"
+        }
+      ],
+      "metadata": {
+        "label": "fig:bec-simulation",
+        "role": "main analog-gravity figure with hydro and static GP/BdG benchmark curves"
+      }
+    },
+    {
+      "artifact_id": "data-bec-profile",
+      "category": "audit",
+      "path": "../physics/bec_sonic_horizon_data.dat",
+      "sha256": "fae08f1a30098a231d220281884e6ed04d70ac1c6a9169b7ad2f5215f10fe69f",
+      "produced_by": "physics/bec_sonic_horizon_simulation.py",
+      "sources": [
+        {
+          "path": "../physics/bec_sonic_horizon_simulation.py",
+          "role": "source-script"
+        }
+      ],
+      "metadata": {
+        "role": "radial profile data with hydro, static GP/BdG benchmark, and thermal/null columns"
+      }
+    },
+    {
+      "artifact_id": "data-bec-robustness",
+      "category": "audit",
+      "path": "../physics/bec_sonic_horizon_robustness.dat",
+      "sha256": "2c6c9d85569bedd932d1ea6d056418472085c8e71a24663537384fd589ff4a02",
+      "produced_by": "physics/bec_sonic_horizon_simulation.py",
+      "sources": [
+        {
+          "path": "../physics/bec_sonic_horizon_simulation.py",
+          "role": "source-script"
+        }
+      ],
+      "metadata": {
+        "role": "robustness scan data with hydro amplitudes and static GP/BdG relative shifts"
+      }
+    },
+    {
+      "artifact_id": "pdf-manuscript",
+      "category": "pdf",
+      "path": "../physics/coherism.pdf",
+      "sha256": "aeaa172ef9bc38ca07c1c8357080e322fbbff508ab24f2d4986dfb3fa43bd036",
+      "produced_by": "latexmk",
+      "sources": [
+        {
+          "path": "main.tex",
+          "role": "compiled-from"
+        },
+        {
+          "path": "references.bib",
+          "role": "bibliography"
+        }
+      ],
+      "metadata": {
+        "upstream_path": "physics/coherism.pdf"
+      }
+    },
+    {
+      "artifact_id": "tex-cover-letter",
+      "category": "tex",
+      "path": "../physics/cover_letter.tex",
+      "sha256": "46cbfa2f7012d742e430cb96724dc1e5cb93ab7e25e7636fd0b967b856ab3887",
+      "produced_by": "manual-review-bootstrap",
+      "sources": [],
+      "metadata": {
+        "role": "submission cover letter source"
+      }
+    },
+    {
+      "artifact_id": "pdf-cover-letter",
+      "category": "pdf",
+      "path": "../physics/cover_letter.pdf",
+      "sha256": "756915a3bb42c1aafb1f89c169d787f9494a0f637ede43f011b526fd7b8d65d4",
+      "produced_by": "latexmk",
+      "sources": [
+        {
+          "path": "../physics/cover_letter.tex",
+          "role": "compiled-from"
+        }
+      ],
+      "metadata": {
+        "role": "submission cover letter PDF"
+      }
+    }
+  ]
+}

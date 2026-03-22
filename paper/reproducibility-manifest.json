@@ -1,0 +1,207 @@
+{
+  "paper_title": "Coherence-Dependent Backreaction in Semiclassical and Analog Gravity: Controlled Limits and an Analog-Gravity Test",
+  "date": "2026-03-22",
+  "contact": "dahmann@lumyn.cc",
+  "environment": {
+    "python_version": "3.14.0",
+    "package_manager": "pip",
+    "virtual_environment": "physics/.venv",
+    "required_packages": [
+      {
+        "package": "numpy",
+        "version": "2.3.5",
+        "purpose": "Deterministic array evaluation for the analog scaling model and robustness scans"
+      },
+      {
+        "package": "matplotlib",
+        "version": "3.10.8",
+        "purpose": "Generation of the manuscript figure from the analog scaling model"
+      }
+    ],
+    "lock_file": "paper/requirements-lock.txt",
+    "system_requirements": {
+      "operating_systems": [
+        "macOS 15"
+      ],
+      "architectures": [
+        "arm64"
+      ],
+      "compiler": "",
+      "gpu": ""
+    }
+  },
+  "input_data": [],
+  "generated_data": [
+    {
+      "name": "bec-sonic-horizon-profile",
+      "script": "physics/bec_sonic_horizon_simulation.py",
+      "parameters": {
+        "n_0": "1e20 m^-3",
+        "xi": "0.3 um",
+        "c_s": "1.73 mm/s",
+        "L_coh": "10 um",
+        "N_phonon": "1000"
+      },
+      "size": "26.1 KB",
+      "checksum_sha256": "fae08f1a30098a231d220281884e6ed04d70ac1c6a9169b7ad2f5215f10fe69f"
+    },
+    {
+      "name": "bec-robustness-scan",
+      "script": "physics/bec_sonic_horizon_simulation.py",
+      "parameters": {
+        "scan_range": "0.75x to 1.25x baseline",
+        "scan_points": "11"
+      },
+      "size": "1.7 KB",
+      "checksum_sha256": "2c6c9d85569bedd932d1ea6d056418472085c8e71a24663537384fd589ff4a02"
+    }
+  ],
+  "external_dependencies": [],
+  "execution_steps": [
+    {
+      "name": "run-bec-simulation",
+      "command": "cd physics && .venv/bin/python bec_sonic_horizon_simulation.py",
+      "outputs": [
+        "physics/bec_sonic_horizon_results.png",
+        "physics/bec_sonic_horizon_data.dat",
+        "physics/bec_sonic_horizon_robustness.dat"
+      ],
+      "stochastic": false,
+      "expected_wall_time": "< 1 min",
+      "parallel_group": ""
+    },
+    {
+      "name": "build-manuscript",
+      "command": "cd physics && latexmk -pdf -interaction=nonstopmode -halt-on-error coherism.tex",
+      "outputs": [
+        "physics/coherism.pdf"
+      ],
+      "stochastic": false,
+      "expected_wall_time": "< 1 min",
+      "parallel_group": ""
+    },
+    {
+      "name": "build-cover-letter",
+      "command": "cd physics && latexmk -pdf -interaction=nonstopmode -halt-on-error cover_letter.tex",
+      "outputs": [
+        "physics/cover_letter.pdf"
+      ],
+      "stochastic": false,
+      "expected_wall_time": "< 1 min",
+      "parallel_group": ""
+    }
+  ],
+  "expected_results": [
+    {
+      "quantity": "A_hydro = max_{|r-r_H|<=L_coh} |delta rho / rho_0|",
+      "expected_value": "1.57e-6",
+      "tolerance": "deterministic script output for the manuscript baseline",
+      "script": "physics/bec_sonic_horizon_simulation.py",
+      "figure_or_table": "Fig. bec-simulation"
+    },
+    {
+      "quantity": "A_GP/BdG = max_{|r-r_H|<=L_coh} |delta rho / rho_0|",
+      "expected_value": "1.56e-6",
+      "tolerance": "deterministic script output for the static GP/BdG benchmark of the same baseline source profile",
+      "script": "physics/bec_sonic_horizon_simulation.py",
+      "figure_or_table": "Fig. bec-simulation"
+    },
+    {
+      "quantity": "static GP/BdG shift relative to hydro",
+      "expected_value": "0.63%",
+      "tolerance": "< 0.9% across one-at-a-time ±25% scans",
+      "script": "physics/bec_sonic_horizon_simulation.py",
+      "figure_or_table": "Fig. bec-simulation"
+    },
+    {
+      "quantity": "thermal leading-order informational signal",
+      "expected_value": "0",
+      "tolerance": "exact within the adopted ansatz",
+      "script": "physics/bec_sonic_horizon_simulation.py",
+      "figure_or_table": "Fig. bec-simulation"
+    }
+  ],
+  "output_files": [
+    {
+      "path": "physics/bec_sonic_horizon_results.png",
+      "description": "Main analog-gravity figure used in the manuscript",
+      "approximate_size": "148946 B",
+      "checksum_sha256": "279b24f7353dce2f739dd17b1b9ea57babd5bae346246910c3cc63969a460880",
+      "approximate_checksum": false
+    },
+    {
+      "path": "physics/bec_sonic_horizon_data.dat",
+      "description": "Generated radial profile data including hydro, static GP/BdG benchmark, and thermal/null columns",
+      "approximate_size": "26073 B",
+      "checksum_sha256": "fae08f1a30098a231d220281884e6ed04d70ac1c6a9169b7ad2f5215f10fe69f",
+      "approximate_checksum": false
+    },
+    {
+      "path": "physics/bec_sonic_horizon_robustness.dat",
+      "description": "Generated robustness scan data including hydro amplitudes and static GP/BdG relative shifts",
+      "approximate_size": "1728 B",
+      "checksum_sha256": "2c6c9d85569bedd932d1ea6d056418472085c8e71a24663537384fd589ff4a02",
+      "approximate_checksum": false
+    },
+    {
+      "path": "physics/coherism.pdf",
+      "description": "Compiled manuscript PDF",
+      "approximate_size": "609484 B",
+      "checksum_sha256": "aeaa172ef9bc38ca07c1c8357080e322fbbff508ab24f2d4986dfb3fa43bd036",
+      "approximate_checksum": false
+    },
+    {
+      "path": "physics/cover_letter.pdf",
+      "description": "Compiled cover letter PDF",
+      "approximate_size": "88465 B",
+      "checksum_sha256": "756915a3bb42c1aafb1f89c169d787f9494a0f637ede43f011b526fd7b8d65d4",
+      "approximate_checksum": false
+    }
+  ],
+  "resource_requirements": [
+    {
+      "step": "run-bec-simulation",
+      "cpu_cores": 1,
+      "memory_gb": 1.0,
+      "gpu": "",
+      "wall_time": "< 1 min",
+      "notes": "Deterministic NumPy/Matplotlib run on a laptop"
+    },
+    {
+      "step": "build-manuscript",
+      "cpu_cores": 1,
+      "memory_gb": 1.0,
+      "gpu": "",
+      "wall_time": "< 1 min",
+      "notes": "Requires local LaTeX toolchain with revtex4-2"
+    },
+    {
+      "step": "build-cover-letter",
+      "cpu_cores": 1,
+      "memory_gb": 1.0,
+      "gpu": "",
+      "wall_time": "< 1 min",
+      "notes": "Requires local LaTeX toolchain"
+    }
+  ],
+  "minimum_viable": "1 CPU core, 1 GB RAM, local LaTeX installation, and a Python environment matching paper/requirements-lock.txt",
+  "recommended": "Repo-local physics/.venv plus local latexmk/revtex4-2 on macOS arm64",
+  "random_seeds": [],
+  "seeding_strategy": "No stochastic steps in the current paper-support pipeline.",
+  "known_platform_differences": [
+    {
+      "platform": "Different LaTeX distributions",
+      "issue": "PDF layout and auxiliary files may differ slightly across TeX installations.",
+      "workaround": "Compare numerical outputs and cited values, not byte-for-byte layout, when checking manuscript content."
+    }
+  ],
+  "verification_steps": [
+    "Run the analog scaling script and confirm the generated figure/data files are regenerated without errors.",
+    "Rebuild the manuscript and confirm the PDF compiles cleanly without undefined references or citations.",
+    "Compare the generated robustness data against the quoted manuscript ranges for the 10^-6 baseline and 10^-7 falsification threshold.",
+    "Confirm that the static GP/BdG benchmark reproduces the same baseline observable within the subpercent shift claimed in the manuscript."
+  ],
+  "manifest_created": "2026-03-22T15:54:37Z",
+  "last_verified": "2026-03-22T15:54:37Z",
+  "last_verified_platform": "Darwin arm64"
+}
