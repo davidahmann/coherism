@@ -1,21 +1,21 @@
 {
   "paper_title": "Coherence-Dependent Backreaction in Semiclassical and Analog Gravity: Controlled Limits and an Analog-Gravity Test",
-  "date": "2026-03-22",
+  "date": "2026-06-10",
   "contact": "dahmann@lumyn.cc",
   "environment": {
     "python_version": "3.14.0",
     "package_manager": "pip",
-    "virtual_environment": "physics/.venv",
+    "virtual_environment": ".venv",
     "required_packages": [
       {
         "package": "numpy",
         "version": "2.3.5",
-        "purpose": "Deterministic array evaluation for the analog scaling model and robustness scans"
+        "purpose": "Deterministic array evaluation for the analog scaling model, robustness scans, and the 1D GPE solver"
       },
       {
         "package": "matplotlib",
-        "version": "3.10.8",
-        "purpose": "Generation of the manuscript figure from the analog scaling model"
+        "version": "3.10.7",
+        "purpose": "Generation of the manuscript figures"
       }
     ],
     "lock_file": "paper/requirements-lock.txt",
@@ -40,27 +40,43 @@
         "xi": "0.3 um",
         "c_s": "1.73 mm/s",
         "L_coh": "10 um",
-        "N_phonon": "1000"
+        "kappa_H": "8.2e2 1/s (T_H ~ 1.0 nK)",
+        "x_bar": "2.0",
+        "N_phonon": "1000",
+        "M_modes": "100"
       },
-      "size": "26.1 KB",
-      "checksum_sha256": "fae08f1a30098a231d220281884e6ed04d70ac1c6a9169b7ad2f5215f10fe69f"
+      "size": "32.6 KB",
+      "checksum_sha256": "98ab84cb73db714966f53117ab90bea2e92038e02004c565abe818428ae61a0f"
     },
     {
       "name": "bec-robustness-scan",
       "script": "physics/bec_sonic_horizon_simulation.py",
       "parameters": {
         "scan_range": "0.75x to 1.25x baseline",
-        "scan_points": "11"
+        "scan_points": "11",
+        "scanned": "n0, xi, L_coh, N_phonon, M, T_H, c_s(GP)"
       },
-      "size": "1.7 KB",
-      "checksum_sha256": "2c6c9d85569bedd932d1ea6d056418472085c8e71a24663537384fd589ff4a02"
+      "size": "2.3 KB",
+      "checksum_sha256": "7647bace78eb262f9090e4fd007ae9fad7798402d83bcbe091b37f5caaf9a847"
+    },
+    {
+      "name": "gpe-protocol-study",
+      "script": "physics/gpe_protocol_simulation.py",
+      "parameters": {
+        "grid": "NX=2048, L=400 (hbar=m=1, g=n0=1)",
+        "kernel_validation": "k*xi in [0.06, 1.5], imaginary-time relaxation",
+        "confound": "coherent vs 16-realization phase-randomized ensemble, M=4 and M=8, first-order dn/n ~ 0.1",
+        "rng_seed": "20260610"
+      },
+      "size": "82.6 KB",
+      "checksum_sha256": "70e644eac4e00d22e57452bddfb4a071dc817f69237b5a5164aa39c954f1297d"
     }
   ],
   "external_dependencies": [],
   "execution_steps": [
     {
       "name": "run-bec-simulation",
-      "command": "cd physics && .venv/bin/python bec_sonic_horizon_simulation.py",
+      "command": "cd physics && ../.venv/bin/python bec_sonic_horizon_simulation.py",
       "outputs": [
         "physics/bec_sonic_horizon_results.png",
         "physics/bec_sonic_horizon_data.dat",
@@ -69,6 +85,18 @@
       "stochastic": false,
       "expected_wall_time": "< 1 min",
       "parallel_group": ""
+    },
+    {
+      "name": "run-gpe-study",
+      "command": "cd physics && ../.venv/bin/python gpe_protocol_simulation.py",
+      "outputs": [
+        "physics/gpe_protocol_results.png",
+        "physics/gpe_protocol_data.dat"
+      ],
+      "stochastic": false,
+      "expected_wall_time": "< 1 min",
+      "parallel_group": "",
+      "notes": "Seeded RNG (20260610) makes the phase-randomized ensemble deterministic."
     },
     {
       "name": "build-manuscript",
@@ -93,68 +121,96 @@
   ],
   "expected_results": [
     {
-      "quantity": "A_hydro = max_{|r-r_H|<=L_coh} |delta rho / rho_0|",
+      "quantity": "A_coh = max_{|r-r_H|<=L_coh} |delta rho / rho_0| (coherent, hydro)",
       "expected_value": "1.57e-6",
       "tolerance": "deterministic script output for the manuscript baseline",
       "script": "physics/bec_sonic_horizon_simulation.py",
       "figure_or_table": "Fig. bec-simulation"
     },
     {
-      "quantity": "A_GP/BdG = max_{|r-r_H|<=L_coh} |delta rho / rho_0|",
-      "expected_value": "1.56e-6",
-      "tolerance": "deterministic script output for the static GP/BdG benchmark of the same baseline source profile",
+      "quantity": "A_th (energy-matched thermal, hydro)",
+      "expected_value": "1.34e-6",
+      "tolerance": "deterministic script output; s_th = beta*dE - dS_vN with dS_vN ~ 291 nats",
       "script": "physics/bec_sonic_horizon_simulation.py",
       "figure_or_table": "Fig. bec-simulation"
     },
     {
-      "quantity": "static GP/BdG shift relative to hydro",
+      "quantity": "Delta A = A_coh - A_th (primary observable)",
+      "expected_value": "2.29e-7",
+      "tolerance": "deterministic; falsification threshold 5e-8; scans stay in [6.0e-8, 1.27e-6]",
+      "script": "physics/bec_sonic_horizon_simulation.py",
+      "figure_or_table": "Fig. bec-simulation"
+    },
+    {
+      "quantity": "static GP/BdG shift of Delta A relative to hydro",
       "expected_value": "0.63%",
-      "tolerance": "< 0.9% across one-at-a-time ±25% scans",
+      "tolerance": "< 0.9% across one-at-a-time +/-25% scans",
       "script": "physics/bec_sonic_horizon_simulation.py",
       "figure_or_table": "Fig. bec-simulation"
     },
     {
-      "quantity": "thermal leading-order informational signal",
-      "expected_value": "0",
-      "tolerance": "exact within the adopted ansatz",
-      "script": "physics/bec_sonic_horizon_simulation.py",
-      "figure_or_table": "Fig. bec-simulation"
+      "quantity": "max deviation of imaginary-time GPE response from analytic kernel",
+      "expected_value": "0.53%",
+      "tolerance": "< 0.6% over k*xi in [0.06, 1.5]",
+      "script": "physics/gpe_protocol_simulation.py",
+      "figure_or_table": "Fig. gpe-study (left)"
+    },
+    {
+      "quantity": "ordinary-GP confound differential (coherent minus phase-randomized, matched energy, no informational term)",
+      "expected_value": "rms 3.0e-3 (M=4), 3.8e-3 (M=8) at first-order dn/n ~ 0.1",
+      "tolerance": "order-of-magnitude systematic quote; seeded ensemble",
+      "script": "physics/gpe_protocol_simulation.py",
+      "figure_or_table": "Fig. gpe-study (right)"
     }
   ],
   "output_files": [
     {
       "path": "physics/bec_sonic_horizon_results.png",
       "description": "Main analog-gravity figure used in the manuscript",
-      "approximate_size": "148946 B",
-      "checksum_sha256": "279b24f7353dce2f739dd17b1b9ea57babd5bae346246910c3cc63969a460880",
+      "approximate_size": "170209 B",
+      "checksum_sha256": "72cad1af15f857827b36ad2b848f9d64a73210be57642227e4f043bf6bdfddd0",
       "approximate_checksum": false
     },
     {
       "path": "physics/bec_sonic_horizon_data.dat",
-      "description": "Generated radial profile data including hydro, static GP/BdG benchmark, and thermal/null columns",
-      "approximate_size": "26073 B",
-      "checksum_sha256": "fae08f1a30098a231d220281884e6ed04d70ac1c6a9169b7ad2f5215f10fe69f",
+      "description": "Radial profile data: coherent (hydro, GP/BdG), thermal, differential",
+      "approximate_size": "32596 B",
+      "checksum_sha256": "98ab84cb73db714966f53117ab90bea2e92038e02004c565abe818428ae61a0f",
       "approximate_checksum": false
     },
     {
       "path": "physics/bec_sonic_horizon_robustness.dat",
-      "description": "Generated robustness scan data including hydro amplitudes and static GP/BdG relative shifts",
-      "approximate_size": "1728 B",
-      "checksum_sha256": "2c6c9d85569bedd932d1ea6d056418472085c8e71a24663537384fd589ff4a02",
+      "description": "Robustness scan data: A_coh and Delta A per scanned parameter",
+      "approximate_size": "2304 B",
+      "checksum_sha256": "7647bace78eb262f9090e4fd007ae9fad7798402d83bcbe091b37f5caaf9a847",
+      "approximate_checksum": false
+    },
+    {
+      "path": "physics/gpe_protocol_results.png",
+      "description": "Time-dependent 1D GPE study figure (kernel validation + confound)",
+      "approximate_size": "164890 B",
+      "checksum_sha256": "4fc6705c1891edc23d6b8c394d04864b6cf7b8cd3bdeb429c013ca8ec635c97c",
+      "approximate_checksum": false
+    },
+    {
+      "path": "physics/gpe_protocol_data.dat",
+      "description": "Confound differential profiles and kernel-validation summary",
+      "approximate_size": "82585 B",
+      "checksum_sha256": "70e644eac4e00d22e57452bddfb4a071dc817f69237b5a5164aa39c954f1297d",
       "approximate_checksum": false
     },
     {
       "path": "physics/coherism.pdf",
-      "description": "Compiled manuscript PDF",
-      "approximate_size": "609484 B",
-      "checksum_sha256": "aeaa172ef9bc38ca07c1c8357080e322fbbff508ab24f2d4986dfb3fa43bd036",
+      "description": "Compiled manuscript PDF (18 pages)",
+      "approximate_size": "839075 B",
+      "checksum_sha256": "2aa9fd4de1f16efd63083040bfdf9d3079757a45fc513543181ea897a8309126",
       "approximate_checksum": false
     },
     {
       "path": "physics/cover_letter.pdf",
       "description": "Compiled cover letter PDF",
-      "approximate_size": "88465 B",
-      "checksum_sha256": "756915a3bb42c1aafb1f89c169d787f9494a0f637ede43f011b526fd7b8d65d4",
+      "approximate_size": "100766 B",
+      "checksum_sha256": "b78fc6732d56fb7101164e70f628ac1750b4cc99ee3e0854d787b7246d7fc2d1",
       "approximate_checksum": false
     }
   ],
@@ -166,6 +222,14 @@
       "gpu": "",
       "wall_time": "< 1 min",
       "notes": "Deterministic NumPy/Matplotlib run on a laptop"
+    },
+    {
+      "step": "run-gpe-study",
+      "cpu_cores": 1,
+      "memory_gb": 1.0,
+      "gpu": "",
+      "wall_time": "< 1 min",
+      "notes": "Split-step 1D GPE, seeded RNG; ~25 s on Apple Silicon"
     },
     {
       "step": "build-manuscript",
@@ -185,23 +249,31 @@
     }
   ],
   "minimum_viable": "1 CPU core, 1 GB RAM, local LaTeX installation, and a Python environment matching paper/requirements-lock.txt",
-  "recommended": "Repo-local physics/.venv plus local latexmk/revtex4-2 on macOS arm64",
-  "random_seeds": [],
-  "seeding_strategy": "No stochastic steps in the current paper-support pipeline.",
+  "recommended": "Repo-local .venv plus local latexmk/revtex4-2 on macOS arm64",
+  "random_seeds": [
+    20260610
+  ],
+  "seeding_strategy": "The GPE confound ensemble uses numpy.random.default_rng(20260610); all other steps are deterministic.",
   "known_platform_differences": [
     {
       "platform": "Different LaTeX distributions",
       "issue": "PDF layout and auxiliary files may differ slightly across TeX installations.",
       "workaround": "Compare numerical outputs and cited values, not byte-for-byte layout, when checking manuscript content."
+    },
+    {
+      "platform": "Different BLAS/FFT backends",
+      "issue": "Floating-point reductions in the GPE solver may differ at the 1e-12 level across platforms.",
+      "workaround": "Compare quoted percentages and orders of magnitude, not full-precision floats."
     }
   ],
   "verification_steps": [
-    "Run the analog scaling script and confirm the generated figure/data files are regenerated without errors.",
+    "Run both simulation scripts and confirm the generated figure/data files are regenerated without errors.",
     "Rebuild the manuscript and confirm the PDF compiles cleanly without undefined references or citations.",
-    "Compare the generated robustness data against the quoted manuscript ranges for the 10^-6 baseline and 10^-7 falsification threshold.",
-    "Confirm that the static GP/BdG benchmark reproduces the same baseline observable within the subpercent shift claimed in the manuscript."
+    "Confirm A_coh = 1.57e-6, A_th = 1.34e-6, Delta A = 2.29e-7 at the baseline, and that the scan range matches [6.0e-8, 1.27e-6].",
+    "Confirm the static GP/BdG benchmark shifts the differential by 0.63% at baseline (< 0.9% in scans).",
+    "Confirm the imaginary-time GPE kernel validation deviates < 0.6% from the analytic kernel over the quoted band."
   ],
   "manifest_created": "2026-03-22T15:54:37Z",
-  "last_verified": "2026-03-22T15:54:37Z",
+  "last_verified": "2026-06-10T00:00:00Z",
   "last_verified_platform": "Darwin arm64"
 }

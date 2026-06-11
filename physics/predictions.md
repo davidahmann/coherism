@@ -2,23 +2,23 @@
 
 This document outlines four concrete, falsifiable predictions of the Coherism framework. The primary and most immediate test is the **Analog Gravity Density Modulation** experiment, which offers an effective coupling enhancement of $\sim 60$ orders of magnitude compared to gravitational tests.
 
-## 1. Primary Experimental Test: Analog Gravity Density Modulation
+## 1. Primary Experimental Test: Analog Gravity Density-Modulation Differential
 
 **Status:** Primary Near-Term Test  
-**Predicted Magnitude:** $\delta\rho/\rho_0 \sim 10^{-6}$
+**Predicted Magnitude:** $\Delta A = A_{\mathrm{coh}} - A_{\mathrm{th}} \approx 2.3\times10^{-7}$ (on top of a common $\sim10^{-6}$ modulation)
 
-In a Bose-Einstein Condensate (BEC) simulating a black hole (sonic horizon), Coherism predicts a specific density ripple near the horizon caused by the informational stress tensor ($\Theta_{\mu\nu}$) of coherent phonons. This effect is distinct from the backreaction of spontaneous Hawking radiation (vacuum fluctuations) due to the macroscopic coherence of the injected pulse.
+In a Bose-Einstein Condensate (BEC) simulating a black hole (sonic horizon), the framework predicts density modulations near the horizon caused by the informational stress tensor ($\Theta_{\mu\nu}$) of injected phonons. The source is fixed by the exact identity $S(\rho\Vert\sigma_\beta) = \beta_H\Delta E - \Delta S_{\mathrm{vN}}$ (relative entropy = free-energy excess over the Hawking-temperature reference), so **both** coherent and energy-matched thermal injections produce a signal; they differ exactly by the von Neumann entropy of the injected occupation. The differential directly measures injected entropy and is independent of the Hawking temperature at fixed band occupation.
 
 ### Experimental Protocol
-1.  **Setup:** Create a "draining vortex" or "waterfall" potential in a 2D $^{87}$Rb BEC (standard configuration in labs like JILA, MIT, Technion).
-2.  **Injection:** Inject a **coherent phonon pulse** (sound wave) toward the sonic horizon using Bragg spectroscopy or a localized potential paddle.
-    * *Control:* Inject a thermal phonon pulse of equivalent energy.
-3.  **Measurement:** Use phase-contrast imaging to photograph the density profile near the horizon with high spatial resolution.
+1.  **Setup:** Create a steep sonic horizon (surface gravity $\kappa_H \sim 10^3\,\mathrm{s^{-1}}$, $T_H \sim 1\,\mathrm{nK}$) via a "waterfall" step or tightly imprinted draining vortex in a 2D $^{87}$Rb BEC (standard configuration in labs like JILA, MIT, Technion).
+2.  **Injection:** Alternate between a **coherent broadband soft pulse** ($\hbar\bar\omega \approx 2k_BT_H$, $M\sim10^2$ modes) and a **phase-randomized thermal pulse** matched in energy and band, via Bragg spectroscopy; characterize the injected occupation (hence $\Delta S_{\mathrm{vN}}$) by phonon thermometry.
+3.  **Measurement:** Phase-contrast imaging of the near-horizon density profile for both injection types, averaged over many dwell times; difference the profiles.
+4.  **Consistency knob:** Repeat at a second bandwidth $M$ at fixed energy — the differential must scale as $\Delta S_{\mathrm{vN}}(M)$.
 
 ### Prediction vs. Null Hypothesis
 
-* **Coherism Prediction:** A stationary density modulation of order $\delta\rho/\rho_0 \sim 10^{-6}$ appears *only* for the coherent pulse and is strongly suppressed for the thermal control (in the manuscript's reference model and simulation, coherent injection yields $\delta\rho/\rho_0 \approx 1.4 \times 10^{-6}$, while the thermal control is consistent with zero).
-* **Standard Physics (Null):** The density profile remains smooth to $10^{-7}$ precision, or shows no statistically significant difference between coherent and thermal pulses of equal energy (accounting for standard non-linearities).
+* **Framework Prediction:** $A_{\mathrm{coh}} \approx 1.6\times10^{-6}$, $A_{\mathrm{th}} \approx 1.3\times10^{-6}$, differential $\Delta A = \kappa_{\mathrm{eff}}\Delta S_{\mathrm{vN}} \approx 2.3\times10^{-7}$, scaling with injected entropy.
+* **Standard Physics (Null):** No horizon-pinned static differential above $5\times10^{-8}$ once ordinary nonlinear response (which the manuscript's time-dependent GPE study shows is the dominant systematic) is discriminated by its propagating spatial character and weak bandwidth dependence.
 
 ### Novelty
 Existing experiments focus on the passive backreaction of spontaneous Hawking radiation (quantum noise). This protocol proposes an **active, driven test** using a coherent driver to amplify the informational stress term $\Theta_{\mu\nu}$, turning a "noise hunting" experiment into a high-signal-to-noise "response" experiment.
@@ -27,8 +27,8 @@ Existing experiments focus on the passive backreaction of spontaneous Hawking ra
 
 ## 2. Weak Equivalence Principle (WEP) Violation
 
-**Status:** Secondary Test (Requires High Precision)  
-**Predicted Magnitude:** $\eta_{\mathrm{coh}} \sim 10^{-15}$ (order-of-magnitude target; note MICROSCOPE bounds apply to classical composition tests, not coherent-vs-incoherent same-material tests)
+**Status:** Long-Term Constraint Channel (far below current precision)  
+**Predicted Magnitude:** $\eta_{\mathrm{coh}} \sim 10^{-30}\,\alpha$ for laboratory-scale coherent states (the manuscript's weak-field benchmark; an earlier $10^{-15}$ figure in this document had no support in the manuscript and is retracted). Current atom-interferometric bounds are $\eta \lesssim 10^{-12}$ (Asenbaum et al. 2020) and $\eta \lesssim 5\times10^{-8}$ for internal-state superpositions (Rosi et al. 2017), so this channel constrains the framework only in principle. The structural point stands: any state-dependence of gravity beyond $\langle T_{\mu\nu}\rangle$ implies some WEP violation, and the manuscript now states this openly as a constraint channel.
 
 Coherism predicts that a "coherent" object falls with a slightly different acceleration than a "classical" (incoherent) object of the exact same mass and energy, due to the coupling of the coherence functional to the background geometry.
 
@@ -82,8 +82,8 @@ The universe's expansion history could deviate from ΛCDM if "coherence energy" 
 
 ## 5. The Distinguishing Test: Coherent vs. Thermal
 
-**Status:** *Experimentum Crucis*
-**Predicted Magnitude:** $\eta_{\mathrm{coh}} \sim 10^{-15}$ (same estimate as the WEP test above)
+**Status:** *Experimentum Crucis* (realized near-term as the analog differential of Test 1)
+**Predicted Magnitude:** $\eta_{\mathrm{coh}} \sim 10^{-30}\,\alpha$ gravitationally (see Test 2); $\Delta A \approx 2.3\times10^{-7}$ in the analog system
 
 This is the **unique signature** that distinguishes Coherism from competing frameworks (Penrose-Diósi, stochastic gravity).
 
@@ -112,7 +112,7 @@ Both have identical mass, energy, and density. Only Coherism predicts a differen
 
 * **Why:** The effective coupling in the analog system is $\sim 60$--$62$ orders of magnitude stronger than in gravitational systems (as quantified in the manuscript via $\kappa_{\mathrm{eff}}$).
 * **Feasibility:** Requires standard cold-atom laboratory hardware (2D BEC, draining vortex, imaging).
-* **Verdict:** A null result in the BEC density modulation test ($< 10^{-7}$) would falsify the analog gravity predictions and cast significant doubt on the gravitational implementation. A positive result ($\sim 10^{-6}$) specific to coherent injection would provide the first direct evidence of informational backreaction.
+* **Verdict:** A coherent-minus-thermal differential below $5\times10^{-8}$ in the BEC test would falsify the acoustic implementation and cast significant doubt on the gravitational implementation. A positive differential scaling with the injected von Neumann entropy $\Delta S_{\mathrm{vN}}$ (verified via the bandwidth knob) would provide the first direct evidence that an emergent geometry responds to state distinguishability beyond mean energy.
 
 ## Comparison with Alternative Frameworks
 

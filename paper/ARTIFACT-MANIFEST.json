@@ -1,31 +1,33 @@
 {
-  "version": 1,
+  "version": 2,
   "paper_title": "Coherence-Dependent Backreaction in Semiclassical and Analog Gravity: Controlled Limits and an Analog-Gravity Test",
   "journal": "foundations_of_physics",
   "created_at": "2026-03-22T15:54:37Z",
+  "updated_at": "2026-06-10T00:00:00Z",
+  "revision_note": "Free-energy informational source (exact Gaussian-state identity), differential observable Delta A, time-dependent 1D GPE kernel validation and confound study, hybrid-dynamics and WEP discussion, 8 new references.",
   "artifacts": [
     {
       "artifact_id": "tex-paper",
       "category": "tex",
       "path": "main.tex",
-      "sha256": "0ed063f2e3522e5f89fb02886ed2732486ee37534294314fbd0593a81969951d",
+      "sha256": "0f32c9065fe9f47094996d428b661dfbf89e7351969a2aff8306e4dd6f64460c",
       "produced_by": "manual-review-bootstrap",
       "sources": [],
       "metadata": {
         "upstream_path": "physics/coherism.tex",
-        "role": "canonical manuscript source"
+        "role": "canonical manuscript source (symlink to upstream)"
       }
     },
     {
       "artifact_id": "bib-references",
       "category": "bib",
       "path": "references.bib",
-      "sha256": "3a48a083909201099f6588a8ddbc741adbd379456b9c2996ac7accdb68ef218e",
+      "sha256": "a6f273ab99f10822c762e8ac14c5df144bea044bccdb218326c1be0ee50c82d8",
       "produced_by": "manual-review-bootstrap",
       "sources": [],
       "metadata": {
         "upstream_path": "physics/coherism_refs.bib",
-        "entry_count": 29
+        "entry_count": 37
       }
     },
     {
@@ -42,14 +44,15 @@
       ],
       "metadata": {
         "scope": "manuscript-cited sources",
-        "expected_clean": true
+        "expected_clean": true,
+        "note": "audit predates the 8 references added 2026-06-10 (ElingGuedensJacobson2006, KafriTaylorMilburn2014, TilloyDiosi2016, Oppenheim2023, OppenheimEtAl2023, Gisin1990, Rosi2017, Asenbaum2020); these were entered with DOI-verified metadata"
       }
     },
     {
       "artifact_id": "figure-bec-main",
       "category": "figure",
       "path": "../physics/bec_sonic_horizon_results.png",
-      "sha256": "279b24f7353dce2f739dd17b1b9ea57babd5bae346246910c3cc63969a460880",
+      "sha256": "72cad1af15f857827b36ad2b848f9d64a73210be57642227e4f043bf6bdfddd0",
       "produced_by": "physics/bec_sonic_horizon_simulation.py",
       "sources": [
         {
@@ -59,14 +62,14 @@
       ],
       "metadata": {
         "label": "fig:bec-simulation",
-        "role": "main analog-gravity figure with hydro and static GP/BdG benchmark curves"
+        "role": "main analog-gravity figure: coherent/thermal/differential profiles and Delta A robustness scan"
       }
     },
     {
       "artifact_id": "data-bec-profile",
       "category": "audit",
       "path": "../physics/bec_sonic_horizon_data.dat",
-      "sha256": "fae08f1a30098a231d220281884e6ed04d70ac1c6a9169b7ad2f5215f10fe69f",
+      "sha256": "98ab84cb73db714966f53117ab90bea2e92038e02004c565abe818428ae61a0f",
       "produced_by": "physics/bec_sonic_horizon_simulation.py",
       "sources": [
         {
@@ -75,14 +78,14 @@
         }
       ],
       "metadata": {
-        "role": "radial profile data with hydro, static GP/BdG benchmark, and thermal/null columns"
+        "role": "radial profile data: coherent (hydro and static GP/BdG), thermal, and differential columns"
       }
     },
     {
       "artifact_id": "data-bec-robustness",
       "category": "audit",
       "path": "../physics/bec_sonic_horizon_robustness.dat",
-      "sha256": "2c6c9d85569bedd932d1ea6d056418472085c8e71a24663537384fd589ff4a02",
+      "sha256": "7647bace78eb262f9090e4fd007ae9fad7798402d83bcbe091b37f5caaf9a847",
       "produced_by": "physics/bec_sonic_horizon_simulation.py",
       "sources": [
         {
@@ -91,14 +94,47 @@
         }
       ],
       "metadata": {
-        "role": "robustness scan data with hydro amplitudes and static GP/BdG relative shifts"
+        "role": "one-at-a-time robustness scan of A_coh and Delta A over n0, xi, L_coh, N_phonon, M, T_H, c_s(GP)"
+      }
+    },
+    {
+      "artifact_id": "figure-gpe-study",
+      "category": "figure",
+      "path": "../physics/gpe_protocol_results.png",
+      "sha256": "4fc6705c1891edc23d6b8c394d04864b6cf7b8cd3bdeb429c013ca8ec635c97c",
+      "produced_by": "physics/gpe_protocol_simulation.py",
+      "sources": [
+        {
+          "path": "../physics/gpe_protocol_simulation.py",
+          "role": "source-script"
+        }
+      ],
+      "metadata": {
+        "label": "fig:gpe-study",
+        "role": "time-dependent 1D GPE study: static-kernel validation and ordinary-nonlinearity confound differential"
+      }
+    },
+    {
+      "artifact_id": "data-gpe-study",
+      "category": "audit",
+      "path": "../physics/gpe_protocol_data.dat",
+      "sha256": "70e644eac4e00d22e57452bddfb4a071dc817f69237b5a5164aa39c954f1297d",
+      "produced_by": "physics/gpe_protocol_simulation.py",
+      "sources": [
+        {
+          "path": "../physics/gpe_protocol_simulation.py",
+          "role": "source-script"
+        }
+      ],
+      "metadata": {
+        "role": "confound differential profiles at two bandwidths plus kernel-validation summary in header"
       }
     },
     {
       "artifact_id": "pdf-manuscript",
       "category": "pdf",
       "path": "../physics/coherism.pdf",
-      "sha256": "aeaa172ef9bc38ca07c1c8357080e322fbbff508ab24f2d4986dfb3fa43bd036",
+      "sha256": "2aa9fd4de1f16efd63083040bfdf9d3079757a45fc513543181ea897a8309126",
       "produced_by": "latexmk",
       "sources": [
         {
@@ -111,14 +147,15 @@
         }
       ],
       "metadata": {
-        "upstream_path": "physics/coherism.pdf"
+        "upstream_path": "physics/coherism.pdf",
+        "pages": 18
       }
     },
     {
       "artifact_id": "tex-cover-letter",
       "category": "tex",
       "path": "../physics/cover_letter.tex",
-      "sha256": "46cbfa2f7012d742e430cb96724dc1e5cb93ab7e25e7636fd0b967b856ab3887",
+      "sha256": "bb513e509fbb790a264d7854ebff1f48968e3f36911b0fd1dde0eddb6f737475",
       "produced_by": "manual-review-bootstrap",
       "sources": [],
       "metadata": {
@@ -129,7 +166,7 @@
       "artifact_id": "pdf-cover-letter",
       "category": "pdf",
       "path": "../physics/cover_letter.pdf",
-      "sha256": "756915a3bb42c1aafb1f89c169d787f9494a0f637ede43f011b526fd7b8d65d4",
+      "sha256": "b78fc6732d56fb7101164e70f628ac1750b4cc99ee3e0854d787b7246d7fc2d1",
       "produced_by": "latexmk",
       "sources": [
         {
