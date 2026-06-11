@@ -9,26 +9,27 @@ While operating at opposite ends of the abstraction spectrum—one at the theore
 ## 📂 Repository Structure
 
 ### 1. `physics/` - Coherism
-**Title:** *Coherence-Dependent Backreaction in Semiclassical and Analog Gravity: Testable Predictions from Informational Stress*
+**Title:** *Coherence-Dependent Backreaction in Semiclassical and Analog Gravity: Controlled Limits and an Analog-Gravity Test*
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17868263.svg)](https://doi.org/10.5281/zenodo.17868263)
 
-This directory contains the LaTeX source for the "Coherism" paper, prepared for *Classical and Quantum Gravity*.
+This directory contains the LaTeX source for the coherence-functional EFT paper, prepared for *Foundations of Physics*.
 
-*   **The Big Idea:** An informational stress tensor Θ_μν augments semiclassical gravity, coupling quantum coherence to spacetime geometry in a testable way.
-*   **Key Concept:** The **Coherence Functional** built from relative entropy yields predictions distinguishing coherent from thermal quantum states.
-*   **Primary Prediction:** BEC density modulation δρ/ρ₀ ~ 10⁻⁶ for coherent phonon injection (zero for thermal)—measurable with current technology.
-*   **Falsification:** Null result at δρ/ρ₀ < 10⁻⁷ would falsify the acoustic implementation.
+*   **The Big Idea:** An informational stress tensor Θ_μν augments semiclassical gravity, coupling quantum-state mismatch (relative entropy to a geometry-adapted reference) to spacetime geometry in a testable way.
+*   **Key Concept:** The exact identity `S(ρ‖σ_β) = β_H ΔE − ΔS_vN` fixes the source: relative entropy is the free-energy excess over the Hawking-temperature reference, so coherent and energy-matched thermal injections differ exactly by the injected von Neumann entropy.
+*   **Primary Prediction:** BEC near-horizon density modulations ~10⁻⁶ for both injections; the observable is the differential ΔA = κ_eff·ΔS_vN ≈ 2.3×10⁻⁷, which directly measures injected entropy.
+*   **Falsification:** Differential below 5×10⁻⁸ would falsify the acoustic implementation.
 *   **Key Results:**
-    *   Informational stress tensor Θ_μν for Schwarzschild, FRW, Rindler, and acoustic geometries
-    *   Two independent derivations of coupling κ (holographic and entropic)
-    *   First-principles Lindblad generator from Unruh-DeWitt dynamics
-    *   Unique distinguishing test: coherent vs. thermal states (η ~ 10⁻¹⁵)
+    *   Controlled limits: 1+1D conformal (Polyakov), weak-field/Rindler; standard semiclassical behaviour recovered at ρ ≈ σ[g]
+    *   Coherent-vs-thermal structure of the analog prediction derived (not assumed) from the free-energy identity
+    *   Density-response kernel validated against time-dependent 1D GPE to 0.5%; dominant ordinary-nonlinearity systematic quantified
+    *   Detector-model (Unruh-DeWitt) appendix motivating the geometry-dependent GKLS structure
+    *   WEP state-dependence owned as a structural constraint channel (η_coh ~ 10⁻³⁰·α, far below current bounds)
 *   **Files:**
     *   `coherism.tex`: Main manuscript (revtex4-2, PRD format)
     *   `coherism_refs.bib`: Bibliography
-    *   `bec_sonic_horizon_simulation.py`: Primary experimental prediction simulation
-    *   `coherism_frw_simulation.py`: FRW cosmology simulation
-    *   `generate_data.py`: 0D QFT toy model
+    *   `bec_sonic_horizon_simulation.py`: Analog scaling model + differential observable + robustness scans
+    *   `gpe_protocol_simulation.py`: Time-dependent 1D GPE kernel validation + confound study
+    *   `coherism_frw_simulation.py`, `generate_data.py`: Archived exploratory scripts (not part of the submission)
     *   `predictions.md`: Falsifiable predictions and experimental protocols
 
 #### 🧬 The Feedback Loop (Coherism)

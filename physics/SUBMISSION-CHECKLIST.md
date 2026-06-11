@@ -1,6 +1,6 @@
 # Foundations of Physics Submission Checklist
 
-Date prepared: `2026-03-22`
+Date prepared: `2026-03-22` (revised `2026-06-10`: free-energy source, differential observable, GPE study)
 Target journal: `Foundations of Physics`
 
 ## Submission Files
@@ -12,14 +12,15 @@ Target journal: `Foundations of Physics`
 ## Validation Snapshot
 
 - [x] Analog script rerun from [bec_sonic_horizon_simulation.py](/Users/davidahmann/Documents/Coherism/coherism_paper/physics/bec_sonic_horizon_simulation.py).
-- [x] Baseline outputs reproduced: `A_hydro = 1.57e-6`, `A_GP/BdG = 1.56e-6`, benchmark shift `0.63%`, max scan shift `0.84%`.
-- [x] [coherism.pdf](/Users/davidahmann/Documents/Coherism/coherism_paper/physics/coherism.pdf) rebuilt successfully.
+- [x] Baseline outputs reproduced: `A_coh = 1.57e-6`, `A_th = 1.34e-6`, `ΔA = 2.29e-7`, GP/BdG shift of `ΔA` `0.63%` (max scan shift `0.84%`), scan range `[6.0e-8, 1.27e-6]`.
+- [x] GPE study rerun from [gpe_protocol_simulation.py](/Users/davidahmann/Documents/Coherism/coherism_paper/physics/gpe_protocol_simulation.py): kernel deviation `0.53%` max; confound rms `3.0e-3`/`3.8e-3` (M=4/8) at first-order `δn/n ≈ 0.1`.
+- [x] [coherism.pdf](/Users/davidahmann/Documents/Coherism/coherism_paper/physics/coherism.pdf) rebuilt successfully (18 pages).
 - [x] [cover_letter.pdf](/Users/davidahmann/Documents/Coherism/coherism_paper/physics/cover_letter.pdf) rebuilt successfully.
 - [x] `physics/coherism.log` and `physics/cover_letter.log` contain no undefined citations or references.
 - [x] [ARTIFACT-MANIFEST.json](/Users/davidahmann/Documents/Coherism/coherism_paper/paper/ARTIFACT-MANIFEST.json) hashes match current files.
 - [x] [reproducibility-manifest.json](/Users/davidahmann/Documents/Coherism/coherism_paper/paper/reproducibility-manifest.json) hashes match current files.
-- [x] Strict GPD peer-review preflight passes.
-- [x] GPD health check passes with no warnings.
+- [ ] Strict GPD peer-review preflight rerun on the revised manuscript (previous pass was for the 2026-03-22 revision).
+- [ ] GPD health check rerun on the revised manuscript.
 
 ## Manual Final Check Before Submit
 
