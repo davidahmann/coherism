@@ -3,14 +3,14 @@
   "paper_title": "Coherence-Dependent Backreaction in Semiclassical and Analog Gravity: Controlled Limits and an Analog-Gravity Test",
   "journal": "foundations_of_physics",
   "created_at": "2026-03-22T15:54:37Z",
-  "updated_at": "2026-06-10T00:00:00Z",
-  "revision_note": "Free-energy informational source (exact Gaussian-state identity), differential observable Delta A, time-dependent 1D GPE kernel validation and confound study, hybrid-dynamics and WEP discussion, 8 new references.",
+  "updated_at": "2026-06-12T00:00:00Z",
+  "revision_note": "Free-energy informational source (exact Gaussian-state identity), differential observable Delta A, time-dependent 1D GPE kernel validation and confound study, hybrid-dynamics and WEP discussion, 8 new references, deterministic rebuild metadata.",
   "artifacts": [
     {
       "artifact_id": "tex-paper",
       "category": "tex",
       "path": "main.tex",
-      "sha256": "0f32c9065fe9f47094996d428b661dfbf89e7351969a2aff8306e4dd6f64460c",
+      "sha256": "2061cd67ccc29f1f7ca33841bf6d2c8cb3d7f1b4eef01e9da14404d4d4b9e85a",
       "produced_by": "manual-review-bootstrap",
       "sources": [],
       "metadata": {
@@ -22,7 +22,7 @@
       "artifact_id": "bib-references",
       "category": "bib",
       "path": "references.bib",
-      "sha256": "a6f273ab99f10822c762e8ac14c5df144bea044bccdb218326c1be0ee50c82d8",
+      "sha256": "140b99c87b10c210f3b5f89ef29926b2fd374e4b66e1ac5d9d2e13701fbe11ce",
       "produced_by": "manual-review-bootstrap",
       "sources": [],
       "metadata": {
@@ -34,7 +34,7 @@
       "artifact_id": "audit-bibliography",
       "category": "audit",
       "path": "BIBLIOGRAPHY-AUDIT.json",
-      "sha256": "5602aecc4513c13d59b2efac2ff35854153a15c2c1527a315602280074aff07c",
+      "sha256": "685529f04bf284ea6b6fa314d763c7d1b0024378846cc6fdecc2b97dd837413b",
       "produced_by": "manual-review-bootstrap",
       "sources": [
         {
@@ -45,14 +45,14 @@
       "metadata": {
         "scope": "manuscript-cited sources",
         "expected_clean": true,
-        "note": "audit predates the 8 references added 2026-06-10 (ElingGuedensJacobson2006, KafriTaylorMilburn2014, TilloyDiosi2016, Oppenheim2023, OppenheimEtAl2023, Gisin1990, Rosi2017, Asenbaum2020); these were entered with DOI-verified metadata"
+        "note": "audit refreshed 2026-06-12 for all 37 bibliography entries; DOI-backed article entries were checked against Crossref metadata except Zenodo, which was checked by direct DOI resolution; non-DOI books were checked by publisher URLs"
       }
     },
     {
       "artifact_id": "figure-bec-main",
       "category": "figure",
       "path": "../physics/bec_sonic_horizon_results.png",
-      "sha256": "72cad1af15f857827b36ad2b848f9d64a73210be57642227e4f043bf6bdfddd0",
+      "sha256": "1943e3339f3afdc3023a9cce083605e93b552b82c9d92ae4bfd1ae58b3e6e507",
       "produced_by": "physics/bec_sonic_horizon_simulation.py",
       "sources": [
         {
@@ -101,7 +101,7 @@
       "artifact_id": "figure-gpe-study",
       "category": "figure",
       "path": "../physics/gpe_protocol_results.png",
-      "sha256": "4fc6705c1891edc23d6b8c394d04864b6cf7b8cd3bdeb429c013ca8ec635c97c",
+      "sha256": "fd9060f42178a2a9f407253d9786c9e2643b9226dc18fe3a2d49e8cad1ae6bde",
       "produced_by": "physics/gpe_protocol_simulation.py",
       "sources": [
         {
@@ -134,7 +134,7 @@
       "artifact_id": "pdf-manuscript",
       "category": "pdf",
       "path": "../physics/coherism.pdf",
-      "sha256": "2aa9fd4de1f16efd63083040bfdf9d3079757a45fc513543181ea897a8309126",
+      "sha256": "c744e9f7f4d3998587af3501cc4e4cbf9fc1fd0f7fbb270b775826c30d927635",
       "produced_by": "latexmk",
       "sources": [
         {
@@ -155,7 +155,7 @@
       "artifact_id": "tex-cover-letter",
       "category": "tex",
       "path": "../physics/cover_letter.tex",
-      "sha256": "bb513e509fbb790a264d7854ebff1f48968e3f36911b0fd1dde0eddb6f737475",
+      "sha256": "5a6c511b66cddfdf65aeb211b1fc03591d57dc590377122a1dba0cbacf56cdd5",
       "produced_by": "manual-review-bootstrap",
       "sources": [],
       "metadata": {
@@ -166,7 +166,7 @@
       "artifact_id": "pdf-cover-letter",
       "category": "pdf",
       "path": "../physics/cover_letter.pdf",
-      "sha256": "b78fc6732d56fb7101164e70f628ac1750b4cc99ee3e0854d787b7246d7fc2d1",
+      "sha256": "e382789ccc8e1f8cadc135445332af1030055265ed93f43e709df82d50840274",
       "produced_by": "latexmk",
       "sources": [
         {

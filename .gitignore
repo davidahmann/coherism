@@ -36,6 +36,9 @@ Thumbs.db
 .agents/
 .codex/
 .gpd/
+GPD/
+.claude/
+.mcp.json
 REFEREE-REPORT.pdf
 
 # Security - NEVER commit these

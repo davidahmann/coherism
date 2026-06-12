@@ -1,6 +1,6 @@
-# Coherism: Falsifiable Predictions and Experimental Protocols
+# Coherism: Current Prediction Status and Experimental Protocols
 
-This document outlines four concrete, falsifiable predictions of the Coherism framework. The primary and most immediate test is the **Analog Gravity Density Modulation** experiment, which offers an effective coupling enhancement of $\sim 60$ orders of magnitude compared to gravitational tests.
+This document is a support note for the manuscript, not an independent claim source. The current submission position is narrower than earlier drafts: the near-term falsification path is the analog-gravity density-modulation differential, while direct gravitational channels are long-term consistency constraints far below present sensitivity.
 
 ## 1. Primary Experimental Test: Analog Gravity Density-Modulation Differential
 
@@ -25,33 +25,31 @@ Existing experiments focus on the passive backreaction of spontaneous Hawking ra
 
 ---
 
-## 2. Weak Equivalence Principle (WEP) Violation
+## 2. Weak Equivalence Principle (WEP) Constraint
 
 **Status:** Long-Term Constraint Channel (far below current precision)  
-**Predicted Magnitude:** $\eta_{\mathrm{coh}} \sim 10^{-30}\,\alpha$ for laboratory-scale coherent states (the manuscript's weak-field benchmark; an earlier $10^{-15}$ figure in this document had no support in the manuscript and is retracted). Current atom-interferometric bounds are $\eta \lesssim 10^{-12}$ (Asenbaum et al. 2020) and $\eta \lesssim 5\times10^{-8}$ for internal-state superpositions (Rosi et al. 2017), so this channel constrains the framework only in principle. The structural point stands: any state-dependence of gravity beyond $\langle T_{\mu\nu}\rangle$ implies some WEP violation, and the manuscript now states this openly as a constraint channel.
+**Predicted Magnitude:** $\eta_{\mathrm{coh}} \sim 10^{-30}\,\alpha$ for laboratory-scale coherent states (the manuscript's weak-field benchmark; earlier larger figures in this support note are retracted). Current atom-interferometric composition-WEP bounds are $\eta \lesssim 10^{-12}$ (Asenbaum et al. 2020), and bounds for atoms in internal-state superpositions are $\eta \lesssim 5\times10^{-8}$ (Rosi et al. 2017), so this channel constrains the framework only in principle. The structural point stands: any state-dependence of gravity beyond $\langle T_{\mu\nu}\rangle$ implies some WEP violation, and the manuscript now states this openly as a constraint channel.
 
-Coherism predicts that a "coherent" object falls with a slightly different acceleration than a "classical" (incoherent) object of the exact same mass and energy, due to the coupling of the coherence functional to the background geometry.
+The framework implies that, if gravity responds to a state functional beyond $\langle T_{\mu\nu}\rangle$, sufficiently ideal coherent and incoherent systems with equal ordinary stress energy need not source identical geometry. In the present manuscript this is not advertised as a near-term signal; it is a consistency and constraint channel.
 
-### Experimental Protocol
-1.  **Setup:** Vacuum drop tower or fountain.
-2.  **Test Masses:**
-    * Mass A: Bose-Einstein Condensate ($^{87}$Rb), representing a macroscopic coherent state.
-    * Mass B: Thermal gas of $^{87}$Rb, representing an incoherent state.
-3.  **Procedure:** Perform a simultaneous differential free-fall test.
+### Possible Long-Term Protocol
+1.  **Setup:** Atom-interferometric or free-fall WEP platform with quantum-state control.
+2.  **Test states:** Compare states with matched mass-energy and composition but controlled coherence or internal-state preparation.
+3.  **Procedure:** Use the result as a bound on the gravitational coupling coefficient, not as the manuscript's primary discovery channel.
 
 ### Prediction
 
-* **Coherism:** $\eta_{\mathrm{coh}} = \frac{a_{BEC} - a_{thermal}}{a_{avg}} \sim 10^{-15}$ for highly coherent versus incoherent states of the same material (order-of-magnitude estimate in the manuscript).
-* **Falsification:** A null result at $10^{-16}$ precision would constrain the gravitational coupling $\kappa$ to be negligible for this effect.
+* **Framework benchmark:** $\eta_{\mathrm{coh}} \sim 10^{-30}\alpha$ for laboratory-scale coherent states in the weak-field estimate.
+* **Implication:** Current WEP tests do not constrain $\alpha\sim1$ in this benchmark, but future improvements would bound the gravitational implementation.
 
 ---
 
-## 3. Atom Interferometer Phase Shift
+## 3. Atom-Interferometer Phase Shift
 
-**Status:** Secondary Test  
-**Predicted Magnitude:** $\delta\phi/\phi \sim 10^{-11}$
+**Status:** Exploratory constraint idea, not a manuscript prediction
+**Predicted Magnitude:** No supported near-term value in the current manuscript.
 
-The "informational weight" of a spatial superposition creates an additional phase shift in an atom interferometer, beyond the standard gravitational phase shift.
+Earlier notes quoted a near-term fractional phase shift. That number is not supported by the current derivation chain and should not be used in submission materials. Atom interferometry remains relevant because it can constrain state-dependent gravity, but the current manuscript does not claim an independently detectable interferometer phase anomaly.
 
 ### Experimental Protocol
 1.  **Setup:** Large-baseline atom interferometer (e.g., 10m towers).
@@ -59,8 +57,8 @@ The "informational weight" of a spatial superposition creates an additional phas
 
 ### Prediction
 
-* **Coherism:** A fractional deviation of $\delta\phi/\phi \sim 10^{-11}$ from the standard GR prediction ($k_{eff} g T^2$).
-* **Falsification:** Null result at $10^{-12}$ precision.
+* **Framework status:** No standalone phase-shift prediction is claimed.
+* **Use:** Treat future interferometer limits as constraints on the gravitational coupling of the informational source.
 
 ---
 
@@ -80,12 +78,12 @@ The universe's expansion history could deviate from ΛCDM if "coherence energy" 
 
 ---
 
-## 5. The Distinguishing Test: Coherent vs. Thermal
+## 5. Coherent-vs.-Thermal Discriminator
 
-**Status:** *Experimentum Crucis* (realized near-term as the analog differential of Test 1)
+**Status:** Model-level analog discriminator, not a proof of astrophysical gravitational backreaction
 **Predicted Magnitude:** $\eta_{\mathrm{coh}} \sim 10^{-30}\,\alpha$ gravitationally (see Test 2); $\Delta A \approx 2.3\times10^{-7}$ in the analog system
 
-This is the **unique signature** that distinguishes Coherism from competing frameworks (Penrose-Diósi, stochastic gravity).
+The clean discriminator is an energy-matched coherent-minus-thermal response. In the analog system, a positive result would test the proposed state-geometry feedback structure in an emergent acoustic geometry. It would not by itself prove direct gravitational backreaction in astrophysical spacetime.
 
 ### Why This Test Matters
 
@@ -97,12 +95,12 @@ This is the **unique signature** that distinguishes Coherism from competing fram
 
 ### Experimental Protocol (Distinguishing Test)
 
-Compare free-fall acceleration of:
+Near term, compare the analog density response to:
 
-* **Sample A:** BEC of N atoms (coherent)
-* **Sample B:** Thermal gas of N atoms (incoherent)
+* **Drive A:** Coherent broadband phonon pulse.
+* **Drive B:** Phase-randomized, energy-matched thermal phonon pulse.
 
-Both have identical mass, energy, and density. Only Coherism predicts a difference.
+Both drives have matched mean injected energy and band support. The proposed differential is controlled by the injected von Neumann entropy.
 
 ---
 
@@ -112,7 +110,7 @@ Both have identical mass, energy, and density. Only Coherism predicts a differen
 
 * **Why:** The effective coupling in the analog system is $\sim 60$--$62$ orders of magnitude stronger than in gravitational systems (as quantified in the manuscript via $\kappa_{\mathrm{eff}}$).
 * **Feasibility:** Requires standard cold-atom laboratory hardware (2D BEC, draining vortex, imaging).
-* **Verdict:** A coherent-minus-thermal differential below $5\times10^{-8}$ in the BEC test would falsify the acoustic implementation and cast significant doubt on the gravitational implementation. A positive differential scaling with the injected von Neumann entropy $\Delta S_{\mathrm{vN}}$ (verified via the bandwidth knob) would provide the first direct evidence that an emergent geometry responds to state distinguishability beyond mean energy.
+* **Verdict:** A coherent-minus-thermal differential below $5\times10^{-8}$ in the specified BEC implementation would falsify that acoustic implementation of the proposal. A positive differential scaling with the injected von Neumann entropy $\Delta S_{\mathrm{vN}}$ would be model-level evidence that an emergent geometry can respond to state distinguishability beyond mean energy.
 
 ## Comparison with Alternative Frameworks
 

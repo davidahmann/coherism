@@ -1,11 +1,11 @@
 {
   "paper_title": "Coherence-Dependent Backreaction in Semiclassical and Analog Gravity: Controlled Limits and an Analog-Gravity Test",
-  "date": "2026-06-10",
+  "date": "2026-06-12",
   "contact": "dahmann@lumyn.cc",
   "environment": {
     "python_version": "3.14.0",
     "package_manager": "pip",
-    "virtual_environment": ".venv",
+    "virtual_environment": "physics/.venv",
     "required_packages": [
       {
         "package": "numpy",
@@ -14,7 +14,7 @@
       },
       {
         "package": "matplotlib",
-        "version": "3.10.7",
+        "version": "3.10.8",
         "purpose": "Generation of the manuscript figures"
       }
     ],
@@ -76,7 +76,7 @@
   "execution_steps": [
     {
       "name": "run-bec-simulation",
-      "command": "cd physics && ../.venv/bin/python bec_sonic_horizon_simulation.py",
+      "command": "cd physics && .venv/bin/python bec_sonic_horizon_simulation.py",
       "outputs": [
         "physics/bec_sonic_horizon_results.png",
         "physics/bec_sonic_horizon_data.dat",
@@ -88,7 +88,7 @@
     },
     {
       "name": "run-gpe-study",
-      "command": "cd physics && ../.venv/bin/python gpe_protocol_simulation.py",
+      "command": "cd physics && .venv/bin/python gpe_protocol_simulation.py",
       "outputs": [
         "physics/gpe_protocol_results.png",
         "physics/gpe_protocol_data.dat"
@@ -100,7 +100,7 @@
     },
     {
       "name": "build-manuscript",
-      "command": "cd physics && latexmk -pdf -interaction=nonstopmode -halt-on-error coherism.tex",
+      "command": "cd physics && SOURCE_DATE_EPOCH=1781222400 latexmk -g -pdf -interaction=nonstopmode -halt-on-error coherism.tex",
       "outputs": [
         "physics/coherism.pdf"
       ],
@@ -110,7 +110,7 @@
     },
     {
       "name": "build-cover-letter",
-      "command": "cd physics && latexmk -pdf -interaction=nonstopmode -halt-on-error cover_letter.tex",
+      "command": "cd physics && SOURCE_DATE_EPOCH=1781222400 latexmk -g -pdf -interaction=nonstopmode -halt-on-error cover_letter.tex",
       "outputs": [
         "physics/cover_letter.pdf"
       ],
@@ -167,8 +167,8 @@
     {
       "path": "physics/bec_sonic_horizon_results.png",
       "description": "Main analog-gravity figure used in the manuscript",
-      "approximate_size": "170209 B",
-      "checksum_sha256": "72cad1af15f857827b36ad2b848f9d64a73210be57642227e4f043bf6bdfddd0",
+      "approximate_size": "170170 B",
+      "checksum_sha256": "1943e3339f3afdc3023a9cce083605e93b552b82c9d92ae4bfd1ae58b3e6e507",
       "approximate_checksum": false
     },
     {
@@ -188,8 +188,8 @@
     {
       "path": "physics/gpe_protocol_results.png",
       "description": "Time-dependent 1D GPE study figure (kernel validation + confound)",
-      "approximate_size": "164890 B",
-      "checksum_sha256": "4fc6705c1891edc23d6b8c394d04864b6cf7b8cd3bdeb429c013ca8ec635c97c",
+      "approximate_size": "164851 B",
+      "checksum_sha256": "fd9060f42178a2a9f407253d9786c9e2643b9226dc18fe3a2d49e8cad1ae6bde",
       "approximate_checksum": false
     },
     {
@@ -202,15 +202,15 @@
     {
       "path": "physics/coherism.pdf",
       "description": "Compiled manuscript PDF (18 pages)",
-      "approximate_size": "839075 B",
-      "checksum_sha256": "2aa9fd4de1f16efd63083040bfdf9d3079757a45fc513543181ea897a8309126",
+      "approximate_size": "836212 B",
+      "checksum_sha256": "c744e9f7f4d3998587af3501cc4e4cbf9fc1fd0f7fbb270b775826c30d927635",
       "approximate_checksum": false
     },
     {
       "path": "physics/cover_letter.pdf",
       "description": "Compiled cover letter PDF",
-      "approximate_size": "100766 B",
-      "checksum_sha256": "b78fc6732d56fb7101164e70f628ac1750b4cc99ee3e0854d787b7246d7fc2d1",
+      "approximate_size": "100754 B",
+      "checksum_sha256": "e382789ccc8e1f8cadc135445332af1030055265ed93f43e709df82d50840274",
       "approximate_checksum": false
     }
   ],
@@ -274,6 +274,6 @@
     "Confirm the imaginary-time GPE kernel validation deviates < 0.6% from the analytic kernel over the quoted band."
   ],
   "manifest_created": "2026-03-22T15:54:37Z",
-  "last_verified": "2026-06-10T00:00:00Z",
+  "last_verified": "2026-06-12T00:00:00Z",
   "last_verified_platform": "Darwin arm64"
 }

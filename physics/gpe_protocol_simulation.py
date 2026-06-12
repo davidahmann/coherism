@@ -235,7 +235,12 @@ def main():
 
     plt.tight_layout()
     fig_path = BASE_DIR / 'gpe_protocol_results.png'
-    plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+    plt.savefig(
+        fig_path,
+        dpi=150,
+        bbox_inches='tight',
+        metadata={'Software': 'matplotlib'},
+    )
     plt.close()
     print(f"\nFigure saved to {fig_path}")
 

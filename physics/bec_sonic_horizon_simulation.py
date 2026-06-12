@@ -406,7 +406,12 @@ def plot_results(results, save_path=None):
     )
 
     plt.tight_layout()
-    plt.savefig(save_path, dpi=150, bbox_inches='tight')
+    plt.savefig(
+        save_path,
+        dpi=150,
+        bbox_inches='tight',
+        metadata={'Software': 'matplotlib'},
+    )
     plt.close()
     print(f"Figure saved to {save_path}")
 
