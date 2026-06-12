@@ -19,8 +19,11 @@ Target journal: `Foundations of Physics`
 - [x] `physics/coherism.log` and `physics/cover_letter.log` contain no undefined citations or references.
 - [x] [ARTIFACT-MANIFEST.json](/Users/davidahmann/Documents/Coherism/coherism_paper/paper/ARTIFACT-MANIFEST.json) hashes match current files.
 - [x] [reproducibility-manifest.json](/Users/davidahmann/Documents/Coherism/coherism_paper/paper/reproducibility-manifest.json) hashes match current files.
-- [ ] Strict GPD peer-review preflight rerun on the revised manuscript (previous pass was for the 2026-03-22 revision).
-- [ ] GPD health check rerun on the revised manuscript.
+- [x] GPD updated to 1.2.2 (from 1.1.0) and a full six-pass staged peer review (Round 4) run on the revised manuscript. **Recommendation: `major_revision`** (medium confidence) — an advance from the round-1/round-2 `reject`. See [REFEREE-REPORT-R4.pdf](/Users/davidahmann/Documents/Coherism/coherism_paper/.gpd/REFEREE-REPORT-R4.pdf) and [REVALIDATION-R4.md](/Users/davidahmann/Documents/Coherism/coherism_paper/.gpd/review/REVALIDATION-R4.md).
+  - All five stage artifacts + claim index + review ledger schema-valid (GPD 1.2.2 CLI, exit 0); the recommendation-floor check confirms `major_revision` is the most favorable supported outcome.
+  - **Do not submit as-is.** Four blocking issues remain, all fixable without new physics: (1) the `ΔA < 5e-8` falsification threshold lacks a detectability budget and one discrimination handle is physically void (ΔA is second-order in injection amplitude, like the confound); (2) the FoP significance case rests on that overstated empirical hook; (3) the CLM-017 uniqueness proposition is only partially aligned with its proof (proof red-team `gaps_found`); plus a factual Asenbaum-2020 citation error. Recommended fix: reframe around the conceptual core, demote the analog protocol to a model-level discriminator + proposed design, add the detectability discussion, apply the four proof edits, fix the citation.
+  - The strict whole-pipeline gate reports `valid: false` by design (open proof gap `gaps_found` + unregistered GPD manuscript entrypoint); this is the correct fail-closed state for a `major_revision` verdict and was not overridden.
+- [ ] GPD health check rerun on the revised manuscript (optional; not blocking the review verdict).
 
 ## Manual Final Check Before Submit
 
