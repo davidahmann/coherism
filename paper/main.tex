@@ -1,1 +1,287 @@
-../physics/coherism.tex
+\documentclass[aps,prd,twocolumn,superscriptaddress,nofootinbib,floatfix]{revtex4-2}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\emergencystretch=3em
+
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\Drel}{D}
+
+\begin{document}
+
+\title{A Worked Identifiability Audit of a Stipulated Preparation-Indexed Potential in a Homogeneous Bose--Einstein Condensate}
+
+\author{David Ahmann}
+\email{dahmann@lumyn.cc}
+\affiliation{Independent Researcher, Toronto, Canada}
+
+\date{August 28, 2026}
+
+\begin{abstract}
+This methods note asks what can be identified after one stipulates that a static external potential in a homogeneous Bose--Einstein condensate depends on a preparation's quantum relative entropy. The exact relative-entropy/free-energy identity, the stipulated state-to-potential map, the fixed-particle-number condensate response, and the statistical inference model are separated explicitly. A displaced Gibbs state and an equal-energy heated Gibbs state provide an illustrative finite-mode contrast. The resulting localized density template is computed at fixed total particle number and independently reproduced by stationary Gross--Pitaevskii relaxation. A two-bin synthetic fixture demonstrates both an identifiable nuisance model and complete template absorption; a separate phase-randomized classical-field example is retained only as generic motivation for nuisance controls. The audit shows that a bound on the free coupling requires seven explicit contracts spanning the ensemble, intervention, template, preparation, nuisance, measurement, and decision rule. Without them, the construction is a statistical thought experiment rather than a physical-source test. No new source law, analogue-gravity result, detection forecast, or gravitational inference is claimed.
+\end{abstract}
+
+\maketitle
+
+\section{Purpose, audience, and scope boundaries}
+\label{sec:introduction}
+
+Relative entropy and nonequilibrium free energy have a standard exact connection for a Gibbs reference~\cite{Wilming2017}. Weak static density response is likewise a standard Gross--Pitaevskii (GP) and Bogoliubov calculation for dilute condensates~\cite{Bloch2008,Bisset2019}, and nuisance-projected generalized least squares is standard linear inference~\cite{Rao1973}. Structural and practical non-identifiability are established concerns in inverse inference~\cite{Raue2009}. Combining these ingredients does not create a new microscopic interaction.
+
+This paper instead presents a worked audit of a deliberately underdetermined construction. Suppose a preparation-indexed scalar is mapped to a local external potential by assumption. Which statements are identities, which are model choices, which numerical checks validate only implementation, and which additional evidence would be required to identify the map's free coefficient? The case is useful precisely because its rigorous ingredients are standard while the bridge between them is stipulated. The intended readers are advanced students and researchers learning to separate algebraic correctness, numerical reproducibility, model identifiability, and physical evidence. The learning objective is to audit those layers before interpreting a fitted coefficient.
+
+The residual contribution is methodological. The seven-contract audit used throughout the paper is the author's synthesis: (1) state and reference ensemble, (2) operational intervention, (3) spatial template and conservation convention, (4) preparation matching, (5) nuisance basis, (6) measurement and covariance, and (7) decision and validation. Table~\ref{tab:audit-contracts} makes the same taxonomy inspectable. The calculation is not presented as a proposed physical source experiment. It also is not an analogue-gravity model: no background flow, effective metric, horizon, or acoustic propagation observable is constructed. Current reviews treat an effective metric as central to analogue gravity~\cite{Barcelo2026}; philosophical work likewise emphasizes that inference beyond an analogue needs an independently justified bridge~\cite{Dardashti2017}.
+
+Section~\ref{sec:identity} records the exact finite-mode identity and illustrative preparation pair. Section~\ref{sec:source} defines the thought experiment and fixes the particle-number convention. Section~\ref{sec:numerics} reports like-for-like numerical checks and a generic nuisance illustration. Section~\ref{sec:identifiability} gives the conditional inference model and the resulting audit.
+
+\section{Exact finite-mode identity}
+\label{sec:identity}
+
+Consider a finite set $B$ of bosonic modes with positive frequencies,
+\begin{equation}
+ H_B=\sum_{j\in B}\hbar\omega_j a_j^\dagger a_j,
+ \qquad \omega_j>0,
+ \label{eq:band-hamiltonian}
+\end{equation}
+and a Gibbs reference at $\beta>0$,
+\begin{equation}
+ \sigma_B=\frac{e^{-\beta H_B}}{Z_B},
+ \qquad Z_B=\Tr e^{-\beta H_B}<\infty.
+ \label{eq:gibbs-reference}
+\end{equation}
+The Fock space remains infinite dimensional even though the mode set is finite; the assumptions in Eq.~\eqref{eq:gibbs-reference} ensure that the reference is normalized and faithful. For any density operator $\rho_B$ with finite energy,
+\begin{equation}
+ \Drel(\rho_B\Vert\sigma_B)
+ =\Tr\!\left[\rho_B(\ln\rho_B-\ln\sigma_B)\right].
+ \label{eq:relative-entropy}
+\end{equation}
+Define $E_\rho=\Tr(\rho_BH_B)$, $E_\sigma=\Tr(\sigma_BH_B)$, $S(\rho)=-\Tr(\rho\ln\rho)$, and $F_\beta(\rho)=\Tr(\rho H_B)-\beta^{-1}S(\rho)$. Using $\ln\sigma_B=-\beta H_B-\ln Z_B$ gives
+\begin{align}
+ \Drel(\rho_B\Vert\sigma_B)
+ &=\beta(E_\rho-E_\sigma)-[S(\rho_B)-S(\sigma_B)]\\
+ &=\beta[F_\beta(\rho_B)-F_\beta(\sigma_B)].
+ \label{eq:gibbs-identity}
+\end{align}
+This is an identity, not a source law. A continuum or quantum-field extension would require a specified algebra, regulator, and renormalization prescription; none is attempted here~\cite{Casini2008}.
+
+For an illustrative pair, let
+\begin{equation}
+ \rho_{\mathrm d}=D(\bm\alpha)\sigma_BD^\dagger(\bm\alpha)
+ \label{eq:displaced-state}
+\end{equation}
+be a displaced Gibbs state. Unitary displacement preserves entropy, so
+\begin{equation}
+ \Drel_{\mathrm d}=\beta\Delta E_{\mathrm d}.
+ \label{eq:displaced-relative-entropy}
+\end{equation}
+Let $\rho_{\mathrm h}$ be a product Gibbs state at another temperature, chosen so that $\Delta E_{\mathrm h}=\Delta E_{\mathrm d}$. If $\Delta S_{\mathrm h}=S(\rho_{\mathrm h})-S(\sigma_B)$, then
+\begin{equation}
+ \Drel_{\mathrm d}-\Drel_{\mathrm h}=\Delta S_{\mathrm h}.
+ \label{eq:entropy-contrast}
+\end{equation}
+For the arbitrary equal-frequency example in the archived script, $N=1000$, $M=100$, and $\beta\hbar\omega=2$. It gives $\Drel_{\mathrm d}=2000.0$, $\Drel_{\mathrm h}=1709.3$, and $\Delta S_{\mathrm h}=290.7$ nats. These values are regression fixtures for the chosen pair, not physical constants. The word ``heated'' refers only to this ideal density operator.
+
+\section{State-indexed potential at fixed particle number}
+\label{sec:source}
+
+\subsection{Stipulated map}
+
+The thought experiment assigns preparation $i\in\{\mathrm d,\mathrm h\}$ a weak static external potential
+\begin{equation}
+ \frac{\delta U_i(x)}{g n_0}
+ =-\kappa\Drel_i q(x),
+ \qquad \max_x|q(x)|=1.
+ \label{eq:source-ansatz}
+\end{equation}
+Here $g$ is the condensate contact coupling, $n_0$ its mean density, $q(x)$ a prescribed profile, and $\kappa$ a free dimensionless coefficient. Equation~\eqref{eq:source-ansatz} is not derived from Eq.~\eqref{eq:gibbs-identity}, condensate microphysics, or a control protocol. The scalar, linear map, profile, sign, and coefficient are all choices. No independent mechanism is supplied that would switch the potential on according to an unknown preparation property. The construction is therefore a statistical identifiability thought experiment, not an operational source proposal.
+
+At fixed total particle number the uniform part of the potential is absorbed into the chemical potential. The linear response used below therefore requires
+\begin{equation}
+ |\kappa|\Drel_i\,\|q-\overline q\|_\infty\ll1,
+ \qquad \overline q=L^{-1}\!\int_0^L q(x)\,dx,
+ \label{eq:weak-response-condition}
+\end{equation}
+for each preparation. The script validates the response kernel at a nonuniform potential amplitude of $10^{-3}$; it does not determine a universal nonlinear-error threshold.
+
+\subsection{Fixed-number response}
+
+The stationary one-dimensional GP equation is
+\begin{equation}
+ \mu\psi(x)=\left[-\frac{\hbar^2}{2m}\partial_x^2
+ +g|\psi(x)|^2+\delta U_i(x)\right]\psi(x).
+ \label{eq:stationary-gp}
+\end{equation}
+With healing length $\xi=\hbar/\sqrt{2mgn_0}$, linearization about a homogeneous condensate gives, for nonzero Fourier modes,
+\begin{equation}
+ \frac{\delta n_{i,k}}{n_0}
+ =-\frac{\delta U_{i,k}}{gn_0}
+ \frac{1}{1+(k\xi)^2/2},\qquad k\ne0.
+ \label{eq:static-response}
+\end{equation}
+We choose fixed total particle number. Consequently $\delta n_{i,0}=0$: the uniform component of the imposed potential is absorbed into the stationary chemical potential. Define
+\begin{equation}
+ \widetilde q_k=
+ \begin{cases}q_k,&k\ne0,\\0,&k=0,\end{cases}
+ \qquad
+ R_N(x)=\mathcal F^{-1}\!\left[
+ \frac{\widetilde q_k}{1+(k\xi)^2/2}\right](x).
+ \label{eq:fixed-number-profile}
+\end{equation}
+The conditional preparation-difference template is then
+\begin{equation}
+ t(x)=\frac{\delta n_{\mathrm d}(x)-\delta n_{\mathrm h}(x)}{n_0}
+ =\kappa\Delta S_{\mathrm h}R_N(x).
+ \label{eq:conditional-template}
+\end{equation}
+For the declared grid and $q(x)=e^{-|x|/10}$, $\max_x|R_N(x)|=0.902969201$. Thus the peak template per unit $\kappa$ is $262.525274$. These are fixed-number, profile-specific code-regression values. They neither determine $\kappa$ nor show that the preparation-indexed potential exists.
+
+\section{Numerical checks and generic control motivation}
+\label{sec:numerics}
+
+\subsection{Finite-mode arithmetic and conditional template}
+
+The historically named script \texttt{physics/bec\_sonic\_horizon\_simulation.py} implements only Eqs.~\eqref{eq:gibbs-identity}--\eqref{eq:conditional-template}. It uses a periodic domain of length 400, 2048 grid points, $\xi=1/\sqrt2$, and removes the zero Fourier mode. Figure~\ref{fig:stationary-template} shows coupling-normalized responses and an algebraic transfer function. It is not a horizon simulation, noise model, or sensitivity forecast.
+
+\begin{figure*}[t]
+ \centering
+ \includegraphics[width=\textwidth]{bec_sonic_horizon_results.png}
+ \caption{Conditional fixed-number calculation. Left: coupling-normalized responses for the illustrative displaced and equal-energy heated Gibbs states and their contrast. The spatially uniform mode is removed. Right: conversion of an externally supplied residual budget into a prospective bound through Eq.~\eqref{eq:prospective-bound}. Neither panel supplies a physical value of $\kappa$ or an achieved experimental sensitivity.}
+ \label{fig:stationary-template}
+\end{figure*}
+
+\subsection{Like-for-like stationary validation}
+
+The independent script \texttt{physics/gpe\_protocol\_simulation.py} relaxes the stationary GP equation while normalizing the mean density after each imaginary-time step. For six nonzero cosine modes with $0.056\lesssim k\xi\lesssim1.499$ and $|V_0|/(gn_0)=10^{-3}$, the maximum amplitude deviation from Eq.~\eqref{eq:static-response} is $0.53\%$.
+
+More importantly, it repeats the exact localized profile, periodic grid, and fixed-number convention used for Fig.~\ref{fig:stationary-template}. The maximum pointwise difference between the analytic and relaxed profiles is $0.0226\%$ of the analytic peak, and their relative $L^2$ difference is $0.0076\%$. This validates the numerical implementation of the conditional response under the declared convention; it does not validate Eq.~\eqref{eq:source-ansatz}.
+
+\subsection{Existence-only preparation example}
+
+The same script evolves an aligned-phase pure classical field and averages 16 seeded, independently phase-randomized pure fields at fixed modal amplitudes for $M=4$ and $M=8$. The populated band is approximately $0.100\leq k\xi\leq0.200$, centered near 0.15. The aligned-minus-randomized time-averaged density profiles have root-mean-square differences $2.98\times10^{-3}$ and $3.79\times10^{-3}$, respectively.
+
+This calculation is intentionally not carried into the estimator below. It is not the ideal heated density operator, is not exactly matched in full nonlinear GP energy, uses only one seed and one averaging contract, and does not provide a covariance or convergence study. Controlled finite-temperature classical-field methods require sampling a specified phase-space distribution~\cite{Sinatra2001}. The example establishes only that ordinary preparation-dependent structure can exist and that a real analysis needs matched nuisance controls. It does not establish template overlap, estimator bias, a representative nuisance scale, or an uncertainty budget.
+
+\begin{figure*}[t]
+ \centering
+ \includegraphics[width=\textwidth]{gpe_protocol_results.png}
+ \caption{Implementation checks and generic control motivation. Left: nonzero-mode stationary response. Center: the exact localized fixed-number template agrees with independently relaxed GP data. Right: an existence-only aligned-versus-randomized phase example generated without the stipulated potential. The right panel is neither a thermal preparation nor a calibrated nuisance model.}
+ \label{fig:gpe-controls}
+\end{figure*}
+
+\section{Conditional inference and audit result}
+\label{sec:identifiability}
+
+Let $\bm y$ be a signed, dimensionless preparation-difference profile in the same $\delta n/n_0$ estimator space as the source template. Any imaging or preprocessing operation must be calibrated and applied consistently to $\bm y$, $\bm t_0$, $N$, and $C$. Given a predeclared source template $\bm t_0=\Delta S_{\mathrm h}\bm R_N$, nuisance matrix $N$, nuisance amplitudes $\bm a$, and calibrated covariance $C$, consider the standard linear model
+\begin{equation}
+ \bm y=\kappa\bm t_0+N\bm a+\bm\epsilon.
+ \label{eq:linear-analysis-model}
+\end{equation}
+If $C$ is nonsingular and $N^TC^{-1}N$ is invertible, define
+\begin{equation}
+ P_N=I-N(N^TC^{-1}N)^{-1}N^TC^{-1}.
+ \label{eq:nuisance-projector}
+\end{equation}
+The profiled generalized least-squares estimator and its model variance are
+\begin{equation}
+ \widehat\kappa=\frac{\bm t_0^TC^{-1}P_N\bm y}
+ {\bm t_0^TC^{-1}P_N\bm t_0},\qquad
+ \operatorname{Var}(\widehat\kappa)=
+ \frac{1}{\bm t_0^TC^{-1}P_N\bm t_0}.
+ \label{eq:kappa-estimator}
+\end{equation}
+Within this declared model, $\kappa$ is identifiable only when
+\begin{equation}
+ \bm t_0^TC^{-1}P_N\bm t_0>0.
+ \label{eq:identifiability-condition}
+\end{equation}
+A nuisance basis spanning the template removes identifiability; an incomplete basis can bias the estimate. The phase-randomized example does not instantiate $N$ or $C$ and therefore does not execute this analysis.
+
+A two-bin synthetic fixture makes the decisive failure mode explicit. Let $C=I$, $\bm t_0=(1,0)^T$, and $\bm y=0.25\bm t_0$. With nuisance basis $N=(0,1)^T$, the projected template norm is one and Eq.~\eqref{eq:kappa-estimator} gives $\widehat\kappa=0.25$. With $N=(1,0)^T$, the nuisance span contains the template, the projected norm is zero, and $\kappa$ is not identifiable. The deterministic assertions are archived in \texttt{physics/identifiability\_audit.py}; this is a unit test of the estimator contract, not experimental evidence.
+
+A scalar planning relation follows if an external experiment has already established a dimensionless two-sided residual budget $\delta A_{\mathrm{res}}$ in the same calibrated relative-density space for the signed $R_N(x)$ component after validated nuisance removal:
+\begin{equation}
+ |\kappa|\leq
+ \frac{\delta A_{\mathrm{res}}}
+ {\Delta S_{\mathrm h}\max_x|R_N(x)|}
+ =\frac{\delta A_{\mathrm{res}}}{262.525274}.
+ \label{eq:prospective-bound}
+\end{equation}
+Illustrative residual budgets from $10^{-6}$ to $10^{-2}$ map algebraically to $3.809\times10^{-9}$ through $3.809\times10^{-5}$. No such residual budget is measured or forecast here, and the transfer applies only while Eq.~\eqref{eq:weak-response-condition} remains calibrated.
+
+The audit result is therefore conditional and negative. In the canonical order, the worked example has a declared state/reference ensemble, lacks an independent intervention, specifies a spatial template and fixed-number convention, does not implement matched physical preparations, has no empirical nuisance basis, has no measured covariance, and exercises only selected numerical checks rather than a complete decision-and-validation rule. Table~\ref{tab:audit-contracts} records the consequence and clearance evidence for each contract. Without all seven, the preparation contrast does not identify the stipulated coefficient.
+
+\section{Scope and conclusion}
+\label{sec:nonclaims}
+
+The exact result in this paper is Eq.~\eqref{eq:gibbs-identity} and its equal-energy corollary under the stated finite-mode assumptions. The preparation-indexed potential is a free map. The fixed-number GP calculation is a conditional response. The classical-field calculation is a generic existence example. The standard estimator is exercised only on a synthetic two-bin fixture; empirical inference remains impossible without matched data and covariance. These pieces jointly produce a worked identifiability audit, not a new theorem or interaction.
+
+In particular, the paper does not derive a source from condensate microphysics, identify a laboratory mechanism, predict a coupling, establish an experimental bound, construct an effective acoustic metric, or infer gravitational dynamics. A positive fit would identify a coefficient only within a fully declared source and nuisance model. A null result would constrain only that declared combination over its calibrated range.
+
+The useful conclusion is a discipline of separation. An exact state identity does not authorize a physical source; a reproducible response does not validate the stipulated bridge; and a preparation contrast does not identify a coefficient without conserved-quantity, nuisance, covariance, and intervention contracts. The present example makes those dependencies inspectable and reproducible.
+
+\appendix
+
+\section{Reproducibility contract}
+\label{app:reproducibility}
+
+Table~\ref{tab:parameters} collects the choices needed to reproduce the quoted values. Reported digits beyond the rounded main-text values are code-regression precision, not physical uncertainty. No ensemble uncertainty or experimental error bar is estimated.
+
+\begin{table*}[t]
+\caption{Canonical audit contracts. ``Current status'' describes this worked example, not a general verdict on preparation-indexed models.}
+\label{tab:audit-contracts}
+\begin{ruledtabular}
+\begin{tabular}{p{0.15\textwidth}p{0.22\textwidth}p{0.22\textwidth}p{0.34\textwidth}}
+Contract & Declared input & Current status and failure consequence & Evidence required to clear it \\
+\hline
+State/reference & Finite positive-frequency mode set, $\beta>0$, normalized Gibbs reference & Declared; changing the ensemble changes $\Drel_i$ & Operational state reconstruction and reference-selection rationale \\
+Intervention & Source-on/source-off operation independent of the inferred state property & Missing; the stipulated map cannot be separated from programmed control & Mechanism, authorization, calibration, and source-off trace \\
+Template / conservation & Signed $q(x)$, fixed $N$, removed zero mode, weak-response regime & Declared conditionally; another convention changes the response & Predeclared profile, ensemble, calibration, and nonlinear-regime check \\
+Preparation matching & Particle number, energy, density, momentum, and drive histories & Not implemented; ordinary preparation differences can mimic a contrast & Matched tolerances, state reconstruction, and held-out preparation controls \\
+Nuisance basis & Predeclared $N$ spanning credible source-off effects & Missing empirically; template absorption removes identifiability & Source-off data, basis-selection rule, and overlap diagnostics \\
+Measurement / covariance & Calibrated estimator-space map and nonsingular $C$ & Missing empirically; units, weighting, and variance remain ungrounded & Measurement calibration, repeated data, covariance checks, and drift controls \\
+Decision/validation & Identifiability threshold, residual budget, convergence and held-out tests & Partially exercised only in code; no experimental decision is available & Locked rule, numerical convergence, residual validation, and independent review \\
+\end{tabular}
+\end{ruledtabular}
+\end{table*}
+
+\begin{table*}[t]
+\caption{Parameter, estimator, and archive contract. Full SHA-256 digests for every tracked artifact are recorded in \texttt{paper/reproducibility-manifest.json}.}
+\label{tab:parameters}
+\begin{ruledtabular}
+\begin{tabular}{p{0.22\textwidth}p{0.73\textwidth}}
+Component & Declared choice \\
+\hline
+Finite-mode pair & $N=1000$, $M=100$, $\beta\hbar\omega=2$; equal frequencies; heated occupation raised uniformly; $\Drel_{\mathrm d}=2000.000000$, $\Drel_{\mathrm h}=1709.264420$, $\Delta S_{\mathrm h}=290.735580$ nats. \\
+Localized response & Fixed total particle number; $q(x)=e^{-|x|/10}$; periodic length 400; 2048 points; $\xi=1/\sqrt2$; $q_{k=0}$ removed; $R_{N,\mathrm{pk}}=0.902969201$; $\Delta S_{\mathrm h}R_{N,\mathrm{pk}}=262.525274$. \\
+Stationary validation & Imaginary-time step 0.01; 4000 steps; $V_0/(gn_0)=10^{-3}$; same localized profile and grid; maximum profile difference/peak $2.258\times10^{-4}$; relative $L^2$ difference $7.620\times10^{-5}$. \\
+Phase illustration & Seed 20260610; $M=4,8$; total squared modal amplitude $2.5\times10^{-3}$; 16 randomized realizations; time step 0.02; settle time 40; averaging window 160; sample every 25 steps; no uncertainty or convergence claim. \\
+Synthetic GLS fixture & $C=I$, $\bm t_0=(1,0)^T$, $\bm y=0.25\bm t_0$; $N=(0,1)^T$ gives unit projected norm and $\widehat\kappa=0.25$; $N=(1,0)^T$ gives zero projected norm and non-identifiability. \\
+Inference contract & Signed template; fixed-$N$ zero mode; externally declared nuisance matrix; calibrated nonsingular covariance; positive projected template norm; externally established residual budget. \\
+Immutable script IDs & Static-template script SHA-256 prefix \texttt{e5766337bb6f0b8a}; GPE script SHA-256 prefix \texttt{bd6b48a90a00e7d9}; complete digests and output hashes in the manifest. \\
+\end{tabular}
+\end{ruledtabular}
+\end{table*}
+
+The implementation and archived outputs are available at \url{https://github.com/davidahmann/coherism}. The historical script and output names containing \texttt{sonic\_horizon} are retained for stable links; the current calculation contains no horizon. The repository manifest binds the scripts, data tables, figures, manuscript, bibliography, software lock, and stochastic seed.
+
+\begin{acknowledgments}
+This research made use of Get Physics Done (GPD), developed by Physical Superintelligence PBC (PSI).
+\end{acknowledgments}
+
+\section*{Statements and Declarations}
+
+\textbf{Funding.} The author received no specific funding for this work.
+
+\textbf{Competing interests.} The author declares no competing interests.
+
+\textbf{Data and code availability.} Code and numerical artifacts are available at \url{https://github.com/davidahmann/coherism}. The phase-randomized ensemble is a numerical illustration and is not experimental data.
+
+\textbf{Author contributions.} David Ahmann conceived the question, performed the analysis, and wrote the manuscript.
+
+\bibliographystyle{apsrev4-2}
+\bibliography{coherism_refs}
+
+\end{document}

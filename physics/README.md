@@ -1,118 +1,144 @@
-# Coherism: Controlled Limits and an Analog-Gravity Test
+# A Worked Identifiability Audit in a Homogeneous BEC
 
 [![GitHub](https://img.shields.io/badge/Code-GitHub-blue)](https://github.com/davidahmann/coherism/tree/main/physics)
 
-This directory contains the manuscript and supporting materials for the current Coherism paper.
+This directory contains the manuscript and reproducibility material for
+*A Worked Identifiability Audit of a Stipulated Preparation-Indexed Potential in a Homogeneous Bose--Einstein Condensate*.
 
-## Abstract
+## Claim boundary
 
-The manuscript studies an effective-field-theory extension of semiclassical gravity in which a coarse-grained coherence functional generates an informational stress tensor. The paper focuses on controlled limits and one concrete analog-gravity falsification path. The informational source is fixed by the exact Gaussian-state identity `S(rho||sigma_beta) = beta_H ΔE − ΔS_vN` (relative entropy = free-energy excess over the Hawking-temperature reference), so both coherent and energy-matched thermal injections near a BEC sonic horizon source density modulations at the `delta-rho/rho_0 ~ 10^-6` level. The primary observable is their differential, `ΔA = A_coh − A_th = kappa_eff · ΔS_vN ≈ 2.3 x 10^-7` at the baseline, which directly measures the injected von Neumann entropy and is independent of the Hawking temperature at fixed band occupation. The density-response relation is benchmarked to the hydrodynamic compressibility limit, to a static Gross-Pitaevskii/Bogoliubov linear-response kernel (`0.63%` shift of the differential), and to time-dependent 1D GPE simulations that validate the kernel to `0.5%` and quantify the dominant ordinary-nonlinearity systematic. One-at-a-time `±25%` scans keep `ΔA` above `5 x 10^-8`. A differential below `5 x 10^-8` would falsify the acoustic implementation analyzed in the manuscript, not the broader EFT by itself.
+The paper studies a deliberately conditional model:
 
-## Repository Contents
+1. For a specified finite phonon band and full-support Gibbs reference,
+   `D(rho || sigma_beta) = beta * Delta E - Delta S` exactly.
+2. An ideal displaced Gibbs state and an ideal heated product Gibbs state can
+   be constructed with the same added mean energy. Their relative entropies
+   differ by the entropy increase of the heated state.
+3. A preparation-indexed external potential proportional to that finite-mode relative
+   entropy is then **stipulated**. Its profile, sign, intervention, and coupling
+   `kappa` are free inputs.
+4. At fixed total particle number, a homogeneous stationary GP/BdG kernel maps
+   the imposed potential to a density template with its zero mode removed. The
+   exact localized response is reproduced by independent stationary GP relaxation.
+5. A seeded classical-field example motivates generic nuisance controls only.
+   It is not a matched nuisance model, covariance estimate, or uncertainty floor.
+6. A deterministic two-bin fixture demonstrates both an identifiable nuisance
+   model and complete template absorption.
+7. The present work is a conditional identifiability audit, not a new source law,
+   analogue-gravity model, detection forecast, or gravitational test.
 
-### Manuscript
-- `coherism.tex` - Main LaTeX source
-- `coherism.pdf` - Compiled manuscript
-- `coherism_refs.bib` - Bibliography
-- `cover_letter.tex` - Submission cover letter for *Foundations of Physics*
+The model is not a derivation of gravitational backreaction and does not construct
+an acoustic analogue. No effective metric, flow, horizon, or acoustic propagation
+observable is used.
 
-### Main Reproducibility Material
+## Canonical manuscript files
 
-#### BEC Sonic Horizon Scaling Script
+- `../paper/main.tex` — canonical LaTeX source
+- `coherism.tex` — compatibility symlink to `../paper/main.tex`
+- `../paper/references.bib` — canonical bibliography
+- `coherism_refs.bib` — compatibility symlink to the canonical bibliography
+- `coherism.pdf` — compiled manuscript
+- `cover_letter.tex` and `cover_letter.pdf` — journal cover letter
 
-Implements the illustrative scaling model used in the analog-gravity appendix.
+## Reproducibility material
 
-- `bec_sonic_horizon_simulation.py` - Main simulation code
-- `bec_sonic_horizon_results.png` - Visualization used in the manuscript
-- `bec_sonic_horizon_data.dat` - Output data
-- `bec_sonic_horizon_robustness.dat` - One-at-a-time robustness scan data
+### Finite-mode identity and conditional response
 
-This script is an illustrative implementation of the acoustic ansatz used in the paper. It is not a full time-dependent Gross-Pitaevskii/Bogoliubov simulation, but it does benchmark the density-response step both to the standard compressibility relation and to a direct static GP/BdG linear-response kernel, and it includes a one-at-a-time robustness scan of the differential around a GP-compatible baseline.
+`bec_sonic_horizon_simulation.py` retains its historical filename so old links
+continue to work. It now produces only:
 
-Representative output: `A_coh ~= 1.57 x 10^-6`, `A_th ~= 1.34 x 10^-6`, differential `ΔA ~= 2.3 x 10^-7` (GP/BdG shift `0.63%`); `ΔA` stays above `5 x 10^-8` across all `±25%` scans.
+- the finite-mode relative-entropy arithmetic;
+- coupling-normalized stationary response templates;
+- the prospective mapping from an externally calibrated residual budget to a
+  bound on `|kappa|`; and
+- a mode-count sensitivity table for the exact entropy contrast.
 
-To reproduce:
-
-```bash
-python3 bec_sonic_horizon_simulation.py
-```
-
-#### Time-Dependent 1D GPE Study
-
-- `gpe_protocol_simulation.py` - Split-step 1D GPE solver
-- `gpe_protocol_results.png` - Kernel validation + confound figure used in the manuscript
-- `gpe_protocol_data.dat` - Output data
-
-Two studies: (1) imaginary-time relaxation validates the static GP/BdG response kernel to better than `0.6%` over `k·xi ∈ [0.06, 1.5]`; (2) coherent vs energy-matched phase-randomized injection evolved under the bare GPE (no informational term) quantifies the ordinary state-dependent nonlinear response — the protocol's dominant systematic.
-
-To reproduce:
-
-```bash
-python3 gpe_protocol_simulation.py
-```
-
-### Archived Exploratory Scripts
-
-The repository also contains older exploratory scripts such as `coherism_frw_simulation.py` and `generate_data.py`. These are not part of the current submitted manuscript and should be read as archived exploratory materials rather than as validated results supporting the present paper.
-
-### Build Artifacts
-
-- `coherism.aux`, `coherism.bbl`, `coherism.blg`, `coherism.log`, `coherism.out` - LaTeX build files
-- `coherismNotes.bib` - Auto-generated notes bibliography
-
-## Dependencies
-
-### LaTeX
-
-- `revtex4-2`
-- Standard packages: `amsmath`, `physics`, `tikz`, `pgfplots`, `hyperref`
-
-### Python
-
-- Python 3.8+
-- NumPy
-- Matplotlib
-
-Install dependencies:
+It does not assign a physical value to `kappa`, simulate a sonic horizon, or
+define a detection threshold.
 
 ```bash
-pip install numpy matplotlib
+cd physics
+.venv/bin/python bec_sonic_horizon_simulation.py
 ```
 
-## Compiling the Manuscript
+Tracked outputs:
+
+- `bec_sonic_horizon_results.png`
+- `bec_sonic_horizon_data.dat`
+- `bec_sonic_horizon_robustness.dat`
+
+For the dimensionless illustration `N=1000`, `M=100`, and
+`beta*hbar*omega=2`, the script returns
+`D_displaced=2000`, `D_heated=1709.264420`, and
+`Delta S=290.735580` nats. These are finite-model arithmetic, not absolute
+density predictions.
+
+### Stationary response and generic control motivation
+
+`gpe_protocol_simulation.py` contains three checks on a uniform 1D
+testbed:
+
+- imaginary-time relaxation compared with the analytic homogeneous static
+  GP/BdG kernel; and
+- like-for-like validation of the localized fixed-number profile used in the
+  manuscript; and
+- real-time evolution of deterministic-phase and phase-randomized classical
+  fields with the same amplitude spectrum and a fixed random seed.
+
+The third calculation is not a thermal density operator and is not proven to
+match full nonlinear GP energy exactly. Its order-`10^-3` differential is a
+generic reminder that controls are needed, not a calibrated nuisance floor.
 
 ```bash
-pdflatex -interaction=nonstopmode -output-directory=. coherism.tex
-bibtex coherism
-pdflatex -interaction=nonstopmode -output-directory=. coherism.tex
-pdflatex -interaction=nonstopmode -output-directory=. coherism.tex
+cd physics
+.venv/bin/python gpe_protocol_simulation.py
 ```
 
-Or use `latexmk`:
+Tracked outputs:
+
+- `gpe_protocol_results.png`
+- `gpe_protocol_data.dat`
+
+The current deterministic run gives a maximum nonzero-mode kernel deviation of
+`0.53%`. For the localized profile, the maximum pointwise difference is `0.0226%`
+of peak and the relative L2 difference is `0.0076%`. The illustrative RMS
+preparation differentials are `2.98e-3` (`M=4`) and `3.79e-3` (`M=8`).
+
+### Synthetic identifiability fixture
+
+`identifiability_audit.py` checks the nuisance-projected estimator on two
+declared two-bin cases. An orthogonal nuisance leaves unit projected template
+norm and recovers `kappa_hat=0.25`; a nuisance spanning the template gives zero
+projected norm and fails closed as non-identifiable.
 
 ```bash
-latexmk -pdf coherism.tex
+cd physics
+.venv/bin/python identifiability_audit.py
 ```
 
-## Key Results
+Tracked output: `identifiability_audit_data.dat`.
 
-1. The paper defines a coarse-grained coherence functional whose metric variation produces an informational stress tensor.
-2. Controlled leading-order expressions are obtained in a 1+1D conformal toy model and in weak-field/Rindler limits.
-3. The primary falsification path is an analog-gravity protocol in a BEC sonic horizon.
-4. The coherent-vs-thermal structure of the prediction is derived, not assumed: the exact identity `S(rho||sigma) = beta_H ΔE − ΔS_vN` makes both injections source the stress at `~10^-6`, differing exactly by the injected von Neumann entropy.
-5. The primary observable is the differential `ΔA = kappa_eff · ΔS_vN ≈ 2.3 x 10^-7`, independent of the Hawking temperature at fixed band occupation, with a `ΔS_vN` bandwidth scaling that serves as an internal consistency knob.
-6. One-at-a-time `±25%` scans keep `ΔA` above the `5 x 10^-8` falsification threshold; the static GP/BdG correction stays below `0.9%`, and time-dependent GPE relaxation validates the kernel to `0.5%`.
-7. Time-dependent GPE simulations quantify the dominant systematic: ordinary state-dependent nonlinear response at matched energy, to be discriminated by the static horizon-pinned profile and the bandwidth scaling.
-8. A differential below `5 x 10^-8` would falsify the specific acoustic implementation analyzed in the manuscript, not the full EFT by itself.
-9. The detector-model appendix motivates, but does not uniquely derive, the geometry-dependent GKLS structure used phenomenologically in the main text; consistency locking of the sourcing and dissipation sectors (à la hybrid classical-quantum dynamics) is identified as the key open theoretical task.
+## Build
 
-## License
+The locked Python dependencies are in `../paper/requirements-lock.txt`.
 
-This work is licensed under [CC-BY 4.0](../LICENSE).
+```bash
+cd physics
+SOURCE_DATE_EPOCH=1781222400 latexmk -g -pdf -interaction=nonstopmode -halt-on-error coherism.tex
+SOURCE_DATE_EPOCH=1781222400 latexmk -g -pdf -interaction=nonstopmode -halt-on-error cover_letter.tex
+```
 
-## Contact
+## Archived exploratory material
+
+`coherism_frw_simulation.py`, `coherism_frw_data.dat`,
+`coherism_frw_results.png`, `generate_data.py`, `simulation_data.dat`, and
+`toy_coherist_friction.png` are retained as project history. They are not part
+of the current claim set or submission evidence.
+
+## License and contact
+
+This work is licensed under [CC BY 4.0](../LICENSE).
 
 David Ahmann  
 dahmann@lumyn.cc  
-ORCID: [0009-0006-4066-8760](https://orcid.org/0009-0006-4066-8760)  
-Independent Researcher, Toronto, Canada
+[ORCID 0009-0006-4066-8760](https://orcid.org/0009-0006-4066-8760)

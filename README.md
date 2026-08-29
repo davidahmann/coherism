@@ -1,47 +1,42 @@
-# Coherism & ALFM: The Feedback Loop Project
+# Coherism and ALFM Research Repository
 
 [![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
 
-This repository contains the source code and manuscripts for two parallel research initiatives exploring the role of **feedback loops** in fundamental physics and artificial intelligence.
-
-While operating at opposite ends of the abstraction spectrum—one at the theoretical frontier of quantum gravity, the other at the practical frontier of enterprise AI—both projects share a core intellectual DNA: the emergence of structure through error correction.
+This repository contains independent physics and artificial-intelligence research projects. Each project states its own claim boundary; the shared repository name is not evidence of a common physical theory.
 
 ## 📂 Repository Structure
 
 ### 1. `physics/` - Coherism
-**Title:** *Coherence-Dependent Backreaction in Semiclassical and Analog Gravity: Controlled Limits and an Analog-Gravity Test*
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17868263.svg)](https://doi.org/10.5281/zenodo.17868263)
+**Title:** *A Worked Identifiability Audit of a Stipulated Preparation-Indexed Potential in a Homogeneous Bose--Einstein Condensate*
 
-This directory contains the LaTeX source for the coherence-functional EFT paper, prepared for *Foundations of Physics*.
+This directory contains a cautionary methods note and its reproducibility material. A formal GPD review found that the work is not a *Foundations of Physics* contribution without genuinely new science; the current paper is intentionally narrower.
 
-*   **The Big Idea:** An informational stress tensor Θ_μν augments semiclassical gravity, coupling quantum-state mismatch (relative entropy to a geometry-adapted reference) to spacetime geometry in a testable way.
-*   **Key Concept:** The exact identity `S(ρ‖σ_β) = β_H ΔE − ΔS_vN` fixes the source: relative entropy is the free-energy excess over the Hawking-temperature reference, so coherent and energy-matched thermal injections differ exactly by the injected von Neumann entropy.
-*   **Primary Prediction:** BEC near-horizon density modulations ~10⁻⁶ for both injections; the observable is the differential ΔA = κ_eff·ΔS_vN ≈ 2.3×10⁻⁷, which directly measures injected entropy.
-*   **Falsification:** Differential below 5×10⁻⁸ would falsify the acoustic implementation.
+*   **Exact result:** For a specified finite phonon band and full-support Gibbs reference, `D(ρ‖σ_β) = β ΔE − ΔS`. Ideal equal-energy displaced-thermal and heated product-thermal preparations therefore differ in relative entropy by the added entropy of the heated preparation.
+*   **Stipulated step:** A preparation-indexed external potential proportional to that finite-mode relative entropy is assigned with a free coupling `κ`. The map, profile, sign, coupling, and intervention are not derived from condensate physics.
+*   **Identifiability result:** A fixed-particle-number stationary GP/BdG kernel propagates the imposed potential. The same localized response is reproduced by independent stationary GP relaxation. A separate seeded classical-field calculation is generic control motivation, not a matched nuisance model, thermal state, or calibrated noise floor.
+*   **Prospective output:** Given a future, independently calibrated residual budget, the model defines a conditional bound on `|κ|`. It does not provide a detection forecast or falsification threshold.
 *   **Key Results:**
-    *   Controlled limits: 1+1D conformal (Polyakov), weak-field/Rindler; standard semiclassical behaviour recovered at ρ ≈ σ[g]
-    *   Coherent-vs-thermal structure of the analog prediction derived (not assumed) from the free-energy identity
-    *   Density-response kernel validated against time-dependent 1D GPE to 0.5%; dominant ordinary-nonlinearity systematic quantified
-    *   Detector-model (Unruh-DeWitt) appendix motivating the geometry-dependent GKLS structure
-    *   WEP state-dependence owned as a structural constraint channel (η_coh ~ 10⁻³⁰·α, far below current bounds)
+    *   Finite-mode Gibbs-reference identity and ideal preparation contrast
+    *   Coupling-normalized fixed-number response template
+    *   Like-for-like localized-profile agreement between the analytic kernel and imaginary-time GP relaxation
+    *   Explicit intervention, preparation, zero-mode, nuisance, covariance, and estimator limitations
+    *   No analogue-gravity or gravitational inference
 *   **Files:**
-    *   `coherism.tex`: Main manuscript (revtex4-2, PRD format)
+    *   `coherism.tex`: Symlink to the canonical `paper/main.tex` manuscript source
     *   `coherism_refs.bib`: Bibliography
-    *   `bec_sonic_horizon_simulation.py`: Analog scaling model + differential observable + robustness scans
-    *   `gpe_protocol_simulation.py`: Time-dependent 1D GPE kernel validation + confound study
-    *   `coherism_frw_simulation.py`, `generate_data.py`: Archived exploratory scripts (not part of the submission)
-    *   `predictions.md`: Falsifiable predictions and experimental protocols
+    *   `bec_sonic_horizon_simulation.py`: Legacy-named finite-mode identity, coupling-normalized response, and prospective-bound calculation
+    *   `gpe_protocol_simulation.py`: Nonzero-mode and localized fixed-number response checks plus a seeded classical-field illustration
+    *   `coherism_frw_simulation.py`, `generate_data.py`: Archived exploratory scripts that do not support the current manuscript
+    *   `predictions.md`: Current claim status and prospective validation contract
 
-#### 🧬 The Feedback Loop (Coherism)
+#### Model boundary
 ```mermaid
 graph TD
-    G[Spacetime Geometry g] -->|Induces| S[Reference State σ]
-    S -->|Compared with| R[Quantum State ρ]
-    R -->|Relative Entropy| C[Coherence Functional]
-    C -->|Variation δg| T[Informational Stress]
-    C -->|Variation δρ| L[Open System Evolution]
-    T -->|Backreaction| G
-    L -->|State Update| R
+    R[Finite-band preparation ρ] --> D[Exact relative entropy D(ρ‖σβ)]
+    D -->|stipulated free coupling κ| S[State-indexed external potential]
+    S --> K[Fixed-number stationary GP/BdG template]
+    K --> I{Identifiable after calibrated nuisances?}
+    I -->|No current evidence| B[Prospective bound only]
 ```
 
 ### 2. `alfm/` - ALFM (AI Systems)
@@ -115,7 +110,7 @@ graph LR
 
 ## 🚀 Compilation
 
-Both papers are written in LaTeX and use `revtex4-2`.
+The manuscripts are written in LaTeX; the physics and ALFM manuscripts use `revtex4-2`.
 
 **To compile the Physics paper:**
 ```bash
@@ -147,12 +142,9 @@ pdflatex cover_letter.tex
 pdflatex data_availability.tex
 ```
 
-## 🔗 The Connection
+## 🔗 Repository relationship
 
-*   **Coherism (Physics):** Gravity is spacetime correcting for *entropic errors*.
-*   **ALFM (AI):** Intelligence is an AI correcting for *prediction errors*.
-
-Both propose a "Universal Theory of Feedback"—one applied to the fabric of the universe, the other to the fabric of artificial intelligence.
+The physics and AI projects are maintained together for convenience. They do not jointly establish a universal feedback theory, and results from one project are not evidence for the other.
 
 ## 📄 License
 

@@ -1,0 +1,4 @@
+# Deterministic GLS identifiability fixture
+# scenario projected_template_norm kappa_hat identifiable
+orthogonal_nuisance 1.000000000000 0.250000000000 true
+template_absorbed 0.000000000000 nan false

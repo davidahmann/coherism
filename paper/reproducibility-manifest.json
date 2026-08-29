@@ -1,31 +1,27 @@
 {
-  "paper_title": "Coherence-Dependent Backreaction in Semiclassical and Analog Gravity: Controlled Limits and an Analog-Gravity Test",
-  "date": "2026-06-12",
+  "paper_title": "A Worked Identifiability Audit of a Stipulated Preparation-Indexed Potential in a Homogeneous Bose--Einstein Condensate",
+  "date": "2026-08-28",
   "contact": "dahmann@lumyn.cc",
   "environment": {
     "python_version": "3.14.0",
     "package_manager": "pip",
-    "virtual_environment": "physics/.venv",
+    "virtual_environment": "../physics/.venv",
     "required_packages": [
       {
         "package": "numpy",
         "version": "2.3.5",
-        "purpose": "Deterministic array evaluation for the analog scaling model, robustness scans, and the 1D GPE solver"
+        "purpose": "Finite-mode arithmetic, Fourier response, and one-dimensional GP evolution"
       },
       {
         "package": "matplotlib",
         "version": "3.10.8",
-        "purpose": "Generation of the manuscript figures"
+        "purpose": "Generation of both manuscript figures"
       }
     ],
-    "lock_file": "paper/requirements-lock.txt",
+    "lock_file": "requirements-lock.txt",
     "system_requirements": {
-      "operating_systems": [
-        "macOS 15"
-      ],
-      "architectures": [
-        "arm64"
-      ],
+      "operating_systems": ["macOS 26.6.2"],
+      "architectures": ["arm64"],
       "compiler": "",
       "gpu": ""
     }
@@ -33,77 +29,98 @@
   "input_data": [],
   "generated_data": [
     {
-      "name": "bec-sonic-horizon-profile",
-      "script": "physics/bec_sonic_horizon_simulation.py",
+      "name": "finite-mode-fixed-number-response-table",
+      "script": "../physics/bec_sonic_horizon_simulation.py",
       "parameters": {
-        "n_0": "1e20 m^-3",
-        "xi": "0.3 um",
-        "c_s": "1.73 mm/s",
-        "L_coh": "10 um",
-        "kappa_H": "8.2e2 1/s (T_H ~ 1.0 nK)",
-        "x_bar": "2.0",
-        "N_phonon": "1000",
-        "M_modes": "100"
+        "injected_phonons": "1000",
+        "finite_band_modes": "100",
+        "beta_hbar_omega": "2.0",
+        "grid": "N=2048, periodic length=400",
+        "healing_length": "1/sqrt(2)",
+        "source_profile": "exp(-abs(x)/10)",
+        "particle_number_constraint": "fixed N; k=0 removed",
+        "residual_budget_range": "1e-6 to 1e-2"
       },
-      "size": "32.6 KB",
-      "checksum_sha256": "98ab84cb73db714966f53117ab90bea2e92038e02004c565abe818428ae61a0f"
+      "size": "171929 B",
+      "checksum_sha256": "216b138409f3eb5cc13bb1bc9d69191fe7cc2ebe67abaef50cba7702344100de"
     },
     {
-      "name": "bec-robustness-scan",
-      "script": "physics/bec_sonic_horizon_simulation.py",
+      "name": "finite-mode-count-sensitivity-table",
+      "script": "../physics/bec_sonic_horizon_simulation.py",
       "parameters": {
-        "scan_range": "0.75x to 1.25x baseline",
-        "scan_points": "11",
-        "scanned": "n0, xi, L_coh, N_phonon, M, T_H, c_s(GP)"
+        "mode_count_range": "1 to 1000",
+        "sample_count": "61",
+        "injected_phonons": "1000",
+        "beta_hbar_omega": "2.0"
       },
-      "size": "2.3 KB",
-      "checksum_sha256": "7647bace78eb262f9090e4fd007ae9fad7798402d83bcbe091b37f5caaf9a847"
+      "size": "4896 B",
+      "checksum_sha256": "c6e4d44ed8001d94f78226124144e4fcbfa71015320692d557f6e72b2d94fcf0"
     },
     {
-      "name": "gpe-protocol-study",
-      "script": "physics/gpe_protocol_simulation.py",
+      "name": "stationary-gp-validation-and-generic-phase-table",
+      "script": "../physics/gpe_protocol_simulation.py",
       "parameters": {
-        "grid": "NX=2048, L=400 (hbar=m=1, g=n0=1)",
-        "kernel_validation": "k*xi in [0.06, 1.5], imaginary-time relaxation",
-        "confound": "coherent vs 16-realization phase-randomized ensemble, M=4 and M=8, first-order dn/n ~ 0.1",
+        "grid": "NX=2048, L=400, hbar=m=1, g=n0=1",
+        "kernel_validation": "six nonzero k*xi points from 0.056 to 1.499",
+        "localized_validation": "same exponential profile, grid, and fixed-N zero-mode rule",
+        "phase_illustration": "aligned phases versus 16 randomized realizations for M=4 and M=8",
+        "time_average": "40-unit settling interval plus 160-unit averaging interval",
         "rng_seed": "20260610"
       },
-      "size": "82.6 KB",
-      "checksum_sha256": "70e644eac4e00d22e57452bddfb4a071dc817f69237b5a5164aa39c954f1297d"
+      "size": "167142 B",
+      "checksum_sha256": "6cee53b2da61dec150ce1e778b66d2c63faf88e690c2c41525b0922989a1b3c8"
+    },
+    {
+      "name": "synthetic-gls-identifiability-fixture",
+      "script": "../physics/identifiability_audit.py",
+      "parameters": {
+        "covariance": "2x2 identity",
+        "template": "[1, 0]",
+        "observation": "0.25 times the template",
+        "identifiable_nuisance": "[0, 1]",
+        "absorbing_nuisance": "[1, 0]"
+      },
+      "size": "200 B",
+      "checksum_sha256": "3093e68bb0687071084f3a8e2e6ae79a62fb48462c78759cd83fca65d0eaed40"
     }
   ],
   "external_dependencies": [],
   "execution_steps": [
     {
-      "name": "run-bec-simulation",
+      "name": "run-finite-mode-source-study",
       "command": "cd physics && .venv/bin/python bec_sonic_horizon_simulation.py",
       "outputs": [
-        "physics/bec_sonic_horizon_results.png",
-        "physics/bec_sonic_horizon_data.dat",
-        "physics/bec_sonic_horizon_robustness.dat"
+        "../physics/bec_sonic_horizon_results.png",
+        "../physics/bec_sonic_horizon_data.dat",
+        "../physics/bec_sonic_horizon_robustness.dat"
       ],
       "stochastic": false,
       "expected_wall_time": "< 1 min",
       "parallel_group": ""
     },
     {
-      "name": "run-gpe-study",
+      "name": "run-gp-study",
       "command": "cd physics && .venv/bin/python gpe_protocol_simulation.py",
       "outputs": [
-        "physics/gpe_protocol_results.png",
-        "physics/gpe_protocol_data.dat"
+        "../physics/gpe_protocol_results.png",
+        "../physics/gpe_protocol_data.dat"
       ],
+      "stochastic": true,
+      "expected_wall_time": "< 1 min",
+      "parallel_group": ""
+    },
+    {
+      "name": "run-identifiability-fixture",
+      "command": "cd physics && .venv/bin/python identifiability_audit.py",
+      "outputs": ["../physics/identifiability_audit_data.dat"],
       "stochastic": false,
       "expected_wall_time": "< 1 min",
-      "parallel_group": "",
-      "notes": "Seeded RNG (20260610) makes the phase-randomized ensemble deterministic."
+      "parallel_group": ""
     },
     {
       "name": "build-manuscript",
       "command": "cd physics && SOURCE_DATE_EPOCH=1781222400 latexmk -g -pdf -interaction=nonstopmode -halt-on-error coherism.tex",
-      "outputs": [
-        "physics/coherism.pdf"
-      ],
+      "outputs": ["../physics/coherism.pdf"],
       "stochastic": false,
       "expected_wall_time": "< 1 min",
       "parallel_group": ""
@@ -111,9 +128,7 @@
     {
       "name": "build-cover-letter",
       "command": "cd physics && SOURCE_DATE_EPOCH=1781222400 latexmk -g -pdf -interaction=nonstopmode -halt-on-error cover_letter.tex",
-      "outputs": [
-        "physics/cover_letter.pdf"
-      ],
+      "outputs": ["../physics/cover_letter.pdf"],
       "stochastic": false,
       "expected_wall_time": "< 1 min",
       "parallel_group": ""
@@ -121,115 +136,137 @@
   ],
   "expected_results": [
     {
-      "quantity": "A_coh = max_{|r-r_H|<=L_coh} |delta rho / rho_0| (coherent, hydro)",
-      "expected_value": "1.57e-6",
-      "tolerance": "deterministic script output for the manuscript baseline",
-      "script": "physics/bec_sonic_horizon_simulation.py",
-      "figure_or_table": "Fig. bec-simulation"
+      "quantity": "finite-mode relative-entropy fixtures",
+      "expected_value": "D_displaced=2000.000000 nats; D_heated=1709.264420 nats; Delta S=290.735580 nats",
+      "tolerance": "absolute error < 5e-7 nats",
+      "script": "../physics/bec_sonic_horizon_simulation.py",
+      "figure_or_table": "Figure 1 and Table I"
     },
     {
-      "quantity": "A_th (energy-matched thermal, hydro)",
-      "expected_value": "1.34e-6",
-      "tolerance": "deterministic script output; s_th = beta*dE - dS_vN with dS_vN ~ 291 nats",
-      "script": "physics/bec_sonic_horizon_simulation.py",
-      "figure_or_table": "Fig. bec-simulation"
+      "quantity": "fixed-number localized response peak and transfer factor",
+      "expected_value": "0.902969201 and 262.525274",
+      "tolerance": "relative error < 1e-8",
+      "script": "../physics/bec_sonic_horizon_simulation.py",
+      "figure_or_table": "Figure 1 and Table I"
     },
     {
-      "quantity": "Delta A = A_coh - A_th (primary observable)",
-      "expected_value": "2.29e-7",
-      "tolerance": "deterministic; falsification threshold 5e-8; scans stay in [6.0e-8, 1.27e-6]",
-      "script": "physics/bec_sonic_horizon_simulation.py",
-      "figure_or_table": "Fig. bec-simulation"
+      "quantity": "prospective algebraic bound range for assumed residual budgets",
+      "expected_value": "3.809e-9 to 3.809e-5 for residual budgets 1e-6 to 1e-2",
+      "tolerance": "rounding to four significant figures",
+      "script": "../physics/bec_sonic_horizon_simulation.py",
+      "figure_or_table": "Figure 1"
     },
     {
-      "quantity": "static GP/BdG shift of Delta A relative to hydro",
-      "expected_value": "0.63%",
-      "tolerance": "< 0.9% across one-at-a-time +/-25% scans",
-      "script": "physics/bec_sonic_horizon_simulation.py",
-      "figure_or_table": "Fig. bec-simulation"
-    },
-    {
-      "quantity": "max deviation of imaginary-time GPE response from analytic kernel",
+      "quantity": "maximum nonzero-mode stationary-kernel deviation",
       "expected_value": "0.53%",
-      "tolerance": "< 0.6% over k*xi in [0.06, 1.5]",
-      "script": "physics/gpe_protocol_simulation.py",
-      "figure_or_table": "Fig. gpe-study (left)"
+      "tolerance": "< 0.6% over the six reported points",
+      "script": "../physics/gpe_protocol_simulation.py",
+      "figure_or_table": "Figure 2, left"
     },
     {
-      "quantity": "ordinary-GP confound differential (coherent minus phase-randomized, matched energy, no informational term)",
-      "expected_value": "rms 3.0e-3 (M=4), 3.8e-3 (M=8) at first-order dn/n ~ 0.1",
-      "tolerance": "order-of-magnitude systematic quote; seeded ensemble",
-      "script": "physics/gpe_protocol_simulation.py",
-      "figure_or_table": "Fig. gpe-study (right)"
+      "quantity": "localized fixed-number validation",
+      "expected_value": "maximum difference/peak=2.258e-4; relative L2 difference=7.620e-5",
+      "tolerance": "both relative values < 3e-4",
+      "script": "../physics/gpe_protocol_simulation.py",
+      "figure_or_table": "Figure 2, center; Table I"
+    },
+    {
+      "quantity": "seeded generic phase illustration",
+      "expected_value": "rms 2.98e-3 (M=4) and 3.79e-3 (M=8); maxima 6.48e-3 and 1.123e-2",
+      "tolerance": "seeded replay agrees within 5e-6 absolute",
+      "script": "../physics/gpe_protocol_simulation.py",
+      "figure_or_table": "Figure 2, right"
+    },
+    {
+      "quantity": "synthetic GLS identifiability gate",
+      "expected_value": "orthogonal nuisance: projected norm=1 and kappa_hat=0.25; template absorbed: projected norm=0 and non-identifiable",
+      "tolerance": "absolute error < 1e-12",
+      "script": "../physics/identifiability_audit.py",
+      "figure_or_table": "Section V and Table II"
     }
   ],
   "output_files": [
     {
-      "path": "physics/bec_sonic_horizon_results.png",
-      "description": "Main analog-gravity figure used in the manuscript",
-      "approximate_size": "170170 B",
-      "checksum_sha256": "1943e3339f3afdc3023a9cce083605e93b552b82c9d92ae4bfd1ae58b3e6e507",
+      "path": "../physics/bec_sonic_horizon_results.png",
+      "description": "Fixed-number response templates and prospective coupling transfer function",
+      "approximate_size": "107569 B",
+      "checksum_sha256": "5805a4eed6fece5e4f8807b08b36db3e7bc38f92afe365c7445525b7b6b03691",
       "approximate_checksum": false
     },
     {
-      "path": "physics/bec_sonic_horizon_data.dat",
-      "description": "Radial profile data: coherent (hydro, GP/BdG), thermal, differential",
-      "approximate_size": "32596 B",
-      "checksum_sha256": "98ab84cb73db714966f53117ab90bea2e92038e02004c565abe818428ae61a0f",
+      "path": "../physics/bec_sonic_horizon_data.dat",
+      "description": "Coupling-normalized fixed-number stationary response profiles",
+      "approximate_size": "171929 B",
+      "checksum_sha256": "216b138409f3eb5cc13bb1bc9d69191fe7cc2ebe67abaef50cba7702344100de",
       "approximate_checksum": false
     },
     {
-      "path": "physics/bec_sonic_horizon_robustness.dat",
-      "description": "Robustness scan data: A_coh and Delta A per scanned parameter",
-      "approximate_size": "2304 B",
-      "checksum_sha256": "7647bace78eb262f9090e4fd007ae9fad7798402d83bcbe091b37f5caaf9a847",
+      "path": "../physics/bec_sonic_horizon_robustness.dat",
+      "description": "Finite-mode count sensitivity table",
+      "approximate_size": "4896 B",
+      "checksum_sha256": "c6e4d44ed8001d94f78226124144e4fcbfa71015320692d557f6e72b2d94fcf0",
       "approximate_checksum": false
     },
     {
-      "path": "physics/gpe_protocol_results.png",
-      "description": "Time-dependent 1D GPE study figure (kernel validation + confound)",
-      "approximate_size": "164851 B",
-      "checksum_sha256": "fd9060f42178a2a9f407253d9786c9e2643b9226dc18fe3a2d49e8cad1ae6bde",
+      "path": "../physics/gpe_protocol_results.png",
+      "description": "Stationary response checks and generic preparation illustration",
+      "approximate_size": "192410 B",
+      "checksum_sha256": "3889b7d61b5c24ac98ee60d6599249e791997a0de6e8079564414d80d430f7f2",
       "approximate_checksum": false
     },
     {
-      "path": "physics/gpe_protocol_data.dat",
-      "description": "Confound differential profiles and kernel-validation summary",
-      "approximate_size": "82585 B",
-      "checksum_sha256": "70e644eac4e00d22e57452bddfb4a071dc817f69237b5a5164aa39c954f1297d",
+      "path": "../physics/gpe_protocol_data.dat",
+      "description": "Nonzero-mode and localized fixed-number validation plus seeded phase profiles",
+      "approximate_size": "167142 B",
+      "checksum_sha256": "6cee53b2da61dec150ce1e778b66d2c63faf88e690c2c41525b0922989a1b3c8",
       "approximate_checksum": false
     },
     {
-      "path": "physics/coherism.pdf",
-      "description": "Compiled manuscript PDF (18 pages)",
-      "approximate_size": "836212 B",
-      "checksum_sha256": "c744e9f7f4d3998587af3501cc4e4cbf9fc1fd0f7fbb270b775826c30d927635",
+      "path": "../physics/identifiability_audit_data.dat",
+      "description": "Deterministic two-bin GLS identifiable and template-absorbed fixtures",
+      "approximate_size": "200 B",
+      "checksum_sha256": "3093e68bb0687071084f3a8e2e6ae79a62fb48462c78759cd83fca65d0eaed40",
       "approximate_checksum": false
     },
     {
-      "path": "physics/cover_letter.pdf",
-      "description": "Compiled cover letter PDF",
-      "approximate_size": "100754 B",
-      "checksum_sha256": "e382789ccc8e1f8cadc135445332af1030055265ed93f43e709df82d50840274",
+      "path": "../physics/coherism.pdf",
+      "description": "Compiled six-page methods manuscript",
+      "approximate_size": "640980 B",
+      "checksum_sha256": "a2adf3eeff72c621ef0c541137845f585ee41c23a01d78b1cc945ebb2c9aca96",
+      "approximate_checksum": false
+    },
+    {
+      "path": "../physics/cover_letter.pdf",
+      "description": "Compiled one-page venue-neutral draft cover letter",
+      "approximate_size": "40635 B",
+      "checksum_sha256": "a4e214816d14357edd1c791be97994c54e81f3fd9ba848593380fb61df59baae",
       "approximate_checksum": false
     }
   ],
   "resource_requirements": [
     {
-      "step": "run-bec-simulation",
+      "step": "run-finite-mode-source-study",
       "cpu_cores": 1,
       "memory_gb": 1.0,
       "gpu": "",
       "wall_time": "< 1 min",
-      "notes": "Deterministic NumPy/Matplotlib run on a laptop"
+      "notes": "Deterministic NumPy and Matplotlib run"
     },
     {
-      "step": "run-gpe-study",
+      "step": "run-gp-study",
       "cpu_cores": 1,
       "memory_gb": 1.0,
       "gpu": "",
       "wall_time": "< 1 min",
-      "notes": "Split-step 1D GPE, seeded RNG; ~25 s on Apple Silicon"
+      "notes": "Seeded split-step one-dimensional GP study"
+    },
+    {
+      "step": "run-identifiability-fixture",
+      "cpu_cores": 1,
+      "memory_gb": 1.0,
+      "gpu": "",
+      "wall_time": "< 1 min",
+      "notes": "Deterministic two-bin NumPy assertions"
     },
     {
       "step": "build-manuscript",
@@ -237,7 +274,7 @@
       "memory_gb": 1.0,
       "gpu": "",
       "wall_time": "< 1 min",
-      "notes": "Requires local LaTeX toolchain with revtex4-2"
+      "notes": "Requires latexmk, BibTeX, and revtex4-2"
     },
     {
       "step": "build-cover-letter",
@@ -245,35 +282,38 @@
       "memory_gb": 1.0,
       "gpu": "",
       "wall_time": "< 1 min",
-      "notes": "Requires local LaTeX toolchain"
+      "notes": "Requires latexmk"
     }
   ],
-  "minimum_viable": "1 CPU core, 1 GB RAM, local LaTeX installation, and a Python environment matching paper/requirements-lock.txt",
-  "recommended": "Repo-local .venv plus local latexmk/revtex4-2 on macOS arm64",
+  "minimum_viable": "1 CPU core, 1 GB RAM, a local LaTeX installation, and the pinned Python packages",
+  "recommended": "The repository-local physics/.venv plus latexmk and revtex4-2 on macOS arm64",
   "random_seeds": [
-    20260610
+    {
+      "computation": "run-gp-study",
+      "seed": "20260610",
+      "purpose": "Reproducible randomized-phase classical-field illustration"
+    }
   ],
-  "seeding_strategy": "The GPE confound ensemble uses numpy.random.default_rng(20260610); all other steps are deterministic.",
+  "seeding_strategy": "numpy.random.default_rng(20260610) is used for the randomized-phase illustration; all other calculations are deterministic.",
   "known_platform_differences": [
     {
       "platform": "Different LaTeX distributions",
-      "issue": "PDF layout and auxiliary files may differ slightly across TeX installations.",
-      "workaround": "Compare numerical outputs and cited values, not byte-for-byte layout, when checking manuscript content."
+      "issue": "PDF metadata, line breaks, and byte hashes may differ across TeX installations.",
+      "workaround": "Check page content, numerical outputs, citations, and references rather than requiring a cross-platform PDF byte match."
     },
     {
-      "platform": "Different BLAS/FFT backends",
-      "issue": "Floating-point reductions in the GPE solver may differ at the 1e-12 level across platforms.",
-      "workaround": "Compare quoted percentages and orders of magnitude, not full-precision floats."
+      "platform": "Different BLAS or FFT backends",
+      "issue": "Floating-point reductions may vary below the reported tolerance.",
+      "workaround": "Use the declared numerical tolerances rather than full-precision byte comparison for regenerated data."
     }
   ],
   "verification_steps": [
-    "Run both simulation scripts and confirm the generated figure/data files are regenerated without errors.",
-    "Rebuild the manuscript and confirm the PDF compiles cleanly without undefined references or citations.",
-    "Confirm A_coh = 1.57e-6, A_th = 1.34e-6, Delta A = 2.29e-7 at the baseline, and that the scan range matches [6.0e-8, 1.27e-6].",
-    "Confirm the static GP/BdG benchmark shifts the differential by 0.63% at baseline (< 0.9% in scans).",
-    "Confirm the imaginary-time GPE kernel validation deviates < 0.6% from the analytic kernel over the quoted band."
+    "Rerun all three Python scripts in the pinned repository-local environment.",
+    "Compare the finite-mode, fixed-number, stationary-validation, synthetic-identifiability, and seeded illustration values against the declared tolerances.",
+    "Rebuild the manuscript and cover letter and scan for undefined citations, references, LaTeX errors, fatal errors, and overfull boxes.",
+    "Render and inspect every PDF page and both generated figures for clipping, overlap, stale claims, and legibility."
   ],
-  "manifest_created": "2026-03-22T15:54:37Z",
-  "last_verified": "2026-06-12T00:00:00Z",
+  "manifest_created": "2026-08-29T01:11:41Z",
+  "last_verified": "2026-08-29T01:11:41Z",
   "last_verified_platform": "Darwin arm64"
 }

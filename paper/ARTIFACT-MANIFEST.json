@@ -1,41 +1,44 @@
 {
-  "version": 2,
-  "paper_title": "Coherence-Dependent Backreaction in Semiclassical and Analog Gravity: Controlled Limits and an Analog-Gravity Test",
-  "journal": "foundations_of_physics",
-  "created_at": "2026-03-22T15:54:37Z",
-  "updated_at": "2026-06-12T00:00:00Z",
-  "revision_note": "Free-energy informational source (exact Gaussian-state identity), differential observable Delta A, time-dependent 1D GPE kernel validation and confound study, hybrid-dynamics and WEP discussion, 8 new references, deterministic rebuild metadata.",
+  "version": 1,
+  "paper_title": "A Worked Identifiability Audit of a Stipulated Preparation-Indexed Potential in a Homogeneous Bose--Einstein Condensate",
+  "journal": "prl",
+  "created_at": "2026-08-29T01:12:54+00:00",
+  "manuscript_sha256": "16eedd184a3488b6ac2bf5f077ad86a359c90f4d397bb585b7c4be8144961f75",
+  "manuscript_mtime_ns": 1787965841590294467,
   "artifacts": [
     {
       "artifact_id": "tex-paper",
       "category": "tex",
       "path": "main.tex",
-      "sha256": "2061cd67ccc29f1f7ca33841bf6d2c8cb3d7f1b4eef01e9da14404d4d4b9e85a",
-      "produced_by": "manual-review-bootstrap",
+      "sha256": "16eedd184a3488b6ac2bf5f077ad86a359c90f4d397bb585b7c4be8144961f75",
+      "produced_by": "gpd-write-paper:round-7-response",
       "sources": [],
       "metadata": {
-        "upstream_path": "physics/coherism.tex",
-        "role": "canonical manuscript source (symlink to upstream)"
+        "target_venue": "methods or tutorial venue not yet selected",
+        "builder_profile": "prl",
+        "section_count": 6,
+        "appendix_count": 1,
+        "figure_count": 2
       }
     },
     {
       "artifact_id": "bib-references",
       "category": "bib",
       "path": "references.bib",
-      "sha256": "140b99c87b10c210f3b5f89ef29926b2fd374e4b66e1ac5d9d2e13701fbe11ce",
-      "produced_by": "manual-review-bootstrap",
+      "sha256": "d779b400db66541e4017d576a9360705a9c246f6e7bb67811f14de33e476c600",
+      "produced_by": "gpd-write-paper:bibliography-repair",
       "sources": [],
       "metadata": {
-        "upstream_path": "physics/coherism_refs.bib",
-        "entry_count": 37
+        "resolved_sources": 9,
+        "failed_sources": 0
       }
     },
     {
       "artifact_id": "audit-bibliography",
       "category": "audit",
       "path": "BIBLIOGRAPHY-AUDIT.json",
-      "sha256": "685529f04bf284ea6b6fa314d763c7d1b0024378846cc6fdecc2b97dd837413b",
-      "produced_by": "manual-review-bootstrap",
+      "sha256": "3476c33d45c03698a37cd9a9b0ba29fd427dac21a41e901b32bf36f01862ed55",
+      "produced_by": "gpd-write-paper:citation-audit",
       "sources": [
         {
           "path": "references.bib",
@@ -43,103 +46,23 @@
         }
       ],
       "metadata": {
-        "scope": "manuscript-cited sources",
-        "expected_clean": true,
-        "note": "audit refreshed 2026-06-12 for all 37 bibliography entries; DOI-backed article entries were checked against Crossref metadata except Zenodo, which was checked by direct DOI resolution; non-DOI books were checked by publisher URLs"
+        "total_sources": 9,
+        "resolved_sources": 9,
+        "partial_sources": 0,
+        "unverified_sources": 0,
+        "failed_sources": 0
       }
     },
     {
-      "artifact_id": "figure-bec-main",
-      "category": "figure",
-      "path": "../physics/bec_sonic_horizon_results.png",
-      "sha256": "1943e3339f3afdc3023a9cce083605e93b552b82c9d92ae4bfd1ae58b3e6e507",
-      "produced_by": "physics/bec_sonic_horizon_simulation.py",
-      "sources": [
-        {
-          "path": "../physics/bec_sonic_horizon_simulation.py",
-          "role": "source-script"
-        }
-      ],
-      "metadata": {
-        "label": "fig:bec-simulation",
-        "role": "main analog-gravity figure: coherent/thermal/differential profiles and Delta A robustness scan"
-      }
-    },
-    {
-      "artifact_id": "data-bec-profile",
+      "artifact_id": "audit-citations",
       "category": "audit",
-      "path": "../physics/bec_sonic_horizon_data.dat",
-      "sha256": "98ab84cb73db714966f53117ab90bea2e92038e02004c565abe818428ae61a0f",
-      "produced_by": "physics/bec_sonic_horizon_simulation.py",
-      "sources": [
-        {
-          "path": "../physics/bec_sonic_horizon_simulation.py",
-          "role": "source-script"
-        }
-      ],
-      "metadata": {
-        "role": "radial profile data: coherent (hydro and static GP/BdG), thermal, and differential columns"
-      }
-    },
-    {
-      "artifact_id": "data-bec-robustness",
-      "category": "audit",
-      "path": "../physics/bec_sonic_horizon_robustness.dat",
-      "sha256": "7647bace78eb262f9090e4fd007ae9fad7798402d83bcbe091b37f5caaf9a847",
-      "produced_by": "physics/bec_sonic_horizon_simulation.py",
-      "sources": [
-        {
-          "path": "../physics/bec_sonic_horizon_simulation.py",
-          "role": "source-script"
-        }
-      ],
-      "metadata": {
-        "role": "one-at-a-time robustness scan of A_coh and Delta A over n0, xi, L_coh, N_phonon, M, T_H, c_s(GP)"
-      }
-    },
-    {
-      "artifact_id": "figure-gpe-study",
-      "category": "figure",
-      "path": "../physics/gpe_protocol_results.png",
-      "sha256": "fd9060f42178a2a9f407253d9786c9e2643b9226dc18fe3a2d49e8cad1ae6bde",
-      "produced_by": "physics/gpe_protocol_simulation.py",
-      "sources": [
-        {
-          "path": "../physics/gpe_protocol_simulation.py",
-          "role": "source-script"
-        }
-      ],
-      "metadata": {
-        "label": "fig:gpe-study",
-        "role": "time-dependent 1D GPE study: static-kernel validation and ordinary-nonlinearity confound differential"
-      }
-    },
-    {
-      "artifact_id": "data-gpe-study",
-      "category": "audit",
-      "path": "../physics/gpe_protocol_data.dat",
-      "sha256": "70e644eac4e00d22e57452bddfb4a071dc817f69237b5a5164aa39c954f1297d",
-      "produced_by": "physics/gpe_protocol_simulation.py",
-      "sources": [
-        {
-          "path": "../physics/gpe_protocol_simulation.py",
-          "role": "source-script"
-        }
-      ],
-      "metadata": {
-        "role": "confound differential profiles at two bandwidths plus kernel-validation summary in header"
-      }
-    },
-    {
-      "artifact_id": "pdf-manuscript",
-      "category": "pdf",
-      "path": "../physics/coherism.pdf",
-      "sha256": "c744e9f7f4d3998587af3501cc4e4cbf9fc1fd0f7fbb270b775826c30d927635",
-      "produced_by": "latexmk",
+      "path": "CITATION-AUDIT.md",
+      "sha256": "fc83e3662a26bce13ad10dbfce523db2f21c0dfcc9b1f7f99a892a6156872770",
+      "produced_by": "gpd-write-paper:citation-audit",
       "sources": [
         {
           "path": "main.tex",
-          "role": "compiled-from"
+          "role": "citation-source"
         },
         {
           "path": "references.bib",
@@ -147,35 +70,22 @@
         }
       ],
       "metadata": {
-        "upstream_path": "physics/coherism.pdf",
-        "pages": 18
+        "cited_keys": 9,
+        "orphaned_keys": 0,
+        "undefined_keys": 0
       }
     },
     {
-      "artifact_id": "tex-cover-letter",
-      "category": "tex",
-      "path": "../physics/cover_letter.tex",
-      "sha256": "5a6c511b66cddfdf65aeb211b1fc03591d57dc590377122a1dba0cbacf56cdd5",
-      "produced_by": "manual-review-bootstrap",
+      "artifact_id": "audit-reproducibility",
+      "category": "audit",
+      "path": "reproducibility-manifest.json",
+      "sha256": "68c648e09ac4dfbc51fc09af394ada68ddcc728f3f0e0f3da7c3440b301f7d07",
+      "produced_by": "gpd-write-paper:reproducibility-audit",
       "sources": [],
       "metadata": {
-        "role": "submission cover letter source"
-      }
-    },
-    {
-      "artifact_id": "pdf-cover-letter",
-      "category": "pdf",
-      "path": "../physics/cover_letter.pdf",
-      "sha256": "e382789ccc8e1f8cadc135445332af1030055265ed93f43e709df82d50840274",
-      "produced_by": "latexmk",
-      "sources": [
-        {
-          "path": "../physics/cover_letter.tex",
-          "role": "compiled-from"
-        }
-      ],
-      "metadata": {
-        "role": "submission cover letter PDF"
+        "generated_datasets": 4,
+        "tracked_outputs": 8,
+        "random_seed": 20260610
       }
     }
   ]

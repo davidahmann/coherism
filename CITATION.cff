@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: "Coherism & ALFM: The Feedback Loop Project"
+title: "Coherism and ALFM Research Repository"
 message: "If you use this work, please cite it as below."
 type: software
 authors:
@@ -8,19 +8,19 @@ authors:
     affiliation: Independent Researcher
     city: Toronto
     country: CA
-repository-code: "https://github.com/davidahmann/coherism_paper"
+repository-code: "https://github.com/davidahmann/coherism"
 license: CC-BY-4.0
-version: "1.0.0"
-date-released: "2024-11-30"
+version: "1.1.0"
+date-released: "2026-08-28"
 
 references:
   - type: article
-    title: "Coherism: A Variational Feedback Framework for Quantum Information and Spacetime Geometry"
+    title: "A Worked Identifiability Audit of a Stipulated Preparation-Indexed Potential in a Homogeneous Bose--Einstein Condensate"
     authors:
       - family-names: Ahmann
         given-names: David
-    year: 2024
-    notes: "Preprint - physics/coherism.tex"
+    year: 2026
+    notes: "Methods preprint - physics/coherism.tex"
     
   - type: article
     title: "ALFM: Adaptive Latent Feedback Model for Institutional Memory in Foundation Model Deployments"
@@ -32,9 +32,9 @@ references:
 
 preferred-citation:
   type: generic
-  title: "Coherism & ALFM: The Feedback Loop Project"
+  title: "Coherism and ALFM Research Repository"
   authors:
     - family-names: Ahmann
       given-names: David
-  year: 2024
-  url: "https://github.com/davidahmann/coherism_paper"
+  year: 2026
+  url: "https://github.com/davidahmann/coherism"
